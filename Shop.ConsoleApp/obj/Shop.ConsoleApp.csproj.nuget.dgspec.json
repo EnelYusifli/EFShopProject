@@ -235,7 +235,11 @@
         "frameworks": {
           "net6.0": {
             "targetAlias": "net6.0",
-            "projectReferences": {}
+            "projectReferences": {
+              "C:\\Users\\HP\\source\\repos\\ShopProject\\Shop.Core\\Shop.Core.csproj": {
+                "projectPath": "C:\\Users\\HP\\source\\repos\\ShopProject\\Shop.Core\\Shop.Core.csproj"
+              }
+            }
           }
         },
         "warningProperties": {

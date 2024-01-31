@@ -782,6 +782,16 @@
             "rid": "win"
           }
         }
+      },
+      "Shop.Core/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "compile": {
+          "bin/placeholder/Shop.Core.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Shop.Core.dll": {}
+        }
       }
     }
   },
@@ -2003,13 +2013,19 @@
         "useSharedDesignerContext.txt",
         "version.txt"
       ]
+    },
+    "Shop.Core/1.0.0": {
+      "type": "project",
+      "path": "../Shop.Core/Shop.Core.csproj",
+      "msbuildProject": "../Shop.Core/Shop.Core.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net6.0": [
       "Microsoft.EntityFrameworkCore >= 6.0.26",
       "Microsoft.EntityFrameworkCore.SqlServer >= 6.0.26",
-      "Microsoft.EntityFrameworkCore.Tools >= 6.0.26"
+      "Microsoft.EntityFrameworkCore.Tools >= 6.0.26",
+      "Shop.Core >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -2043,7 +2059,11 @@
       "frameworks": {
         "net6.0": {
           "targetAlias": "net6.0",
-          "projectReferences": {}
+          "projectReferences": {
+            "C:\\Users\\HP\\source\\repos\\ShopProject\\Shop.Core\\Shop.Core.csproj": {
+              "projectPath": "C:\\Users\\HP\\source\\repos\\ShopProject\\Shop.Core\\Shop.Core.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

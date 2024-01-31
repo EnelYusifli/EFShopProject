@@ -507,7 +507,8 @@
       "Shop.DataAccess/1.0.0": {
         "dependencies": {
           "Microsoft.EntityFrameworkCore": "6.0.26",
-          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.26"
+          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.26",
+          "Shop.Core": "1.0.0"
         },
         "runtime": {
           "Shop.DataAccess.dll": {}

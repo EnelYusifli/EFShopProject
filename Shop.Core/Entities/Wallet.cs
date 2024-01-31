@@ -9,4 +9,5 @@ public class Wallet:BaseEntities
     public string ExpirationDate { get; set; }=null!;
     public string CVC { get; set; }=null!;
     public decimal Balance { get; set; }
+    public ICollection<Invoice>? Invoices { get; set; }
 }

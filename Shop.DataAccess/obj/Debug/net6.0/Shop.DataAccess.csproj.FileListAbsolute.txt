@@ -1,0 +1,14 @@
+C:\Users\HP\source\repos\ShopProject\Shop.DataAccess\bin\Debug\net6.0\Shop.DataAccess.deps.json
+C:\Users\HP\source\repos\ShopProject\Shop.DataAccess\bin\Debug\net6.0\Shop.DataAccess.runtimeconfig.json
+C:\Users\HP\source\repos\ShopProject\Shop.DataAccess\bin\Debug\net6.0\Shop.DataAccess.dll
+C:\Users\HP\source\repos\ShopProject\Shop.DataAccess\bin\Debug\net6.0\Shop.DataAccess.pdb
+C:\Users\HP\source\repos\ShopProject\Shop.DataAccess\obj\Debug\net6.0\Shop.DataAccess.csproj.AssemblyReference.cache
+C:\Users\HP\source\repos\ShopProject\Shop.DataAccess\obj\Debug\net6.0\Shop.DataAccess.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\HP\source\repos\ShopProject\Shop.DataAccess\obj\Debug\net6.0\Shop.DataAccess.AssemblyInfoInputs.cache
+C:\Users\HP\source\repos\ShopProject\Shop.DataAccess\obj\Debug\net6.0\Shop.DataAccess.AssemblyInfo.cs
+C:\Users\HP\source\repos\ShopProject\Shop.DataAccess\obj\Debug\net6.0\Shop.DataAccess.csproj.CoreCompileInputs.cache
+C:\Users\HP\source\repos\ShopProject\Shop.DataAccess\obj\Debug\net6.0\Shop.DataAccess.dll
+C:\Users\HP\source\repos\ShopProject\Shop.DataAccess\obj\Debug\net6.0\refint\Shop.DataAccess.dll
+C:\Users\HP\source\repos\ShopProject\Shop.DataAccess\obj\Debug\net6.0\Shop.DataAccess.pdb
+C:\Users\HP\source\repos\ShopProject\Shop.DataAccess\obj\Debug\net6.0\Shop.DataAccess.genruntimeconfig.cache
+C:\Users\HP\source\repos\ShopProject\Shop.DataAccess\obj\Debug\net6.0\ref\Shop.DataAccess.dll

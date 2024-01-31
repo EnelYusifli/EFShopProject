@@ -1,0 +1,36 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v6.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v6.0": {
+      "Shop.Business/1.0.0": {
+        "dependencies": {
+          "Shop.Core": "1.0.0"
+        },
+        "runtime": {
+          "Shop.Business.dll": {}
+        }
+      },
+      "Shop.Core/1.0.0": {
+        "runtime": {
+          "Shop.Core.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Shop.Business/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Shop.Core/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}

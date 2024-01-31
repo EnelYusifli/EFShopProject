@@ -27,6 +27,29 @@ public class ShopDbContext:DbContext
             .HasOne(u => u.Cart)
             .WithOne(c => c.User)
             .HasForeignKey<Cart>(c => c.Id);
-
+        modelBuilder.Entity<Cart>()
+            .HasMany(c => c.CartProducts)
+            .WithOne(cp => cp.Cart)
+            .HasForeignKey(cp => cp.CartId);
+        modelBuilder.Entity<Product>()
+            .HasMany(p => p.CartProducts)
+            .WithOne(cp => cp.Product)
+            .HasForeignKey(cp => cp.ProductId);
+        modelBuilder.Entity<Product>()
+            .HasMany(p => p.ProductInvoices)
+            .WithOne(pi => pi.Product)
+            .HasForeignKey(pi => pi.ProductId);
+        modelBuilder.Entity<Invoice>()
+            .HasMany(i => i.ProductInvoices)
+            .WithOne(pi => pi.Invoice)
+            .HasForeignKey(pi => pi.InvoiceId);
+        modelBuilder.Entity<Invoice>()
+            .HasOne(i => i.Wallet)
+            .WithMany(w => w.Invoices)
+            .HasForeignKey(i => i.WalletId);
+        modelBuilder.Entity<ProductInvoice>()
+            .HasKey(pi => new { pi.InvoiceId, pi.ProductId });
+        modelBuilder.Entity<CartProduct>()
+            .HasKey(cp => new { cp.CartId, cp.ProductId });
     }
 }

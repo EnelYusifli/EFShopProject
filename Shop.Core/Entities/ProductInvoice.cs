@@ -6,4 +6,5 @@ public class ProductInvoice:BaseEntities
     public Product Product { get; set; } = null!;
     public int InvoiceId { get; set; }
     public int ProductId { get; set; }
+    public int ProductCountInInvoice { get; set; } = 1;
 }

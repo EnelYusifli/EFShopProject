@@ -5,10 +5,9 @@ namespace Shop.DataAccess;
 
 public class ShopDbContext:DbContext
 {
-    ShopDbContext context = new();
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer(@"Server=.\SQLEXPRESS;Database=Shop;Trusted_Connection=true;");
+        optionsBuilder.UseSqlServer(@"Server=ENEL\SQLEXPRESS;Database=Shop;Trusted_Connection=true;");
     }
     public DbSet<User> Users { get; set; }
     public DbSet<Wallet> Wallets { get; set; }

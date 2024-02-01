@@ -43,8 +43,11 @@ public class UserService : IUserService
         await Console.Out.WriteLineAsync("Logged in Successfully");
     }
 
-    public void LoginUserWithUsername(string username, string password)
+    public async void LoginUserWithUsername(string username, string password)
     {
-        
+        User? user = await context.Users.FirstOrDefaultAsync(u => u.UserName == username);
+        if (user is null) throw new CannotBeFoundException("User email cannot be found");
+        if (user.Password != password) throw new IsNotCorrectException("Password is not correct");
+        await Console.Out.WriteLineAsync("Logged in Successfully");
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Shop.Business.Services;
-using Shop.Business.Utilities.Exceptions;
 using Shop.Business.Utilities.Helper;
+
+
+
 bool isContinue = true;
 UserService userService = new UserService();
 ProductService productService = new ProductService();
@@ -134,5 +136,30 @@ while (isContinue)
     else Console.WriteLine("Please enter correct format");
 }
 
-
+isContinue = true;
+    Console.WriteLine("\nWe wish you a pleasant experience :))\n");
+while (isContinue)
+{
+    Console.WriteLine("\n1)Go To HomePage");
+    Console.WriteLine("2)Go To Cart");
+    Console.WriteLine("3)See UserInfo\n");
+    string? option = Console.ReadLine();
+    int intOption;
+    bool isInt = int.TryParse(option, out intOption);
+    if (isInt)
+    {
+        if (intOption > 0 && intOption <= 3)
+        {
+            switch (intOption)
+            {
+                case (int)MainPage.GoToHomePage:
+                    break;
+                case (int)MainPage.GoToCart:
+                    break;
+                case (int)MainPage.SeeUserInfo:
+                    break;
+            }
+        }
+    }
+}
 

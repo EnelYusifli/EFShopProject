@@ -15,7 +15,7 @@ public class UserService : IUserService
         {
             if (age != null && age < 16) throw new LessThanMinimumException("Age cannot be less than 16");
             if (password.Length < 8) throw new LessThanMinimumException("Password length must be at least 8");
-            bool isDublicate = await context.Users.Where(u=> u.Email == email || u.UserName == username).AnyAsync();
+            bool isDublicate = await context.Users.Where(u=> u.Email.ToLower() == email.ToLower() || u.UserName.ToLower() == username.ToLower()).AnyAsync();
             if (!isDublicate)
             {
                 User user = new User()
@@ -36,6 +36,7 @@ public class UserService : IUserService
                 };
                 await context.Carts.AddAsync(user.Cart);
                 await context.SaveChangesAsync();
+                await Console.Out.WriteLineAsync("Registered Successfully");
             }
             else throw new ShouldBeUniqueException("Email or Username is taken");
         }

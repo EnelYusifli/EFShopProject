@@ -11,21 +11,27 @@ public class ProductService : IProductService
 
     public async void CreateProduct(string productName, string description, decimal price, int availableCount)
     {
+
         if (productName is not null)
         {
             if (availableCount > 0)
             {
                 if (price > 0)
                 {
-                    Product product = new Product()
+                    bool isDublicate = context.Products.Where(p => p.Name.ToLower() == productName.ToLower()).Any();
+                    if (!isDublicate)
                     {
-                        Name = productName,
-                        Price = price,
-                        AvailableCount = availableCount,
-                        Description = description
-                    };
-                    await context.Products.AddAsync(product);
-                    await context.SaveChangesAsync();
+                        Product product = new Product()
+                        {
+                            Name = productName,
+                            Price = price,
+                            AvailableCount = availableCount,
+                            Description = description
+                        };
+                        await context.Products.AddAsync(product);
+                        await context.SaveChangesAsync();
+                    }
+                    else throw new ShouldBeUniqueException("Product Name must be unique");
                 }
                 else throw new LessThanMinimumException("Price should be more than 0");
             }
@@ -33,4 +39,12 @@ public class ProductService : IProductService
         }
         else throw new CannotBeNullException("Name cannot be null");
     }
+    public async void AddProductToCart(string productName)
+    {
+
+    }
+
+
+
+
 }

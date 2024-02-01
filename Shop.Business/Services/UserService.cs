@@ -30,6 +30,11 @@ public class UserService : IUserService
                     Address = address
                 };
                 await context.Users.AddAsync(user);
+                user.Cart = new Cart()
+                {
+                    Id = user.Id
+                };
+                await context.Carts.AddAsync(user.Cart);
                 await context.SaveChangesAsync();
             }
             else throw new ShouldBeUniqueException("Email or Username is taken");

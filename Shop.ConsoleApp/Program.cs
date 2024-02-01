@@ -1,15 +1,13 @@
-﻿// See https://aka.ms/new-console-template for more information
-using Shop.Business.Interfaces;
-using Shop.Business.Services;
+﻿using Shop.Business.Services;
 using Shop.Business.Utilities.Helper;
 bool isContinue = true;
 UserService userService = new UserService();
-while (isContinue)
-{
     Console.WriteLine("welcome");
     Console.WriteLine("1)Register");
     Console.WriteLine("2)Login");
     int option = Convert.ToInt32(Console.ReadLine());
+while (isContinue)
+{
     switch (option)
     {
         case (int)ConsoleAppEnum.Register:
@@ -53,6 +51,20 @@ while (isContinue)
                         Console.WriteLine("Enter Password");
                         string password = Console.ReadLine();
                         userService.LoginUserWithEmail(email, password);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    break;
+                case (int)LoginMethod.LoginWithUsername:
+                    try
+                    {
+                        Console.WriteLine("Enter Username");
+                        string username = Console.ReadLine();
+                        Console.WriteLine("Enter Password");
+                        string password = Console.ReadLine();
+                        userService.LoginUserWithEmail(username, password);
                     }
                     catch (Exception ex)
                     {

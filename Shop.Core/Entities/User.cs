@@ -1,4 +1,6 @@
-﻿namespace Shop.Core.Entities;
+﻿using Shop.Core.Abstract;
+
+namespace Shop.Core.Entities;
 
 public class User : BaseEntities
 {
@@ -13,4 +15,6 @@ public class User : BaseEntities
     public string? Address { get; set; }
     public ICollection<Wallet>? Wallets { get; set; }
     public Cart Cart { get; set; } = null!;
+
+    
 }

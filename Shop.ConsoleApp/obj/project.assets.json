@@ -787,7 +787,8 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v6.0",
         "dependencies": {
-          "Shop.Core": "1.0.0"
+          "Shop.Core": "1.0.0",
+          "Shop.DataAccess": "1.0.0"
         },
         "compile": {
           "bin/placeholder/Shop.Business.dll": {}

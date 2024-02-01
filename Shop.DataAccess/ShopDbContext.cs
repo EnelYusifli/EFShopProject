@@ -9,15 +9,29 @@ public class ShopDbContext:DbContext
     {
         optionsBuilder.UseSqlServer(@"Server=ENEL\SQLEXPRESS;Database=Shop;Trusted_Connection=true;");
     }
-    public DbSet<User> Users { get; set; }
-    public DbSet<Wallet> Wallets { get; set; }
-    public DbSet<Product> Products { get; set; }
-    public DbSet<Cart> Carts { get; set; }
-    public DbSet<Invoice> Invoices { get; set; }
-    public DbSet<ProductInvoice> ProductInvoice { get; set; }
-    public DbSet<CartProduct> CartProduct { get; set; }
+    public DbSet<User>? Users { get; set; }
+    public DbSet<Wallet>? Wallets { get; set; }
+    public DbSet<Product>? Products { get; set; }
+    public DbSet<Cart>? Carts { get; set; }
+    public DbSet<Invoice>? Invoices { get; set; }
+    public DbSet<Discount>? Discounts { get; set; }
+    public DbSet<ProductDiscount>? ProductDiscounts { get; set; }
+    public DbSet<ProductInvoice>? ProductInvoices { get; set; }
+    public DbSet<CartProduct>? CartProducts { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.UserName)
+            .IsUnique();
+        modelBuilder.Entity<User>()
+            .HasIndex(u => u.Email)
+            .IsUnique();
+        modelBuilder.Entity<Wallet>()
+            .HasIndex(w => w.Number)
+            .IsUnique();
+        modelBuilder.Entity<Product>()
+            .HasIndex(p => p.Name)
+            .IsUnique();
         modelBuilder.Entity<User>()
             .HasMany(u => u.Wallets)
             .WithOne(w => w.User)
@@ -42,6 +56,14 @@ public class ShopDbContext:DbContext
             .HasMany(i => i.ProductInvoices)
             .WithOne(pi => pi.Invoice)
             .HasForeignKey(pi => pi.InvoiceId);
+        modelBuilder.Entity<Product>()
+            .HasMany(p => p.ProductDiscounts)
+            .WithOne(pd => pd.Product)
+            .HasForeignKey(pd => pd.ProductId);
+        modelBuilder.Entity<Discount>()
+            .HasMany(d => d.ProductDiscounts)
+            .WithOne(pd => pd.Discount)
+            .HasForeignKey(pd => pd.DiscountId);
         modelBuilder.Entity<Invoice>()
             .HasOne(i => i.Wallet)
             .WithMany(w => w.Invoices)
@@ -50,5 +72,7 @@ public class ShopDbContext:DbContext
             .HasKey(pi => new { pi.InvoiceId, pi.ProductId });
         modelBuilder.Entity<CartProduct>()
             .HasKey(cp => new { cp.CartId, cp.ProductId });
+        modelBuilder.Entity<ProductDiscount>()
+            .HasKey(pd => new {  pd.ProductId, pd.DiscountId });
     }
 }

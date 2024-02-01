@@ -34,6 +34,9 @@
             "projectReferences": {
               "C:\\Users\\HP\\source\\repos\\ShopProject\\Shop.Core\\Shop.Core.csproj": {
                 "projectPath": "C:\\Users\\HP\\source\\repos\\ShopProject\\Shop.Core\\Shop.Core.csproj"
+              },
+              "C:\\Users\\HP\\source\\repos\\ShopProject\\Shop.DataAccess\\Shop.DataAccess.csproj": {
+                "projectPath": "C:\\Users\\HP\\source\\repos\\ShopProject\\Shop.DataAccess\\Shop.DataAccess.csproj"
               }
             }
           }

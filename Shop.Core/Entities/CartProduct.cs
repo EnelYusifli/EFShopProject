@@ -1,4 +1,6 @@
-﻿namespace Shop.Core.Entities;
+﻿using Shop.Core.Abstract;
+
+namespace Shop.Core.Entities;
 
 public class CartProduct:BaseEntities
 {

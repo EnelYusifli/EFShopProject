@@ -493,7 +493,8 @@
       },
       "Shop.Business/1.0.0": {
         "dependencies": {
-          "Shop.Core": "1.0.0"
+          "Shop.Core": "1.0.0",
+          "Shop.DataAccess": "1.0.0"
         },
         "runtime": {
           "Shop.Business.dll": {}

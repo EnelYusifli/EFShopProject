@@ -65,7 +65,38 @@ namespace Shop.DataAccess.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("CartProduct");
+                    b.ToTable("CartProducts");
+                });
+
+            modelBuilder.Entity("Shop.Core.Entities.Discount", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeactive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Percent")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Discounts");
                 });
 
             modelBuilder.Entity("Shop.Core.Entities.Invoice", b =>
@@ -123,14 +154,44 @@ namespace Shop.DataAccess.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Name")
+                        .IsUnique();
+
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("Shop.Core.Entities.ProductDiscount", b =>
+                {
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DiscountId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsDeactive")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("ModifiedTime")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("ProductId", "DiscountId");
+
+                    b.HasIndex("DiscountId");
+
+                    b.ToTable("ProductDiscounts");
                 });
 
             modelBuilder.Entity("Shop.Core.Entities.ProductInvoice", b =>
@@ -157,7 +218,7 @@ namespace Shop.DataAccess.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductInvoice");
+                    b.ToTable("ProductInvoices");
                 });
 
             modelBuilder.Entity("Shop.Core.Entities.User", b =>
@@ -179,7 +240,7 @@ namespace Shop.DataAccess.Migrations
 
                     b.Property<string>("Email")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<bool>("IsDeactive")
                         .HasColumnType("bit");
@@ -203,9 +264,15 @@ namespace Shop.DataAccess.Migrations
 
                     b.Property<string>("UserName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("UserName")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });
@@ -240,12 +307,15 @@ namespace Shop.DataAccess.Migrations
 
                     b.Property<string>("Number")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Number")
+                        .IsUnique();
 
                     b.HasIndex("UserId");
 
@@ -293,6 +363,25 @@ namespace Shop.DataAccess.Migrations
                     b.Navigation("Wallet");
                 });
 
+            modelBuilder.Entity("Shop.Core.Entities.ProductDiscount", b =>
+                {
+                    b.HasOne("Shop.Core.Entities.Discount", "Discount")
+                        .WithMany("ProductDiscounts")
+                        .HasForeignKey("DiscountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Shop.Core.Entities.Product", "Product")
+                        .WithMany("ProductDiscounts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Discount");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Shop.Core.Entities.ProductInvoice", b =>
                 {
                     b.HasOne("Shop.Core.Entities.Invoice", "Invoice")
@@ -328,6 +417,11 @@ namespace Shop.DataAccess.Migrations
                     b.Navigation("CartProducts");
                 });
 
+            modelBuilder.Entity("Shop.Core.Entities.Discount", b =>
+                {
+                    b.Navigation("ProductDiscounts");
+                });
+
             modelBuilder.Entity("Shop.Core.Entities.Invoice", b =>
                 {
                     b.Navigation("ProductInvoices");
@@ -336,6 +430,8 @@ namespace Shop.DataAccess.Migrations
             modelBuilder.Entity("Shop.Core.Entities.Product", b =>
                 {
                     b.Navigation("CartProducts");
+
+                    b.Navigation("ProductDiscounts");
 
                     b.Navigation("ProductInvoices");
                 });

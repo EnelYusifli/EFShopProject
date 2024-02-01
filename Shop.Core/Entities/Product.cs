@@ -1,4 +1,6 @@
-﻿namespace Shop.Core.Entities;
+﻿using Shop.Core.Abstract;
+
+namespace Shop.Core.Entities;
 
 public class Product:BaseEntities
 {
@@ -9,4 +11,5 @@ public class Product:BaseEntities
     public int AvailableCount { get; set; }
     public ICollection<ProductInvoice>? ProductInvoices { get; set; }
     public ICollection<CartProduct>? CartProducts { get; set; }
+    public ICollection<ProductDiscount>? ProductDiscounts { get; set; }
 }

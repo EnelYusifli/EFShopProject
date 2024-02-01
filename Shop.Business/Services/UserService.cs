@@ -3,7 +3,6 @@ using Shop.Business.Interfaces;
 using Shop.Business.Utilities.Exceptions;
 using Shop.Core.Entities;
 using Shop.DataAccess;
-using System.ComponentModel.Design;
 
 namespace Shop.Business.Services;
 
@@ -34,5 +33,18 @@ public class UserService : IUserService
             else throw new ShouldBeUniqueException("Email or Username is taken");
         }
         else throw new CannotBeNullException("Value cannot be null");
-    }  
+    }
+
+    public async void LoginUserWithEmail(string email, string password)
+    {
+        User? user= await context.Users.FirstOrDefaultAsync(u=> u.Email == email);
+        if (user is null) throw new CannotBeFoundException("User email cannot be found");
+        if (user.Password != password) throw new IsNotCorrectException("Password is not correct");
+        await Console.Out.WriteLineAsync("Logged in Successfully");
+    }
+
+    public void LoginUserWithUsername(string username, string password)
+    {
+        
+    }
 }

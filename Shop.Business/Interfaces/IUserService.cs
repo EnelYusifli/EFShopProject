@@ -2,5 +2,7 @@
 
 public interface IUserService
 {
-     void CreateUserAsync(string name, string? surname, int? age, string email, string password, string username, string? phone, string? address)
+    void CreateUserAsync(string name, string? surname, int? age, string email, string password, string username, string? phone, string? address);
+    void LoginUserWithEmail(string email,string password );
+    void LoginUserWithUsername(string username,string password );
 }

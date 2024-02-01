@@ -37,7 +37,30 @@ while (isContinue)
             {
                 Console.WriteLine(ex.Message);
             }
-           
+            break;
+        case (int)ConsoleAppEnum.Login:
+            Console.WriteLine("1)Login With Email");
+            Console.WriteLine("2)Login With Username");
+            Console.WriteLine("Select an option");
+            int loginOption = Convert.ToInt32(Console.ReadLine());
+            switch (loginOption)
+            {
+                case (int)LoginMethod.LoginWithMail:
+                    try
+                    {
+                        Console.WriteLine("Enter Email");
+                        string email = Console.ReadLine();
+                        Console.WriteLine("Enter Password");
+                        string password = Console.ReadLine();
+                        userService.LoginUserWithEmail(email, password);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    break;
+            }
+          
             break;
     }
 }

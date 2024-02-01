@@ -39,6 +39,7 @@ public class UserService : IUserService
 
     public async void LoginUserWithEmail(string email, string password)
     {
+        if (email is null || password is null) throw new CannotBeNullException("Value cannot be null");
         User? user= await context.Users.FirstOrDefaultAsync(u=> u.Email == email);
         if (user is null) throw new CannotBeFoundException("User email cannot be found");
         if (user.Password != password) throw new IsNotCorrectException("Password is not correct");
@@ -47,6 +48,7 @@ public class UserService : IUserService
 
     public async void LoginUserWithUsername(string username, string password)
     {
+        if (username is null || password is null) throw new CannotBeNullException("Value cannot be null");
         User? user = await context.Users.FirstOrDefaultAsync(u => u.UserName == username);
         if (user is null) throw new CannotBeFoundException("User email cannot be found");
         if (user.Password != password) throw new IsNotCorrectException("Password is not correct");

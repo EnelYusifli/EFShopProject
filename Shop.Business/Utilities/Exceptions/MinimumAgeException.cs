@@ -1,8 +1,8 @@
 ﻿namespace Shop.Business.Utilities.Exceptions;
 
-public class MinimumAgeException:Exception
+public class LessThanMinimumException:Exception
 {
-    public MinimumAgeException(string message) : base(message)
+    public LessThanMinimumException(string message) : base(message)
     {
 
     }

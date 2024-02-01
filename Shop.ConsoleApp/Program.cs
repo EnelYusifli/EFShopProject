@@ -1,79 +1,138 @@
 ﻿using Shop.Business.Services;
+using Shop.Business.Utilities.Exceptions;
 using Shop.Business.Utilities.Helper;
 bool isContinue = true;
 UserService userService = new UserService();
-    Console.WriteLine("welcome");
-    Console.WriteLine("1)Register");
-    Console.WriteLine("2)Login");
-    int option = Convert.ToInt32(Console.ReadLine());
+ProductService productService = new ProductService();
+Console.WriteLine("welcome");
 while (isContinue)
 {
-    switch (option)
+    Console.WriteLine("\n1)Register");
+    Console.WriteLine("2)Login\n");
+    string? option = Console.ReadLine();
+    int intOption;
+    bool isInt = int.TryParse(option, out intOption);
+    if (isInt)
     {
-        case (int)ConsoleAppEnum.Register:
-            try
+        if (intOption > 0 && intOption <= 2)
+        {
+            switch (intOption)
             {
-                Console.WriteLine("Enter Name");
-                string name = Console.ReadLine();
-                Console.WriteLine("Enter Surname");
-                string surname = Console.ReadLine();
-                Console.WriteLine("Enter Age");
-                int? age = Convert.ToInt32(Console.ReadLine());
-                Console.WriteLine("Enter Email");
-                string email = Console.ReadLine();
-                Console.WriteLine("Enter Password");
-                string password = Console.ReadLine();
-                Console.WriteLine("Enter UserName For App");
-                string username = Console.ReadLine();
-                Console.WriteLine("Enter Phone");
-                string phone = Console.ReadLine();
-                Console.WriteLine("Enter Address");
-                string address = Console.ReadLine();
-                userService.CreateUserAsync(name, surname, age, email, password, username, phone, address);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            break;
-        case (int)ConsoleAppEnum.Login:
-            Console.WriteLine("1)Login With Email");
-            Console.WriteLine("2)Login With Username");
-            Console.WriteLine("Select an option");
-            int loginOption = Convert.ToInt32(Console.ReadLine());
-            switch (loginOption)
-            {
-                case (int)LoginMethod.LoginWithMail:
+                case (int)LoginOrRegisterEnum.Register:
                     try
                     {
+                        Console.WriteLine("Enter Name");
+                        string name = Console.ReadLine();
+                        Console.WriteLine("Enter Surname");
+                        string surname = Console.ReadLine();
+                        Console.WriteLine("Enter Age");
+                        int? age = Convert.ToInt32(Console.ReadLine());
                         Console.WriteLine("Enter Email");
                         string email = Console.ReadLine();
                         Console.WriteLine("Enter Password");
                         string password = Console.ReadLine();
-                        userService.LoginUserWithEmail(email, password);
+                        Console.WriteLine("Enter UserName For App");
+                        string username = Console.ReadLine();
+                        Console.WriteLine("Enter Phone");
+                        string phone = Console.ReadLine();
+                        Console.WriteLine("Enter Address");
+                        string address = Console.ReadLine();
+                        userService.CreateUserAsync(name, surname, age, email, password, username, phone, address);
+                    YesOrNo:
+                        Console.WriteLine("\nDo you want to continue? (yes/no)");
+                        string? continueOption = Console.ReadLine();
+                        if (continueOption is null || continueOption.ToLower() != "yes" && continueOption.ToLower() != "no")
+                        {
+                            Console.WriteLine("Please write yes/no");
+                            goto YesOrNo;
+                        }
+                        if (continueOption.ToLower() == "no")
+                            return;
+                        if (continueOption.ToLower() == "yes")
+                        {
+                            isContinue = false;
+                        }
                     }
                     catch (Exception ex)
                     {
                         Console.WriteLine(ex.Message);
                     }
                     break;
-                case (int)LoginMethod.LoginWithUsername:
-                    try
+                case (int)LoginOrRegisterEnum.Login:
+                    Console.WriteLine("1)Login With Email");
+                    Console.WriteLine("2)Login With Username");
+                    Console.WriteLine("Select an option");
+                    int loginOption = Convert.ToInt32(Console.ReadLine());
+                    switch (loginOption)
                     {
-                        Console.WriteLine("Enter Username");
-                        string username = Console.ReadLine();
-                        Console.WriteLine("Enter Password");
-                        string password = Console.ReadLine();
-                        userService.LoginUserWithEmail(username, password);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine(ex.Message);
+                        case (int)LoginMethod.LoginWithMail:
+                            try
+                            {
+                                Console.WriteLine("Enter Email");
+                                string email = Console.ReadLine();
+                                Console.WriteLine("Enter Password");
+                                string password = Console.ReadLine();
+                                userService.LoginUserWithEmail(email, password);
+                            YesOrNo:
+                                Console.WriteLine("\nDo you want to continue? (yes/no)");
+                                string? continueOption = Console.ReadLine();
+                                if (continueOption is null || continueOption.ToLower() != "yes" && continueOption.ToLower() != "no")
+                                {
+                                    Console.WriteLine("Please write yes/no");
+                                    goto YesOrNo;
+                                }
+                                if (continueOption.ToLower() == "no")
+                                    return;
+                                if (continueOption.ToLower() == "yes")
+                                {
+                                    isContinue = false;
+                                }
+
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex.Message);
+                            }
+                            break;
+                        case (int)LoginMethod.LoginWithUsername:
+                            try
+                            {
+                                Console.WriteLine("Enter Username");
+                                string username = Console.ReadLine();
+                                Console.WriteLine("Enter Password");
+                                string password = Console.ReadLine();
+                                userService.LoginUserWithUsername(username, password);
+                            YesOrNo:
+                                Console.WriteLine("\nDo you want to continue? (yes/no)");
+                                string? continueOption = Console.ReadLine();
+                                if (continueOption is null || continueOption.ToLower() != "yes" && continueOption.ToLower() != "no")
+                                {
+                                    Console.WriteLine("Please write yes/no");
+                                    goto YesOrNo;
+                                }
+                                if (continueOption.ToLower() == "no")
+                                    return;
+                                if (continueOption.ToLower() == "yes")
+                                {
+                                    isContinue = false;
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                Console.WriteLine(ex.Message);
+                            }
+                            break;
+                        default:
+                            Console.WriteLine("Invalid option. Please select again.");
+                            break;
                     }
                     break;
             }
-          
-            break;
+        }
+        else Console.WriteLine("Invalid option. Please select again.");
     }
+    else Console.WriteLine("Please enter correct format");
 }
+
+
 

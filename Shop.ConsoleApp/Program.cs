@@ -1,14 +1,44 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using Shop.Business.Interfaces;
+using Shop.Business.Services;
 using Shop.Business.Utilities.Helper;
-using Shop.DataAccess;
-
-Console.WriteLine("Hello, World!");
-
-    int option=Convert.ToInt32(Console.ReadLine());
-switch (option)
+bool isContinue = true;
+UserService userService = new UserService();
+while (isContinue)
 {
-    case (int)ConsoleAppEnum.Register:
-
-        break;
+    Console.WriteLine("welcome");
+    Console.WriteLine("1)Register");
+    Console.WriteLine("2)Login");
+    int option = Convert.ToInt32(Console.ReadLine());
+    switch (option)
+    {
+        case (int)ConsoleAppEnum.Register:
+            try
+            {
+                Console.WriteLine("Enter Name");
+                string name = Console.ReadLine();
+                Console.WriteLine("Enter Surname");
+                string surname = Console.ReadLine();
+                Console.WriteLine("Enter Age");
+                int? age = Convert.ToInt32(Console.ReadLine());
+                Console.WriteLine("Enter Email");
+                string email = Console.ReadLine();
+                Console.WriteLine("Enter Password");
+                string password = Console.ReadLine();
+                Console.WriteLine("Enter UserName For App");
+                string username = Console.ReadLine();
+                Console.WriteLine("Enter Phone");
+                string phone = Console.ReadLine();
+                Console.WriteLine("Enter Address");
+                string address = Console.ReadLine();
+                userService.CreateUserAsync(name, surname, age, email, password, username, phone, address);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+           
+            break;
+    }
 }
 

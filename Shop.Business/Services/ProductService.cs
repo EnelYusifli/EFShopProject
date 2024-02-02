@@ -9,7 +9,7 @@ public class ProductService : IProductService
 {
     ShopDbContext context = new ShopDbContext();
 
-    public async void CreateProduct(string productName, string description, decimal price, int availableCount)
+    public async void CreateProduct(string productName, string description, decimal price, int availableCount,int categoryId)
     {
 
         if (productName is not null)
@@ -18,20 +18,32 @@ public class ProductService : IProductService
             {
                 if (price > 0)
                 {
-                    bool isDublicate = context.Products.Where(p => p.Name.ToLower() == productName.ToLower()).Any();
-                    if (!isDublicate)
+                    if (categoryId > 0)
                     {
-                        Product product = new Product()
+                        Category category = context.Categories.Find(categoryId);
+                        if (category is not null)
                         {
-                            Name = productName,
-                            Price = price,
-                            AvailableCount = availableCount,
-                            Description = description
-                        };
-                        await context.Products.AddAsync(product);
-                        await context.SaveChangesAsync();
+                            bool isDublicate = context.Products.Where(p => p.Name.ToLower() == productName.ToLower()).Any();
+                            if (!isDublicate)
+                            {
+                                Product product = new Product()
+                                {
+                                    Name = productName,
+                                    Price = price,
+                                    AvailableCount = availableCount,
+                                    Description = description,
+                                    CategoryId = categoryId,
+                                    Category= category
+                                };
+                                await context.Products.AddAsync(product);
+                                await context.SaveChangesAsync();
+                            }
+                            else throw new ShouldBeUniqueException("Product Name must be unique");
+                        }
+                        else throw new CannotBeFoundException("Category cannot be found");
                     }
-                    else throw new ShouldBeUniqueException("Product Name must be unique");
+                    else throw new LessThanMinimumException("Id should be more than 0");
+                    
                 }
                 else throw new LessThanMinimumException("Price should be more than 0");
             }

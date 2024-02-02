@@ -1,5 +1,4 @@
-﻿// See https://aka.ms/new-console-template for more information
-using Shop.Business.Services;
+﻿using Shop.Business.Services;
 using Shop.Business.Utilities.Helper;
 using Shop.Core.Entities;
 using Shop.DataAccess;
@@ -21,6 +20,7 @@ User? user = null;
 ShopDbContext context = new ShopDbContext();
 UserService userService = new UserService();
 ProductService productService = new ProductService();
+CategoryService categoryService = new CategoryService();
 WalletService walletService = new WalletService();
 while (isContinue)
 {
@@ -43,7 +43,7 @@ while (isContinue)
                         string email = Console.ReadLine();
                         Console.WriteLine("Enter Password");
                         string password = Console.ReadLine();
-                        userService.LoginUserWithEmail(email, password);
+                        userService.LoginAdminWithEmail(email, password);
                     YesOrNo:
                         Console.WriteLine("\nDo you want to continue? (yes/no)");
                         string? continueOption = Console.ReadLine();
@@ -73,7 +73,7 @@ while (isContinue)
                         string username = Console.ReadLine();
                         Console.WriteLine("Enter Password");
                         string password = Console.ReadLine();
-                        userService.LoginUserWithUsername(username, password);
+                        userService.LoginAdminWithUsername(username, password);
                     YesOrNo:
                         Console.WriteLine("\nDo you want to continue? (yes/no)");
                         string? continueOption = Console.ReadLine();
@@ -105,7 +105,8 @@ while (isContinue)
 isContinue = true;
 while (isContinue)
 {
-    Console.WriteLine("\n1)Add Product");
+    Console.WriteLine("\n1)Create Product");
+    Console.WriteLine("2)Create Category");
     Console.WriteLine("0)Exit\n");
     string? option = Console.ReadLine();
     int intOption;
@@ -117,23 +118,47 @@ while (isContinue)
             switch (intOption)
             {
                 case (int)AdminPanel.CreateProduct:
-                    Console.WriteLine("name");
-                    string name = Console.ReadLine();
-                    Console.WriteLine("desc");
-                    string description = Console.ReadLine();
-                    Console.WriteLine("price");
-                    decimal price = Convert.ToDecimal(Console.ReadLine());
-                    Console.WriteLine("count");
-                    int count = Convert.ToInt32(Console.ReadLine());
-                    foreach (var category in context.Categories)
+                    try
                     {
-                        Console.WriteLine($"\nId:{category.Id}\n" +
-                            $"Name:{category.Name.ToUpper()}\n");
+                        Console.WriteLine("name");
+                        string name = Console.ReadLine();
+                        Console.WriteLine("desc");
+                        string description = Console.ReadLine();
+                        Console.WriteLine("price");
+                        decimal price = Convert.ToDecimal(Console.ReadLine());
+                        Console.WriteLine("count");
+                        int count = Convert.ToInt32(Console.ReadLine());
+                        foreach (var category in context.Categories)
+                        {
+                            Console.WriteLine($"\nId:{category.Id}\n" +
+                                $"Name:{category.Name.ToUpper()}\n");
+                        }
+                        Console.WriteLine("Enter Category Id");
+                        int categoryId = Convert.ToInt32(Console.ReadLine());
+                        productService.CreateProduct(name, description, price, count, categoryId);
                     }
-                    Console.WriteLine("Enter Category Id");
-                    int categoryId = Convert.ToInt32(Console.ReadLine());
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                 
+                    break;
+                case (int)AdminPanel.CreateCategory:
+                    try
+                    {
+                        Console.WriteLine("Enter Name");
+                        string? categoryName = Console.ReadLine();
+                        Console.WriteLine("Enter description");
+                        string? categoryDescription = Console.ReadLine();
+                        categoryService.CreateCategory(categoryName, categoryDescription);
+                        
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    
 
-                    productService.CreateProduct(name, description, price, count, categoryId);
                     break;
             }
         }

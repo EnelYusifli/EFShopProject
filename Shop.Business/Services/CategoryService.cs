@@ -21,6 +21,7 @@ public class CategoryService: ICategoryService
             }
             context.Categories.Add(category);
             context.SaveChanges();
+            Console.WriteLine("Added successfully");
         }
     }
 }

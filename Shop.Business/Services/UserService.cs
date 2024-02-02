@@ -88,6 +88,25 @@ public class UserService : IUserService
         else throw new CannotBeNullException("Value cannot be null");
     }
 
+    public void LoginAdminWithEmail(string email, string password)
+    {
+        if (email is null || password is null) throw new CannotBeNullException("Value cannot be null");
+        User? admin = context.Users.Find(1);
+        if (admin is null) throw new CannotBeFoundException("User email cannot be found");
+        if (admin.Email != email) throw new IsNotCorrectException("Email is not correct");
+        if (admin.Password != password) throw new IsNotCorrectException("Password is not correct");
+        Console.Out.WriteLine("Logged in Successfully");
+    }
+    public void LoginAdminWithUsername(string username, string password)
+    {
+        if (username is null || password is null) throw new CannotBeNullException("Value cannot be null");
+        User? admin = context.Users.Find(1);
+        if (admin is null) throw new CannotBeFoundException("User email cannot be found");
+        if (admin.UserName != username) throw new IsNotCorrectException("Email is not correct");
+        if (admin.Password != password) throw new IsNotCorrectException("Password is not correct");
+        Console.Out.WriteLine("Logged in Successfully");
+    }
+
     //public void UpdateUser
 
 }

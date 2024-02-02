@@ -2,6 +2,7 @@
 public enum AdminPanel
 {
     CreateProduct=1,
+    CreateCategory,
 
 }
 

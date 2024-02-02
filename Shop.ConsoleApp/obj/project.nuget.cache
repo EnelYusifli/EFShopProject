@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "apVYvVzWtVr7+BKgK20lk12a6D+WpR/NKSaP0GSZdZ15MR54VLUeoi0sxMLKo4D4YFOuLwj4t7s1nf62tJLhMA==",
+  "dgSpecHash": "V4zPawAfX2N6FkWphQ2a9ZSF9TK/5RqcrZ2IrUUPCZE2Uk+pHC6Zvox82Odb9Ph3Wcclu9gyizXA6np3z5UKnA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\HP\\source\\repos\\ShopProject\\Shop.ConsoleApp\\Shop.ConsoleApp.csproj",
+  "projectFilePath": "C:\\Users\\HP\\source\\repos\\ShopProject\\Shop.ConsoleApp\\Shop.UserConsoleApp.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\HP\\.nuget\\packages\\humanizer.core\\2.8.26\\humanizer.core.2.8.26.nupkg.sha512",
     "C:\\Users\\HP\\.nuget\\packages\\microsoft.csharp\\4.5.0\\microsoft.csharp.4.5.0.nupkg.sha512",

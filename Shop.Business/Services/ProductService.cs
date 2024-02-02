@@ -39,23 +39,30 @@ public class ProductService : IProductService
         }
         else throw new CannotBeNullException("Name cannot be null");
     }
-    public async void AddProductToCart(string productName, User user)
+    public async void AddProductToCart(string productName,User user, int count=1)
     {
         Product? product = context.Products.Where(p => p.Name.ToLower() == productName.ToLower()).FirstOrDefault();
         if (product is not null && product.IsDeactive == false && user is not null)
         {
-            CartProduct? cartProduct = await context.CartProducts.FindAsync(user.Id, product.Id);
-            if (cartProduct is not null)
+            if (count <= product.AvailableCount)
             {
-                throw new AlreadyExistException("Product is already in your cart");
+                CartProduct? cartProduct = await context.CartProducts.FindAsync(user.Id, product.Id);
+                if (cartProduct is not null)
+                {
+                    throw new AlreadyExistException("Product is already in your cart");
+                }
+                CartProduct newCartProduct = new CartProduct()
+                {
+                    ProductId = product.Id,
+                    CartId = user.Id,
+                    ProductCountInCart = count
+                };
+                await context.CartProducts.AddAsync(newCartProduct);
+                await context.SaveChangesAsync();
+                await Console.Out.WriteLineAsync("Added to Cart Successfully");
+
             }
-            CartProduct newCartProduct = new CartProduct()
-            {
-                ProductId = product.Id,
-                CartId = user.Id
-            };
-            await context.CartProducts.AddAsync(newCartProduct);
-            await context.SaveChangesAsync();
+            else throw new MoreThanMaximumException("Count is more than available");
         }
         else throw new CannotBeFoundException("Product cannot be found");
     }

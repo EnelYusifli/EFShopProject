@@ -1,0 +1,14 @@
+C:\Users\HP\source\repos\ShopProject\Shop.AdminConsoleApp\bin\Debug\net6.0\Shop.AdminConsoleApp.exe
+C:\Users\HP\source\repos\ShopProject\Shop.AdminConsoleApp\bin\Debug\net6.0\Shop.AdminConsoleApp.deps.json
+C:\Users\HP\source\repos\ShopProject\Shop.AdminConsoleApp\bin\Debug\net6.0\Shop.AdminConsoleApp.runtimeconfig.json
+C:\Users\HP\source\repos\ShopProject\Shop.AdminConsoleApp\bin\Debug\net6.0\Shop.AdminConsoleApp.dll
+C:\Users\HP\source\repos\ShopProject\Shop.AdminConsoleApp\bin\Debug\net6.0\Shop.AdminConsoleApp.pdb
+C:\Users\HP\source\repos\ShopProject\Shop.AdminConsoleApp\obj\Debug\net6.0\Shop.AdminConsoleApp.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\HP\source\repos\ShopProject\Shop.AdminConsoleApp\obj\Debug\net6.0\Shop.AdminConsoleApp.AssemblyInfoInputs.cache
+C:\Users\HP\source\repos\ShopProject\Shop.AdminConsoleApp\obj\Debug\net6.0\Shop.AdminConsoleApp.AssemblyInfo.cs
+C:\Users\HP\source\repos\ShopProject\Shop.AdminConsoleApp\obj\Debug\net6.0\Shop.AdminConsoleApp.csproj.CoreCompileInputs.cache
+C:\Users\HP\source\repos\ShopProject\Shop.AdminConsoleApp\obj\Debug\net6.0\Shop.AdminConsoleApp.dll
+C:\Users\HP\source\repos\ShopProject\Shop.AdminConsoleApp\obj\Debug\net6.0\refint\Shop.AdminConsoleApp.dll
+C:\Users\HP\source\repos\ShopProject\Shop.AdminConsoleApp\obj\Debug\net6.0\Shop.AdminConsoleApp.pdb
+C:\Users\HP\source\repos\ShopProject\Shop.AdminConsoleApp\obj\Debug\net6.0\Shop.AdminConsoleApp.genruntimeconfig.cache
+C:\Users\HP\source\repos\ShopProject\Shop.AdminConsoleApp\obj\Debug\net6.0\ref\Shop.AdminConsoleApp.dll

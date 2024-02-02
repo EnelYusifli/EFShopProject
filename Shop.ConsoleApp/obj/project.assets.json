@@ -2075,9 +2075,9 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\HP\\source\\repos\\ShopProject\\Shop.ConsoleApp\\Shop.ConsoleApp.csproj",
-      "projectName": "Shop.ConsoleApp",
-      "projectPath": "C:\\Users\\HP\\source\\repos\\ShopProject\\Shop.ConsoleApp\\Shop.ConsoleApp.csproj",
+      "projectUniqueName": "C:\\Users\\HP\\source\\repos\\ShopProject\\Shop.ConsoleApp\\Shop.UserConsoleApp.csproj",
+      "projectName": "Shop.UserConsoleApp",
+      "projectPath": "C:\\Users\\HP\\source\\repos\\ShopProject\\Shop.ConsoleApp\\Shop.UserConsoleApp.csproj",
       "packagesPath": "C:\\Users\\HP\\.nuget\\packages\\",
       "outputPath": "C:\\Users\\HP\\source\\repos\\ShopProject\\Shop.ConsoleApp\\obj\\",
       "projectStyle": "PackageReference",

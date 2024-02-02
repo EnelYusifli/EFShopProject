@@ -4,7 +4,7 @@ using Shop.Core.Entities;
 using Shop.DataAccess;
 
 bool isContinue = true;
-User? user=null;
+User? user = null;
 ShopDbContext context = new ShopDbContext();
 UserService userService = new UserService();
 ProductService productService = new ProductService();
@@ -54,7 +54,7 @@ while (isContinue)
                             return;
                         if (continueOption.ToLower() == "yes")
                         {
-                            user=userService.FindUserByEmail(email);
+                            user = userService.FindUserByEmail(email);
                             isContinue = false;
                         }
                     }
@@ -67,72 +67,81 @@ while (isContinue)
                     Console.WriteLine("1)Login With Email");
                     Console.WriteLine("2)Login With Username");
                     Console.WriteLine("Select an option");
-                    int loginOption = Convert.ToInt32(Console.ReadLine());
-                    switch (loginOption)
+                    string? loginOption = Console.ReadLine();
+                    int loginIntOption;
+                    bool isIntLogin = int.TryParse(loginOption, out loginIntOption);
+                    if (isIntLogin)
                     {
-                        case (int)LoginMethod.LoginWithMail:
-                            try
-                            {
-                                Console.WriteLine("Enter Email");
-                                string email = Console.ReadLine();
-                                Console.WriteLine("Enter Password");
-                                string password = Console.ReadLine();
-                                userService.LoginUserWithEmail(email, password);
-                            YesOrNo:
-                                Console.WriteLine("\nDo you want to continue? (yes/no)");
-                                string? continueOption = Console.ReadLine();
-                                if (continueOption is null || continueOption.ToLower() != "yes" && continueOption.ToLower() != "no")
-                                {
-                                    Console.WriteLine("Please write yes/no");
-                                    goto YesOrNo;
-                                }
-                                if (continueOption.ToLower() == "no")
-                                    return;
-                                if (continueOption.ToLower() == "yes")
-                                {
-                                    user = userService.FindUserByEmail(email);
-                                    isContinue = false;
-                                }
+                        if (loginIntOption > 0 && loginIntOption <= 2)
+                        {
 
-                            }
-                            catch (Exception ex)
+
+                            switch (loginIntOption)
                             {
-                                Console.WriteLine(ex.Message);
+                                case (int)LoginMethod.LoginWithMail:
+                                    try
+                                    {
+                                        Console.WriteLine("Enter Email");
+                                        string email = Console.ReadLine();
+                                        Console.WriteLine("Enter Password");
+                                        string password = Console.ReadLine();
+                                        userService.LoginUserWithEmail(email, password);
+                                    YesOrNo:
+                                        Console.WriteLine("\nDo you want to continue? (yes/no)");
+                                        string? continueOption = Console.ReadLine();
+                                        if (continueOption is null || continueOption.ToLower() != "yes" && continueOption.ToLower() != "no")
+                                        {
+                                            Console.WriteLine("Please write yes/no");
+                                            goto YesOrNo;
+                                        }
+                                        if (continueOption.ToLower() == "no")
+                                            return;
+                                        if (continueOption.ToLower() == "yes")
+                                        {
+                                            user = userService.FindUserByEmail(email);
+                                            isContinue = false;
+                                        }
+
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine(ex.Message);
+                                    }
+                                    break;
+                                case (int)LoginMethod.LoginWithUsername:
+                                    try
+                                    {
+                                        Console.WriteLine("Enter Username");
+                                        string username = Console.ReadLine();
+                                        Console.WriteLine("Enter Password");
+                                        string password = Console.ReadLine();
+                                        userService.LoginUserWithUsername(username, password);
+                                    YesOrNo:
+                                        Console.WriteLine("\nDo you want to continue? (yes/no)");
+                                        string? continueOption = Console.ReadLine();
+                                        if (continueOption is null || continueOption.ToLower() != "yes" && continueOption.ToLower() != "no")
+                                        {
+                                            Console.WriteLine("Please write yes/no");
+                                            goto YesOrNo;
+                                        }
+                                        if (continueOption.ToLower() == "no")
+                                            return;
+                                        if (continueOption.ToLower() == "yes")
+                                        {
+                                            user = userService.FindUserByUsername(username);
+                                            isContinue = false;
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine(ex.Message);
+                                    }
+                                    break;
                             }
-                            break;
-                        case (int)LoginMethod.LoginWithUsername:
-                            try
-                            {
-                                Console.WriteLine("Enter Username");
-                                string username = Console.ReadLine();
-                                Console.WriteLine("Enter Password");
-                                string password = Console.ReadLine();
-                                userService.LoginUserWithUsername(username, password);
-                            YesOrNo:
-                                Console.WriteLine("\nDo you want to continue? (yes/no)");
-                                string? continueOption = Console.ReadLine();
-                                if (continueOption is null || continueOption.ToLower() != "yes" && continueOption.ToLower() != "no")
-                                {
-                                    Console.WriteLine("Please write yes/no");
-                                    goto YesOrNo;
-                                }
-                                if (continueOption.ToLower() == "no")
-                                    return;
-                                if (continueOption.ToLower() == "yes")
-                                {
-                                    user = userService.FindUserByUsername(username);
-                                    isContinue = false;
-                                }
-                            }
-                            catch (Exception ex)
-                            {
-                                Console.WriteLine(ex.Message);
-                            }
-                            break;
-                        default:
-                            Console.WriteLine("Invalid option. Please select again.");
-                            break;
+                        }
+                        else Console.WriteLine("Invalid option. Please select again.");
                     }
+                    else Console.WriteLine("Please enter correct format");
                     break;
             }
         }
@@ -140,8 +149,6 @@ while (isContinue)
     }
     else Console.WriteLine("Please enter correct format");
 }
-
-User proUser = user;
 isContinue = true;
 Console.WriteLine("\nWe wish you a pleasant experience :))\n");
 while (isContinue)
@@ -159,31 +166,78 @@ while (isContinue)
             switch (intOption)
             {
                 case (int)MainPage.GoToHomePage:
-                    Console.WriteLine("name");
-                    string name = Console.ReadLine();
-                    Console.WriteLine("desc");
-                    string description = Console.ReadLine();
-                    Console.WriteLine("price");
-                    decimal price = Convert.ToDecimal(Console.ReadLine());
-                    Console.WriteLine("count");
-                    int count = Convert.ToInt32(Console.ReadLine());
-                    productService.CreateProduct(name, description, price, count);
+
+                    foreach (var product in context.Products.OrderByDescending(p => p.CreatedDate).Take(5).Where(p => p.IsDeactive == false))
+                    {
+                        Console.Write($"\n Name:{product.Name.ToUpper()},\n" +
+                            $"Price:{product.Price},\n" +
+                            $"Description:{product.Description},\n" +
+                            $"Available Count:{product.AvailableCount}\n\n");
+                    }
+                    Console.WriteLine("1)Continue Scrolling");
+                    Console.WriteLine("2)Add Product To Cart\n");
+                    string? homePageOption = Console.ReadLine();
+                    int homePageIntOption;
+                    bool isIntHomePage = int.TryParse(homePageOption, out homePageIntOption);
+                    if (isIntHomePage)
+                    {
+                        if (homePageIntOption > 0 && homePageIntOption <= 2)
+                        {
+                            int n = 1;
+                            switch (homePageIntOption)
+                            {
+                                case (int)HomePage.ContinueScrolling:
+                                    n = 5 * (n + 1) - 5 * n;
+                                    foreach (var product in context.Products.OrderByDescending(p => p.CreatedDate).Take(n).Where(p => p.IsDeactive == false))
+                                    {
+                                        Console.Write($"\n Name:{product.Name.ToUpper()},\n" +
+                                            $"Price:{product.Price},\n" +
+                                            $"Description:{product.Description},\n" +
+                                            $"Available Count:{product.AvailableCount}\n\n");
+                                        n++;
+                                    }
+                                    break;
+                                case (int)HomePage.AddProductToCart:
+                                    try
+                                    {
+                                        Console.WriteLine("Please enter product name");
+                                        string productName = Console.ReadLine();
+                                        Console.WriteLine("And the count you want to add");
+                                        int productCount = Convert.ToInt32(Console.ReadLine());
+                                        productService.AddProductToCart(productName, user, productCount);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine(ex.Message);
+                                    }
+                                    break;
+                            }
+                        }
+                        else Console.WriteLine("Invalid option. Please select again.");
+                    }
+                    else Console.WriteLine("Please enter correct format");
                     break;
                 case (int)MainPage.GoToCart:
-                    try
-                    {
-                        Console.WriteLine("name");
-                        string productName = Console.ReadLine();
-                        productService.AddProductToCart(productName,user);
-
-                    }
-                    catch (Exception)
-                    {
-
-                        throw;
-                    }
                     break;
                 case (int)MainPage.SeeUserInfo:
+                    Console.WriteLine($"\nName:{user.Name.ToUpper()}\n" +
+                        $"Surname:{user.Surname.ToUpper()}\n" +
+                        $"Email:{user.Email.ToLower()}\n" +
+                        $"Username:{user.UserName}\n" +
+                        $"Phone:{user.Phone}\n" +
+                        $"Address:{user.Address}\n");
+                    bool hasWallet = context.Wallets.Where(w => w.UserId == user.Id).Any();
+                    if (hasWallet)
+                    {
+                        foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id))
+                        {
+                            Console.WriteLine($"Card:{wallet.Number}\n" +
+                                              $"Balance:{wallet.Balance}");
+                        }
+
+                    }
+                    else Console.WriteLine("You do not have any saved card");
+
                     break;
             }
         }

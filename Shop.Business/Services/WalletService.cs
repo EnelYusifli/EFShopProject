@@ -4,5 +4,8 @@ namespace Shop.Business.Services;
 
 public class WalletService: IWalletService
 {
+    public async void CreateCard()
+    {
 
+    }
 }

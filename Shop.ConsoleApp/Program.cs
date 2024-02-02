@@ -1,9 +1,11 @@
 ﻿using Shop.Business.Services;
 using Shop.Business.Utilities.Helper;
-
-
+using Shop.Core.Entities;
+using Shop.DataAccess;
 
 bool isContinue = true;
+User? user=null;
+ShopDbContext context = new ShopDbContext();
 UserService userService = new UserService();
 ProductService productService = new ProductService();
 Console.WriteLine("welcome");
@@ -39,7 +41,7 @@ while (isContinue)
                         string phone = Console.ReadLine();
                         Console.WriteLine("Enter Address");
                         string address = Console.ReadLine();
-                        userService.CreateUserAsync(name, surname, age, email, password, username, phone, address);
+                        userService.CreateUser(name, surname, age, email, password, username, phone, address);
                     YesOrNo:
                         Console.WriteLine("\nDo you want to continue? (yes/no)");
                         string? continueOption = Console.ReadLine();
@@ -52,6 +54,7 @@ while (isContinue)
                             return;
                         if (continueOption.ToLower() == "yes")
                         {
+                            user=userService.FindUserByEmail(email);
                             isContinue = false;
                         }
                     }
@@ -87,6 +90,7 @@ while (isContinue)
                                     return;
                                 if (continueOption.ToLower() == "yes")
                                 {
+                                    user = userService.FindUserByEmail(email);
                                     isContinue = false;
                                 }
 
@@ -116,6 +120,7 @@ while (isContinue)
                                     return;
                                 if (continueOption.ToLower() == "yes")
                                 {
+                                    user = userService.FindUserByUsername(username);
                                     isContinue = false;
                                 }
                             }
@@ -136,8 +141,9 @@ while (isContinue)
     else Console.WriteLine("Please enter correct format");
 }
 
+User proUser = user;
 isContinue = true;
-    Console.WriteLine("\nWe wish you a pleasant experience :))\n");
+Console.WriteLine("\nWe wish you a pleasant experience :))\n");
 while (isContinue)
 {
     Console.WriteLine("\n1)Go To HomePage");
@@ -153,8 +159,29 @@ while (isContinue)
             switch (intOption)
             {
                 case (int)MainPage.GoToHomePage:
+                    Console.WriteLine("name");
+                    string name = Console.ReadLine();
+                    Console.WriteLine("desc");
+                    string description = Console.ReadLine();
+                    Console.WriteLine("price");
+                    decimal price = Convert.ToDecimal(Console.ReadLine());
+                    Console.WriteLine("count");
+                    int count = Convert.ToInt32(Console.ReadLine());
+                    productService.CreateProduct(name, description, price, count);
                     break;
                 case (int)MainPage.GoToCart:
+                    try
+                    {
+                        Console.WriteLine("name");
+                        string productName = Console.ReadLine();
+                        productService.AddProductToCart(productName,user);
+
+                    }
+                    catch (Exception)
+                    {
+
+                        throw;
+                    }
                     break;
                 case (int)MainPage.SeeUserInfo:
                     break;

@@ -125,8 +125,15 @@ while (isContinue)
                     decimal price = Convert.ToDecimal(Console.ReadLine());
                     Console.WriteLine("count");
                     int count = Convert.ToInt32(Console.ReadLine());
-                    
-                    productService.CreateProduct(name, description, price, count);
+                    foreach (var category in context.Categories)
+                    {
+                        Console.WriteLine($"\nId:{category.Id}\n" +
+                            $"Name:{category.Name.ToUpper()}\n");
+                    }
+                    Console.WriteLine("Enter Category Id");
+                    int categoryId = Convert.ToInt32(Console.ReadLine());
+
+                    productService.CreateProduct(name, description, price, count, categoryId);
                     break;
             }
         }

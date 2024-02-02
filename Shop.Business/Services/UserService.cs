@@ -13,7 +13,7 @@ public class UserService : IUserService
     {
         if (name is not null && email is not null && password is not null && username is not null)
         {
-            if (age != null && age < 16) throw new LessThanMinimumException("Age cannot be less than 16");
+            if (age is not null && age < 16) throw new LessThanMinimumException("Age cannot be less than 16");
             if (password.Length < 8) throw new LessThanMinimumException("Password length must be at least 8");
             bool isDublicate = context.Users.Where(u=> u.Email.ToLower() == email.ToLower() || u.UserName.ToLower() == username.ToLower()).Any();
             if (!isDublicate)

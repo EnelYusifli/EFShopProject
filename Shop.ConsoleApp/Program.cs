@@ -242,7 +242,7 @@ while (isContinue)
                 case (int)MainPage.GoToCart:
                     try
                     {
-                        CartProduct cartProduct = context.CartProducts.Find(user.Id);
+                        CartProduct? cartProduct = context.CartProducts.FirstOrDefault(cp=>cp.CartId==user.Id);
                         if (cartProduct is not null)
                         {
                             foreach (var product in context.Products.Where(p => p.CartProducts.Any(cp => cp.CartId == user.Id)))
@@ -250,7 +250,6 @@ while (isContinue)
                                 Console.Write($"\n Name: {product.Name.ToUpper()},\n" +
                                               $"Price: {product.Price},\n" +
                                               $"Description: {product.Description},\n");
-                                             // $"Count:{product.CartProducts.ProductCountInCart}");
                             }
 
                         }

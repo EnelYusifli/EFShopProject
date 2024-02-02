@@ -103,12 +103,9 @@ while (isContinue)
 }
 
 isContinue = true;
-Console.WriteLine("\nWe wish you a pleasant experience :))\n");
 while (isContinue)
 {
-    Console.WriteLine("\n1)Go To HomePage");
-    Console.WriteLine("2)Go To Cart");
-    Console.WriteLine("3)See UserInfo");
+    Console.WriteLine("\n1)Add Product");
     Console.WriteLine("0)Exit\n");
     string? option = Console.ReadLine();
     int intOption;

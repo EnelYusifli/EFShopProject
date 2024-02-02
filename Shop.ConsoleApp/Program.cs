@@ -3,12 +3,22 @@ using Shop.Business.Utilities.Helper;
 using Shop.Core.Entities;
 using Shop.DataAccess;
 
+string appStart = "Application started...";
+string Welcome = "Welcome!";
+Console.SetCursorPosition((Console.WindowWidth - appStart.Length) / 2, Console.CursorTop);
+Console.ForegroundColor = ConsoleColor.Green;
+Console.WriteLine(appStart);
+Console.SetCursorPosition((Console.WindowWidth - Welcome.Length) / 2, Console.CursorTop);
+Console.ForegroundColor = ConsoleColor.Blue;
+Console.WriteLine(Welcome);
+Console.ResetColor();
+
 bool isContinue = true;
 User? user = null;
 ShopDbContext context = new ShopDbContext();
 UserService userService = new UserService();
 ProductService productService = new ProductService();
-Console.WriteLine("welcome");
+WalletService walletService = new WalletService();
 while (isContinue)
 {
     Console.WriteLine("\n1)Register");
@@ -18,7 +28,7 @@ while (isContinue)
     bool isInt = int.TryParse(option, out intOption);
     if (isInt)
     {
-        if (intOption > 0 && intOption <= 2)
+        if (intOption >= 0 && intOption <= 2)
         {
             switch (intOption)
             {
@@ -155,7 +165,8 @@ while (isContinue)
 {
     Console.WriteLine("\n1)Go To HomePage");
     Console.WriteLine("2)Go To Cart");
-    Console.WriteLine("3)See UserInfo\n");
+    Console.WriteLine("3)See UserInfo");
+    Console.WriteLine("0)Exit\n");
     string? option = Console.ReadLine();
     int intOption;
     bool isInt = int.TryParse(option, out intOption);
@@ -174,50 +185,83 @@ while (isContinue)
                             $"Description:{product.Description},\n" +
                             $"Available Count:{product.AvailableCount}\n\n");
                     }
-                    Console.WriteLine("1)Continue Scrolling");
-                    Console.WriteLine("2)Add Product To Cart\n");
-                    string? homePageOption = Console.ReadLine();
-                    int homePageIntOption;
-                    bool isIntHomePage = int.TryParse(homePageOption, out homePageIntOption);
-                    if (isIntHomePage)
+                    bool isContinueHomePage = true;
+                    while (isContinueHomePage)
                     {
-                        if (homePageIntOption > 0 && homePageIntOption <= 2)
+                        Console.WriteLine("1)Continue Scrolling");
+                        Console.WriteLine("2)Add Product To Cart");
+                        Console.WriteLine("0)Return to main page");
+                        string? homePageOption = Console.ReadLine();
+                        int homePageIntOption;
+                        bool isIntHomePage = int.TryParse(homePageOption, out homePageIntOption);
+                        if (isIntHomePage)
                         {
-                            int n = 1;
-                            switch (homePageIntOption)
+                            if (homePageIntOption >= 0 && homePageIntOption <= 2)
                             {
-                                case (int)HomePage.ContinueScrolling:
-                                    n = 5 * (n + 1) - 5 * n;
-                                    foreach (var product in context.Products.OrderByDescending(p => p.CreatedDate).Take(n).Where(p => p.IsDeactive == false))
-                                    {
-                                        Console.Write($"\n Name:{product.Name.ToUpper()},\n" +
-                                            $"Price:{product.Price},\n" +
-                                            $"Description:{product.Description},\n" +
-                                            $"Available Count:{product.AvailableCount}\n\n");
-                                        n++;
-                                    }
-                                    break;
-                                case (int)HomePage.AddProductToCart:
-                                    try
-                                    {
-                                        Console.WriteLine("Please enter product name");
-                                        string productName = Console.ReadLine();
-                                        Console.WriteLine("And the count you want to add");
-                                        int productCount = Convert.ToInt32(Console.ReadLine());
-                                        productService.AddProductToCart(productName, user, productCount);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Console.WriteLine(ex.Message);
-                                    }
-                                    break;
+                                int n = 1;
+                                switch (homePageIntOption)
+                                {
+                                    case (int)HomePage.ContinueScrolling:
+                                        foreach (var product in context.Products
+                                            .OrderByDescending(p => p.CreatedDate)
+                                            .Skip(5*n)
+                                            .Take(5)
+                                            .Where(p => p.IsDeactive == false))
+                                        {
+                                            Console.Write($"\n Name:{product.Name.ToUpper()},\n" +
+                                                $"Price:{product.Price},\n" +
+                                                $"Description:{product.Description},\n" +
+                                                $"Available Count:{product.AvailableCount}\n\n");
+                                            n++;
+                                        }
+                                        break;
+                                    case (int)HomePage.AddProductToCart:
+                                        try
+                                        {
+                                            Console.WriteLine("Please enter product name");
+                                            string productName = Console.ReadLine();
+                                            Console.WriteLine("And the count you want to add");
+                                            int productCount = Convert.ToInt32(Console.ReadLine());
+                                            productService.AddProductToCart(productName, user, productCount);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Console.WriteLine(ex.Message);
+                                        }
+                                        break;
+                                    default:
+                                        isContinueHomePage = false;
+                                        break;
+                                }
                             }
+                            else Console.WriteLine("Invalid option. Please select again.");
                         }
-                        else Console.WriteLine("Invalid option. Please select again.");
+                        else Console.WriteLine("Please enter correct format");
                     }
-                    else Console.WriteLine("Please enter correct format");
                     break;
                 case (int)MainPage.GoToCart:
+                    try
+                    {
+                        CartProduct cartProduct = context.CartProducts.Find(user.Id);
+                        if (cartProduct is not null)
+                        {
+                            foreach (var product in context.Products.Where(p => p.CartProducts.Any(cp => cp.CartId == user.Id)))
+                            {
+                                Console.Write($"\n Name: {product.Name.ToUpper()},\n" +
+                                              $"Price: {product.Price},\n" +
+                                              $"Description: {product.Description},\n");
+                                             // $"Count:{product.CartProducts.ProductCountInCart}");
+                            }
+
+                        }
+                        else Console.WriteLine("You do not have any product in your cart");
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+
+
                     break;
                 case (int)MainPage.SeeUserInfo:
                     Console.WriteLine($"\nName:{user.Name.ToUpper()}\n" +
@@ -237,10 +281,54 @@ while (isContinue)
 
                     }
                     else Console.WriteLine("You do not have any saved card");
+                    bool isUserInfoContinue = true;
+                    while (isUserInfoContinue)
+                    {
+                        Console.WriteLine("\n1)Update User Details");
+                        Console.WriteLine("2)Add New Card");
+                        Console.WriteLine("0)Return to main page\n");
+                        string? homePageOption = Console.ReadLine();
+                        int homePageIntOption;
+                        bool isIntHomePage = int.TryParse(homePageOption, out homePageIntOption);
+                        if (isIntHomePage)
+                        {
+                            if (homePageIntOption >= 0 && homePageIntOption <= 2)
+                            {
+                                switch (homePageIntOption)
+                                {
+                                    case (int)UserInfo.UpdateUserInfo:
 
+                                        break;
+
+                                    case (int)UserInfo.AddNewCard:
+                                        try
+                                        {
+                                            Console.WriteLine("Enter card number");
+                                            string cardNumber = Console.ReadLine();
+                                            Console.WriteLine("Enter CVC");
+                                            string cvc = Console.ReadLine();
+                                            Console.WriteLine("Enter balance");
+                                            decimal balance = Convert.ToDecimal(Console.ReadLine());
+                                            walletService.CreateCard(user, cardNumber, cvc, balance);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Console.WriteLine(ex.Message);
+                                        }
+                                        break;
+                                    case (int)UserInfo.ReturnToHomePage:
+                                        isUserInfoContinue = false;
+                                        break;
+                                }
+                            }
+                            else Console.WriteLine("Invalid option. Please select again.");
+                        }
+                        else Console.WriteLine("Please enter correct format");
+                    }
                     break;
             }
         }
     }
 }
+
 

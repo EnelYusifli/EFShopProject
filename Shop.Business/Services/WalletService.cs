@@ -8,7 +8,7 @@ namespace Shop.Business.Services;
 public class WalletService : IWalletService
 {
     ShopDbContext context = new ShopDbContext();
-    public async void CreateCard(User user, string cardNumber, string cvc, decimal balance)
+    public void CreateCard(User user, string cardNumber, string cvc, decimal balance)
     {
         if (user is not null || cardNumber is not null || cvc is not null)
         {
@@ -24,9 +24,11 @@ public class WalletService : IWalletService
                         CVC = cvc,
                         Balance = balance
                     };
-                    await context.Wallets.AddAsync(wallet);
-                    await context.SaveChangesAsync();
-                } else throw new AlreadyExistException("This card is already added");
+                    context.Wallets.Add(wallet);
+                    context.SaveChanges();
+                    Console.Out.WriteLine("Successfully added");
+                }
+                else throw new AlreadyExistException("This card is already added");
             }
             else throw new LessThanMinimumException("Balance cannot be negative");
         }

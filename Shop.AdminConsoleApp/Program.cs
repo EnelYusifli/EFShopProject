@@ -115,7 +115,7 @@ while (isContinue)
     bool isInt = int.TryParse(option, out intOption);
     if (isInt)
     {
-        if (intOption > 0 && intOption <= 3)
+        if (intOption > 0 && intOption <= 4)
         {
             switch (intOption)
             {
@@ -163,7 +163,13 @@ while (isContinue)
                 case (int)AdminPanel.DeactivateUser:
                     try
                     {
-
+                        foreach (var userForDeactivate in context.Users.Where(u => u.IsDeactive==false))
+                        {
+                            Console.WriteLine($"\nId:{userForDeactivate.Id}/Name:{userForDeactivate.Name.ToUpper()}\n");
+                        }
+                            Console.WriteLine("\nEnter user id");
+                            int userId= Convert.ToInt32(Console.ReadLine());
+                            userService.DeactivateUser(userId);
                     }
                     catch (Exception ex)
                     {

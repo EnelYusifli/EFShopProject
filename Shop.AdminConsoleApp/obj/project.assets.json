@@ -776,6 +776,22 @@
         "runtime": {
           "bin/placeholder/Shop.DataAccess.dll": {}
         }
+      },
+      "Shop.UserConsoleApp/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v6.0",
+        "dependencies": {
+          "Microsoft.EntityFrameworkCore": "6.0.26",
+          "Microsoft.EntityFrameworkCore.SqlServer": "6.0.26",
+          "Shop.Business": "1.0.0",
+          "Shop.DataAccess": "1.0.0"
+        },
+        "compile": {
+          "bin/placeholder/Shop.UserConsoleApp.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/Shop.UserConsoleApp.dll": {}
+        }
       }
     }
   },
@@ -1956,11 +1972,17 @@
       "type": "project",
       "path": "../Shop.DataAccess/Shop.DataAccess.csproj",
       "msbuildProject": "../Shop.DataAccess/Shop.DataAccess.csproj"
+    },
+    "Shop.UserConsoleApp/1.0.0": {
+      "type": "project",
+      "path": "../Shop.ConsoleApp/Shop.UserConsoleApp.csproj",
+      "msbuildProject": "../Shop.ConsoleApp/Shop.UserConsoleApp.csproj"
     }
   },
   "projectFileDependencyGroups": {
     "net6.0": [
-      "Shop.Business >= 1.0.0"
+      "Shop.Business >= 1.0.0",
+      "Shop.UserConsoleApp >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -1997,6 +2019,9 @@
           "projectReferences": {
             "C:\\Users\\HP\\source\\repos\\ShopProject\\Shop.Business\\Shop.Business.csproj": {
               "projectPath": "C:\\Users\\HP\\source\\repos\\ShopProject\\Shop.Business\\Shop.Business.csproj"
+            },
+            "C:\\Users\\HP\\source\\repos\\ShopProject\\Shop.ConsoleApp\\Shop.UserConsoleApp.csproj": {
+              "projectPath": "C:\\Users\\HP\\source\\repos\\ShopProject\\Shop.ConsoleApp\\Shop.UserConsoleApp.csproj"
             }
           }
         }

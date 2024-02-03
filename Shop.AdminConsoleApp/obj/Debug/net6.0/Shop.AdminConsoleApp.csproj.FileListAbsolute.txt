@@ -61,3 +61,8 @@ C:\Users\HP\source\repos\ShopProject\Shop.AdminConsoleApp\bin\Debug\net6.0\Shop.
 C:\Users\HP\source\repos\ShopProject\Shop.AdminConsoleApp\bin\Debug\net6.0\Shop.DataAccess.pdb
 C:\Users\HP\source\repos\ShopProject\Shop.AdminConsoleApp\obj\Debug\net6.0\Shop.AdminConsoleApp.csproj.AssemblyReference.cache
 C:\Users\HP\source\repos\ShopProject\Shop.AdminConsoleApp\obj\Debug\net6.0\Shop.AdminConsoleApp.csproj.CopyComplete
+C:\Users\HP\source\repos\ShopProject\Shop.AdminConsoleApp\bin\Debug\net6.0\Shop.UserConsoleApp.deps.json
+C:\Users\HP\source\repos\ShopProject\Shop.AdminConsoleApp\bin\Debug\net6.0\Shop.UserConsoleApp.runtimeconfig.json
+C:\Users\HP\source\repos\ShopProject\Shop.AdminConsoleApp\bin\Debug\net6.0\Shop.UserConsoleApp.exe
+C:\Users\HP\source\repos\ShopProject\Shop.AdminConsoleApp\bin\Debug\net6.0\Shop.UserConsoleApp.dll
+C:\Users\HP\source\repos\ShopProject\Shop.AdminConsoleApp\bin\Debug\net6.0\Shop.UserConsoleApp.pdb

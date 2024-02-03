@@ -100,34 +100,36 @@ public class UserService : IUserService
     {
         if (username is null || password is null) throw new CannotBeNullException("Value cannot be null");
         User? admin = context.Users.Find(1);
-        if (admin is null) throw new CannotBeFoundException("User email cannot be found");
-        if (admin.UserName != username) throw new IsNotCorrectException("Email is not correct");
+        if (admin is null) throw new CannotBeFoundException("Username cannot be found");
+        if (admin.UserName != username) throw new IsNotCorrectException("Username is not correct");
         if (admin.Password != password) throw new IsNotCorrectException("Password is not correct");
         Console.Out.WriteLine("Logged in Successfully");
     }
 
-    public void DeactivateUser(User user)
+    public void DeactivateUser(int userId)
     {
+        User user = context.Users.Find(userId);
         if (user is not null)
         {
-
             if (user.IsDeactive == false)
             {
                 user.IsDeactive = true;
+                context.SaveChanges();
                 Console.WriteLine("Successfully Deactivated");
             }
             else throw new AlreadyExistException("User is already deactive");
         }
         else throw new CannotBeFoundException("User cannot be found");
     }
-    public void ActivateUser(User user)
+    public void ActivateUser(int userId)
     {
+        User user = context.Users.Find(userId);
         if (user is not null)
         {
-
             if (user.IsDeactive == true)
             {
                 user.IsDeactive = false;
+                context.SaveChanges();
                 Console.WriteLine("Successfully Activated");
             }
             else throw new AlreadyExistException("User is already Active");

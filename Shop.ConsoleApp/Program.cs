@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Shop.Business.Services;
+﻿using Shop.Business.Services;
 using Shop.Business.Utilities.Helper;
 using Shop.Core.Entities;
 using Shop.DataAccess;
@@ -205,7 +204,7 @@ while (isMainPageContinue)
                                     case (int)HomePage.ContinueScrolling:
                                         foreach (var product in context.Products
                                             .OrderByDescending(p => p.CreatedDate)
-                                            .Skip(5*n)
+                                            .Skip(5 * n)
                                             .Take(5)
                                             .Where(p => p.IsDeactive == false))
                                         {
@@ -243,18 +242,27 @@ while (isMainPageContinue)
                 case (int)MainPage.GoToCart:
                     try
                     {
-                        CartProduct? cartProduct = context.CartProducts.FirstOrDefault(cp=>cp.CartId==user.Id);
-                        if (cartProduct is not null)
+                        var products = context.Products
+                                        .Where(p => p.CartProducts.Any(cp => cp.CartId == user.Id))
+                                        .ToList();
+                        
+                        if (products is not null)
                         {
-                            foreach (var product in context.Products.Where(p => p.CartProducts.Any(cp => cp.CartId == user.Id)))
+                            decimal total = 0;
+                            foreach (var product in products)
                             {
-                                //cartProduct = await context.CartProducts
-                                //    .FindAsync(user.Id,product.Id);
+                            CartProduct? cartProduct = await context.CartProducts
+                                            .FindAsync(user.Id, product.Id);
+
                                 Console.Write($"\n Name: {product.Name.ToUpper()},\n" +
                                               $"Price: {product.Price},\n" +
-                                              $"Description: {product.Description},\n\n");
-                                //$"Count:{cartProduct1.ProductCountInCart}");
+                                              $"Description: {product.Description}\n" +
+                                              $"Count In cart:{cartProduct.ProductCountInCart}\n");
+
+                                total += product.Price * cartProduct.ProductCountInCart;
+
                             }
+                            Console.WriteLine($"\nTotal Price ${total}\n");
 
                             bool isContinueCart = true;
                             while (isContinueCart)
@@ -272,7 +280,11 @@ while (isMainPageContinue)
                                         switch (cartIntOption)
                                         {
                                             case (int)CartEnum.BuyAllProducts:
-
+                                                Console.WriteLine("Choose the cart that you want to pay with");
+                                                foreach (var wallet in context.Wallets.Where(w => w.User == user))
+                                                {
+                                                    Console.WriteLine($"Id:{wallet.Id}/Balance:{wallet.Balance}");
+                                                }
                                                 break;
                                             case (int)CartEnum.ReturnToMainPage:
                                                 isContinueCart = false;

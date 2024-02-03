@@ -1,4 +1,6 @@
-﻿using Shop.Business.Services;
+﻿using Microsoft.EntityFrameworkCore;
+using Shop.Business.Services;
+using Shop.Business.Utilities.Exceptions;
 using Shop.Business.Utilities.Helper;
 using Shop.Core.Entities;
 using Shop.DataAccess;
@@ -284,24 +286,24 @@ while (isMainPageContinue)
                                             case (int)CartEnum.BuyAllProducts:
                                                 try
                                                 {
-                                                    //var wallets = context.Wallets.Where(w => w.UserId == user.Id);
-                                                    //if (wallets.Any())
-                                                    //{
-                                                    //    foreach (var wallet in context.Wallets.Where(w => w.User == user))
-                                                    //    {
-                                                    //        Console.WriteLine($"Id:{wallet.Id}/Balance:{wallet.Balance}");
-                                                    //    }
-                                                    //// walletService.WalletsOfUser(user);
-                                                    //Console.WriteLine("\nChoose the card that you want to pay with:\n");
-                                                    //int walletId = Convert.ToInt32(Console.ReadLine());
-                                                    //List<CartProduct>? cartProducts =  context.CartProducts.Where(cp => cp.CartId == user.Id).Include(cp => cp.Product).ToList();
-                                                    //foreach (var cartProduct in cartProducts)
-                                                    //{
-                                                    //    Product product = cartProduct.Product;
-                                                    //    invoiceService.CreateInvoice(walletId, user, product, total);
-                                                    //}
-                                                    //}
-                                                    //else throw new CannotBeFoundException("You do not have any saved cart");
+                                                    var wallets = context.Wallets.Where(w => w.UserId == user.Id);
+                                                    if (wallets.Any())
+                                                    {
+                                                        foreach (var wallet in context.Wallets.Where(w => w.User == user))
+                                                        {
+                                                            Console.WriteLine($"Id:{wallet.Id}/\nNumber:{wallet.Number}\nBalance:{wallet.Balance}");
+                                                        }
+                                                        Console.WriteLine("\nChoose the card that you want to pay with:\n");
+                                                        int walletId = Convert.ToInt32(Console.ReadLine());
+                                                        foreach (var cartProduct in context.CartProducts.Where(cp => cp.CartId == user.Id).Include(cp => cp.Product))
+                                                        {
+                                                            Product product = cartProduct.Product;
+                                                            int count = cartProduct.ProductCountInCart;
+                                                            invoiceService.CreateInvoice(walletId, user, product, total,count);
+                                                            cartProduct.IsDeactive = true;
+                                                        }
+                                                    }
+                                                    else throw new CannotBeFoundException("You do not have any saved cart");
                                                 }
                                                 catch (Exception ex)
                                                 {
@@ -412,7 +414,7 @@ while (isMainPageContinue)
                                             Console.WriteLine("5)Update Password");
                                             Console.WriteLine("6)Update Phone");
                                             Console.WriteLine("7)Update Address");
-                                            Console.WriteLine("0)Return to main page");
+                                            Console.WriteLine("0)Return to user details page");
                                             string? updateUserOption = Console.ReadLine();
                                             int updateUserIntOption;
                                             bool isIntUpdateUser = int.TryParse(updateUserOption, out updateUserIntOption);

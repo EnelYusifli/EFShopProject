@@ -176,6 +176,25 @@ while (isContinue)
                         Console.WriteLine(ex.Message);
                     }
                     break;
+                case (int)AdminPanel.ActivateUser:
+                    try
+                    {
+                        foreach (var userForActivate in context.Users.Where(u => u.IsDeactive == true))
+                        {
+                            Console.WriteLine($"\nId:{userForActivate.Id}/Name:{userForActivate.Name.ToUpper()}\n");
+                        }
+                        Console.WriteLine("\nEnter user id");
+                        int userId = Convert.ToInt32(Console.ReadLine());
+                        userService.ActivateUser(userId);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    break;
+                default:
+                    isContinue= false;
+                    break;
             }
         }
     }

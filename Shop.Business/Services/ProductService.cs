@@ -84,11 +84,24 @@ public class ProductService : IProductService
             CartProduct? cartProduct = context.CartProducts.Find(user.Id, product.Id);
             if (cartProduct is null) throw new AlreadyExistException("Product is not in your cart");
             cartProduct.IsDeactive = true;
-            Console.Out.WriteLine("Deleted to Cart Successfully");
+            Console.Out.WriteLine("Deleted from Cart Successfully");
         }
         else throw new CannotBeFoundException("Product cannot be found on your cart");
     }
+    public void ActivateProduct(Product product)
+    {
+        if (product is not null)
+        {
 
+            if (product.IsDeactive == true)
+            {
+                product.IsDeactive = false;
+                Console.WriteLine("Successfully Activated");
+            }
+            else throw new AlreadyExistException("Product is already Active");
+        }
+        else throw new CannotBeFoundException("Product cannot be found");
+    }
 
 
 

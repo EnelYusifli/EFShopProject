@@ -101,6 +101,20 @@ public class ProductService : IProductService
             else throw new AlreadyExistException("Product is already Active");
         }
         else throw new CannotBeFoundException("Product cannot be found");
+    } 
+    public void DeactivateProduct(Product product)
+    {
+        if (product is not null)
+        {
+
+            if (product.IsDeactive == false)
+            {
+                product.IsDeactive = true;
+                Console.WriteLine("Successfully Activated");
+            }
+            else throw new AlreadyExistException("Product is already Active");
+        }
+        else throw new CannotBeFoundException("Product cannot be found");
     }
 
 

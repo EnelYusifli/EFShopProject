@@ -54,7 +54,7 @@ public class ProductService : IProductService
     public void AddProductToCart(int productId, User user, int count = 1)
     {
         Product? product = context.Products.Find(productId);
-        if (product is not null && product.IsDeactive == false && user is not null)
+        if (product is not null && product.IsDeactive == false && user is not null && user.IsDeactive==false)
         {
             if (count <= product.AvailableCount)
             {
@@ -74,7 +74,7 @@ public class ProductService : IProductService
             }
             else throw new MoreThanMaximumException("Count is more than available");
         }
-        else throw new CannotBeFoundException("Product cannot be found");
+        else throw new CannotBeFoundException("Product or user cannot be found");
     }
     public void DeactivateCartProduct(int productId, User user)
     {
@@ -106,7 +106,6 @@ public class ProductService : IProductService
     {
         if (product is not null)
         {
-
             if (product.IsDeactive == false)
             {
                 product.IsDeactive = true;
@@ -116,7 +115,5 @@ public class ProductService : IProductService
         }
         else throw new CannotBeFoundException("Product cannot be found");
     }
-
-
 
 }

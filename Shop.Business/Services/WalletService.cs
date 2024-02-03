@@ -48,6 +48,21 @@ public class WalletService : IWalletService
     //        }
     //        else throw new CannotBeFoundException("You do not have any saved cart");
     //    } else throw new CannotBeFoundException("User cannot be found");
-       
+
     //}
+
+    public void DeactivateWallet(Wallet wallet)
+    {
+        if (wallet is not null)
+        {
+
+            if (wallet.IsDeactive == false)
+            {
+                wallet.IsDeactive = true;
+                Console.WriteLine("Successfully Activated");
+            }
+            else throw new AlreadyExistException("Wallet is already Active");
+        }
+        else throw new CannotBeFoundException("Wallet cannot be found");
+    }
 }

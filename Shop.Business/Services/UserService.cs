@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Shop.Business.Interfaces;
+﻿using Shop.Business.Interfaces;
 using Shop.Business.Utilities.Exceptions;
 using Shop.Core.Entities;
 using Shop.DataAccess;
@@ -15,7 +14,7 @@ public class UserService : IUserService
         {
             if (age is not null && age < 16) throw new LessThanMinimumException("Age cannot be less than 16");
             if (password.Length < 8) throw new LessThanMinimumException("Password length must be at least 8");
-            bool isDublicate = context.Users.Where(u=> u.Email.ToLower() == email.ToLower() || u.UserName.ToLower() == username.ToLower()).Any();
+            bool isDublicate = context.Users.Where(u => u.Email.ToLower() == email.ToLower() || u.UserName.ToLower() == username.ToLower()).Any();
             if (!isDublicate)
             {
                 User user = new User()
@@ -29,13 +28,13 @@ public class UserService : IUserService
                     Phone = phone,
                     Address = address
                 };
-                 context.Users.Add(user);
+                context.Users.Add(user);
                 user.Cart = new Cart()
                 {
                     Id = user.Id
                 };
-                 context.Carts.Add(user.Cart);
-                 context.SaveChanges();
+                context.Carts.Add(user.Cart);
+                context.SaveChanges();
                 Console.Out.WriteLine("Registered Successfully");
             }
             else throw new ShouldBeUniqueException("Email or Username is taken");
@@ -46,7 +45,7 @@ public class UserService : IUserService
     public void LoginUserWithEmail(string email, string password)
     {
         if (email is null || password is null) throw new CannotBeNullException("Value cannot be null");
-        User? user= context.Users.FirstOrDefault(u=> u.Email == email);
+        User? user = context.Users.FirstOrDefault(u => u.Email == email);
         if (user is null) throw new CannotBeFoundException("User email cannot be found");
         if (user.Password != password) throw new IsNotCorrectException("Password is not correct");
         Console.Out.WriteLine("Logged in Successfully");
@@ -135,8 +134,26 @@ public class UserService : IUserService
         }
         else throw new CannotBeFoundException("User cannot be found");
     }
+    public void UpdateUser(User user, string name, string surname, string email, string username, string password, string phone, string address)
+    {
+        if (user is not null)
+        {
+            user.Name = name;
+            user.Surname = surname;
+            if (context.Users.Where(u => u.Email.ToLower() == email.ToLower() && u.Email.ToLower() != user.Email.ToLower()).Any())
+                throw new ShouldBeUniqueException("This Email is already taken");
+            user.Email = email;
+            if (context.Users.Where(u => u.UserName.ToLower() == username.ToLower() && u.UserName.ToLower() != user.UserName.ToLower()).Any())
+                throw new ShouldBeUniqueException("This Username is already taken");
+            user.UserName = username;
+            user.Password = password;
+            user.Phone = phone;
+            user.Address = address;
+            context.SaveChanges();
+            Console.WriteLine("Successfully updated");
+        }throw new CannotBeFoundException("User cannot be found");
+    }
 
-    
 
 
 }

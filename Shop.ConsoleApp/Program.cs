@@ -295,15 +295,10 @@ while (isMainPageContinue)
                                                         }
                                                         Console.WriteLine("\nChoose the card that you want to pay with:\n");
                                                         int walletId = Convert.ToInt32(Console.ReadLine());
-                                                        foreach (var cartProduct in context.CartProducts.Where(cp => cp.CartId == user.Id).Include(cp => cp.Product))
-                                                        {
-                                                            Product product = cartProduct.Product;
-                                                            int count = cartProduct.ProductCountInCart;
-                                                            invoiceService.CreateInvoice(walletId, user, product, total,count);
-                                                            cartProduct.IsDeactive = true;
-                                                        }
+                                                        List<Product> productsInCart = context.Products.Where(p => p.CartProducts.Any(cp => cp.CartId == user.Id)).ToList();
+                                                        invoiceService.CreateInvoice(walletId, user, productsInCart, total);
                                                     }
-                                                    else throw new CannotBeFoundException("You do not have any saved cart");
+                                                    else throw new CannotBeFoundException("You do not have any saved card");
                                                 }
                                                 catch (Exception ex)
                                                 {
@@ -387,7 +382,7 @@ while (isMainPageContinue)
 
                     }
                     else Console.WriteLine("You do not have any saved card");
-                    
+
                     bool isUserInfoContinue = true;
                     while (isUserInfoContinue)
                     {
@@ -467,7 +462,7 @@ while (isMainPageContinue)
                                                                 {
                                                                     if (user.Email.ToLower() != email.ToLower())
                                                                         userService.UpdateUser(user, user.Name, user.Surname, email, user.UserName, user.Password, user.Phone, user.Address);
-                                                                else
+                                                                    else
                                                                     {
                                                                         Console.WriteLine("Email cannot be the same");
                                                                         goto email;
@@ -495,7 +490,7 @@ while (isMainPageContinue)
                                                                 {
                                                                     if (user.UserName.ToLower() != username.ToLower())
                                                                         userService.UpdateUser(user, user.Name, user.Surname, user.Email, username, user.Password, user.Phone, user.Address);
-                                                                else
+                                                                    else
                                                                     {
                                                                         Console.WriteLine("Username cannot be the same");
                                                                         goto username;

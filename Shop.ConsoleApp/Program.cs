@@ -258,13 +258,15 @@ while (isMainPageContinue)
                                 {
                                     CartProduct? cartProduct = await context.CartProducts
                                                     .FindAsync(user.Id, product.Id);
-
+                                    if (cartProduct.IsDeactive == false)
+                                    {
                                     Console.Write($"\n Name: {product.Name.ToUpper()},\n" +
                                                   $"Price: {product.Price},\n" +
                                                   $"Description: {product.Description}\n" +
                                                   $"Count In cart:{cartProduct.ProductCountInCart}\n");
-
                                     total += product.Price * cartProduct.ProductCountInCart;
+                                    }
+
                                 }
                             }
                             Console.WriteLine($"\nTotal Price ${total}\n");

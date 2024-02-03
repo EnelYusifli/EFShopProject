@@ -109,13 +109,15 @@ while (isContinue)
     Console.WriteLine("2)Create Category");
     Console.WriteLine("3)Deactivate User");
     Console.WriteLine("4)Activate User");
+    Console.WriteLine("5)Deactivate Product");
+    Console.WriteLine("6)Activate Product");
     Console.WriteLine("0)Exit\n");
     string? option = Console.ReadLine();
     int intOption;
     bool isInt = int.TryParse(option, out intOption);
     if (isInt)
     {
-        if (intOption > 0 && intOption <= 4)
+        if (intOption > 0 && intOption <= 6)
         {
             switch (intOption)
             {
@@ -186,6 +188,38 @@ while (isContinue)
                         Console.WriteLine("\nEnter user id");
                         int userId = Convert.ToInt32(Console.ReadLine());
                         userService.ActivateUser(userId);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    break;
+                case (int)AdminPanel.DeactivateProduct:
+                    try
+                    {
+                        foreach (var productForDeactivate in context.Products.Where(p => p.IsDeactive == false))
+                        {
+                            Console.WriteLine($"\nId:{productForDeactivate.Id}/Name:{productForDeactivate.Name.ToUpper()}\n");
+                        }
+                        Console.WriteLine("\nEnter product id");
+                        int productId = Convert.ToInt32(Console.ReadLine());
+                        productService.DeactivateProduct(productId);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    break;
+                case (int)AdminPanel.ActivateProduct:
+                    try
+                    {
+                        foreach (var productForDeactivate in context.Products.Where(p => p.IsDeactive == true))
+                        {
+                            Console.WriteLine($"\nId:{productForDeactivate.Id}/Name:{productForDeactivate.Name.ToUpper()}\n");
+                        }
+                        Console.WriteLine("\nEnter product id");
+                        int productId = Convert.ToInt32(Console.ReadLine());
+                        productService.ActivateProduct(productId);
                     }
                     catch (Exception ex)
                     {

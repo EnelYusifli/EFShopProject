@@ -88,30 +88,34 @@ public class ProductService : IProductService
         }
         else throw new CannotBeFoundException("Product cannot be found on your cart");
     }
-    public void ActivateProduct(Product product)
+    public void ActivateProduct(int productId)
     {
+        Product product = context.Products.Find(productId);
         if (product is not null)
         {
-
             if (product.IsDeactive == true)
             {
                 product.IsDeactive = false;
-                Console.WriteLine("Successfully Activated");
+                context.SaveChanges();
+                Console.WriteLine("Successfully Deactivated");
             }
-            else throw new AlreadyExistException("Product is already Active");
+            else throw new AlreadyExistException("Product is already active");
         }
         else throw new CannotBeFoundException("Product cannot be found");
-    } 
-    public void DeactivateProduct(Product product)
+    }
+
+    public void DeactivateProduct(int productId)
     {
+        Product product = context.Products.Find(productId);
         if (product is not null)
         {
             if (product.IsDeactive == false)
             {
                 product.IsDeactive = true;
-                Console.WriteLine("Successfully Activated");
+                context.SaveChanges();
+                Console.WriteLine("Successfully Deactivated");
             }
-            else throw new AlreadyExistException("Product is already Active");
+            else throw new AlreadyExistException("Product is already deactive");
         }
         else throw new CannotBeFoundException("Product cannot be found");
     }

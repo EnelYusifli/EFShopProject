@@ -5,5 +5,7 @@ public enum AdminPanel
     CreateCategory,
     DeactivateUser,
     ActivateUser,
+    DeactivateProduct,
+    ActivateProduct,
 }
 

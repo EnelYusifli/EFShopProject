@@ -107,6 +107,8 @@ while (isContinue)
 {
     Console.WriteLine("\n1)Create Product");
     Console.WriteLine("2)Create Category");
+    Console.WriteLine("3)Deactivate User");
+    Console.WriteLine("3)Activate User");
     Console.WriteLine("0)Exit\n");
     string? option = Console.ReadLine();
     int intOption;
@@ -120,13 +122,13 @@ while (isContinue)
                 case (int)AdminPanel.CreateProduct:
                     try
                     {
-                        Console.WriteLine("name");
+                        Console.WriteLine("Enter name");
                         string name = Console.ReadLine();
-                        Console.WriteLine("desc");
+                        Console.WriteLine("Enter description");
                         string description = Console.ReadLine();
-                        Console.WriteLine("price");
+                        Console.WriteLine("Enter price");
                         decimal price = Convert.ToDecimal(Console.ReadLine());
-                        Console.WriteLine("count");
+                        Console.WriteLine("Enter availability count");
                         int count = Convert.ToInt32(Console.ReadLine());
                         foreach (var category in context.Categories)
                         {
@@ -157,8 +159,16 @@ while (isContinue)
                     {
                         Console.WriteLine(ex.Message);
                     }
-                    
+                    break;
+                case (int)AdminPanel.DeactivateUser:
+                    try
+                    {
 
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
                     break;
             }
         }

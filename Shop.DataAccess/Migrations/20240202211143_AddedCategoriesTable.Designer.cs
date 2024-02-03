@@ -12,8 +12,8 @@ using Shop.DataAccess;
 namespace Shop.DataAccess.Migrations
 {
     [DbContext(typeof(ShopDbContext))]
-    [Migration("20240202155419_AddedCategoryTable")]
-    partial class AddedCategoryTable
+    [Migration("20240202211143_AddedCategoriesTable")]
+    partial class AddedCategoriesTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -99,7 +99,7 @@ namespace Shop.DataAccess.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Category");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("Shop.Core.Entities.Discount", b =>

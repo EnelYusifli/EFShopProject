@@ -9,7 +9,7 @@ public class ProductService : IProductService
 {
     ShopDbContext context = new ShopDbContext();
 
-    public async void CreateProduct(string productName, string description, decimal price, int availableCount,int categoryId)
+    public async void CreateProduct(string productName, string description, decimal price, int availableCount, int categoryId)
     {
 
         if (productName is not null)
@@ -33,7 +33,7 @@ public class ProductService : IProductService
                                     AvailableCount = availableCount,
                                     Description = description,
                                     CategoryId = categoryId,
-                                    Category= category
+                                    Category = category
                                 };
                                 await context.Products.AddAsync(product);
                                 await context.SaveChangesAsync();
@@ -43,7 +43,7 @@ public class ProductService : IProductService
                         else throw new CannotBeFoundException("Category cannot be found");
                     }
                     else throw new LessThanMinimumException("Id should be more than 0");
-                    
+
                 }
                 else throw new LessThanMinimumException("Price should be more than 0");
             }
@@ -51,14 +51,14 @@ public class ProductService : IProductService
         }
         else throw new CannotBeNullException("Name cannot be null");
     }
-    public async void AddProductToCart(string productName,User user, int count=1)
+    public void AddProductToCart(int productId, User user, int count = 1)
     {
-        Product? product = context.Products.Where(p => p.Name.ToLower() == productName.ToLower()).FirstOrDefault();
+        Product? product = context.Products.Find(productId);
         if (product is not null && product.IsDeactive == false && user is not null)
         {
             if (count <= product.AvailableCount)
             {
-                CartProduct? cartProduct = await context.CartProducts.FindAsync(user.Id, product.Id);
+                CartProduct? cartProduct = context.CartProducts.Find(user.Id, product.Id);
                 if (cartProduct is not null)
                 {
                     throw new AlreadyExistException("Product is already in your cart");
@@ -69,9 +69,9 @@ public class ProductService : IProductService
                     CartId = user.Id,
                     ProductCountInCart = count
                 };
-                await context.CartProducts.AddAsync(newCartProduct);
-                await context.SaveChangesAsync();
-                await Console.Out.WriteLineAsync("Added to Cart Successfully");
+                context.CartProducts.Add(newCartProduct);
+                context.SaveChanges();
+                Console.Out.WriteLine("Added to Cart Successfully");
 
             }
             else throw new MoreThanMaximumException("Count is more than available");

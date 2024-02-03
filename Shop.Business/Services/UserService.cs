@@ -107,6 +107,34 @@ public class UserService : IUserService
         Console.Out.WriteLine("Logged in Successfully");
     }
 
-    //public void UpdateUser
+    public void DeactivateUser(User user)
+    {
+        if (user is not null)
+        {
+
+            if (user.IsDeactive == false)
+            {
+                user.IsDeactive = true;
+                Console.WriteLine("Successfully Deactivated");
+            }
+            else throw new AlreadyExistException("User is already deactive");
+        }
+        else throw new CannotBeFoundException("User cannot be found");
+    }
+    public void ActivateUser(User user)
+    {
+        if (user is not null)
+        {
+
+            if (user.IsDeactive == true)
+            {
+                user.IsDeactive = false;
+                Console.WriteLine("Successfully Activated");
+            }
+            else throw new AlreadyExistException("User is already Active");
+        }
+        else throw new CannotBeFoundException("User cannot be found");
+    }
+
 
 }

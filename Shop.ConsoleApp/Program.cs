@@ -1,4 +1,5 @@
-﻿using Shop.Business.Services;
+﻿using Microsoft.EntityFrameworkCore;
+using Shop.Business.Services;
 using Shop.Business.Utilities.Helper;
 using Shop.Core.Entities;
 using Shop.DataAccess;
@@ -159,9 +160,9 @@ while (isContinue)
     }
     else Console.WriteLine("Please enter correct format");
 }
-isContinue = true;
+bool isMainPageContinue = true;
 Console.WriteLine("\nWe wish you a pleasant experience :))\n");
-while (isContinue)
+while (isMainPageContinue)
 {
     Console.WriteLine("\n1)Go To HomePage");
     Console.WriteLine("2)Go To Cart");
@@ -180,7 +181,7 @@ while (isContinue)
 
                     foreach (var product in context.Products.OrderByDescending(p => p.CreatedDate).Take(5).Where(p => p.IsDeactive == false))
                     {
-                        Console.Write($"\n Name:{product.Name.ToUpper()},\n" +
+                        Console.Write($"\n Id:{product.Id}/Name:{product.Name.ToUpper()},\n" +
                             $"Price:{product.Price},\n" +
                             $"Description:{product.Description},\n" +
                             $"Available Count:{product.AvailableCount}\n\n");
@@ -208,7 +209,7 @@ while (isContinue)
                                             .Take(5)
                                             .Where(p => p.IsDeactive == false))
                                         {
-                                            Console.Write($"\n Name:{product.Name.ToUpper()},\n" +
+                                            Console.Write($"\n Id:{product.Id}/Name:{product.Name.ToUpper()},\n" +
                                                 $"Price:{product.Price},\n" +
                                                 $"Description:{product.Description},\n" +
                                                 $"Available Count:{product.AvailableCount}\n\n");
@@ -218,11 +219,11 @@ while (isContinue)
                                     case (int)HomePage.AddProductToCart:
                                         try
                                         {
-                                            Console.WriteLine("Please enter product name");
-                                            string productName = Console.ReadLine();
+                                            Console.WriteLine("Please enter product id");
+                                            int productId = Convert.ToInt32(Console.ReadLine());
                                             Console.WriteLine("And the count you want to add");
                                             int productCount = Convert.ToInt32(Console.ReadLine());
-                                            productService.AddProductToCart(productName, user, productCount);
+                                            productService.AddProductToCart(productId, user, productCount);
                                         }
                                         catch (Exception ex)
                                         {
@@ -247,13 +248,45 @@ while (isContinue)
                         {
                             foreach (var product in context.Products.Where(p => p.CartProducts.Any(cp => cp.CartId == user.Id)))
                             {
+                                //cartProduct = await context.CartProducts
+                                //    .FindAsync(user.Id,product.Id);
                                 Console.Write($"\n Name: {product.Name.ToUpper()},\n" +
                                               $"Price: {product.Price},\n" +
-                                              $"Description: {product.Description},\n");
+                                              $"Description: {product.Description},\n\n");
+                                //$"Count:{cartProduct1.ProductCountInCart}");
                             }
 
+                            bool isContinueCart = true;
+                            while (isContinueCart)
+                            {
+                                Console.WriteLine("1)Buy All Items in the cart");
+                                Console.WriteLine("2)Select items to buy");
+                                Console.WriteLine("0)Return to main page");
+                                string? cartOption = Console.ReadLine();
+                                int cartIntOption;
+                                bool isIntHomePage = int.TryParse(cartOption, out cartIntOption);
+                                if (isIntHomePage)
+                                {
+                                    if (cartIntOption >= 0 && cartIntOption <= 2)
+                                    {
+                                        switch (cartIntOption)
+                                        {
+                                            case (int)CartEnum.BuyAllProducts:
+
+                                                break;
+                                            case (int)CartEnum.ReturnToMainPage:
+                                                isContinueCart = false;
+                                                break;
+
+                                        }
+
+
+                                    }
+                                    else Console.WriteLine("You do not have any product in your cart");
+                                }
+                            }
                         }
-                        else Console.WriteLine("You do not have any product in your cart");
+
                     }
                     catch (Exception ex)
                     {

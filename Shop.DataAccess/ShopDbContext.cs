@@ -38,8 +38,7 @@ public class ShopDbContext:DbContext
             .IsUnique();
         modelBuilder.Entity<User>()
             .HasMany(u => u.Wallets)
-            .WithOne(w => w.User)
-            .HasForeignKey(w => w.UserId);
+            .WithOne(w => w.User);
         modelBuilder.Entity<User>()
             .HasOne(u => u.Cart)
             .WithOne(c => c.User)

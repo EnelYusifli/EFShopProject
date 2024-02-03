@@ -2,7 +2,8 @@
 public enum CartEnum
 {
     ReturnToMainPage,
-    BuyAllProducts=1,
+    BuyAllProducts,
+    SelectItemsToBuy
 
 }
 

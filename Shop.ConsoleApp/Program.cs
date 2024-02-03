@@ -1,7 +1,10 @@
-﻿using Shop.Business.Services;
+﻿using Microsoft.EntityFrameworkCore;
+using Shop.Business.Services;
+using Shop.Business.Utilities.Exceptions;
 using Shop.Business.Utilities.Helper;
 using Shop.Core.Entities;
 using Shop.DataAccess;
+using System.Linq;
 
 string appStart = "Application started...";
 string Welcome = "Welcome!";
@@ -19,6 +22,7 @@ ShopDbContext context = new ShopDbContext();
 UserService userService = new UserService();
 ProductService productService = new ProductService();
 WalletService walletService = new WalletService();
+InvoiceService invoiceService = new InvoiceService();
 while (isContinue)
 {
     Console.WriteLine("\n1)Register");
@@ -245,14 +249,14 @@ while (isMainPageContinue)
                         var products = context.Products
                                         .Where(p => p.CartProducts.Any(cp => cp.CartId == user.Id))
                                         .ToList();
-                        
+
                         if (products is not null)
                         {
                             decimal total = 0;
                             foreach (var product in products)
                             {
-                            CartProduct? cartProduct = await context.CartProducts
-                                            .FindAsync(user.Id, product.Id);
+                                CartProduct? cartProduct = await context.CartProducts
+                                                .FindAsync(user.Id, product.Id);
 
                                 Console.Write($"\n Name: {product.Name.ToUpper()},\n" +
                                               $"Price: {product.Price},\n" +
@@ -280,12 +284,66 @@ while (isMainPageContinue)
                                         switch (cartIntOption)
                                         {
                                             case (int)CartEnum.BuyAllProducts:
-                                                Console.WriteLine("Choose the cart that you want to pay with");
-                                                foreach (var wallet in context.Wallets.Where(w => w.User == user))
+                                                try
                                                 {
-                                                    Console.WriteLine($"Id:{wallet.Id}/Balance:{wallet.Balance}");
+                                                    //var wallets = context.Wallets.Where(w => w.UserId == user.Id);
+                                                    //if (wallets.Any())
+                                                    //{
+                                                    //    foreach (var wallet in context.Wallets.Where(w => w.User == user))
+                                                    //    {
+                                                    //        Console.WriteLine($"Id:{wallet.Id}/Balance:{wallet.Balance}");
+                                                    //    }
+                                                    //// walletService.WalletsOfUser(user);
+                                                    //Console.WriteLine("\nChoose the card that you want to pay with:\n");
+                                                    //int walletId = Convert.ToInt32(Console.ReadLine());
+                                                    //List<CartProduct>? cartProducts =  context.CartProducts.Where(cp => cp.CartId == user.Id).Include(cp => cp.Product).ToList();
+                                                    //foreach (var cartProduct in cartProducts)
+                                                    //{
+                                                    //    Product product = cartProduct.Product;
+                                                    //    invoiceService.CreateInvoice(walletId, user, product, total);
+                                                    //}
+                                                    //}
+                                                    //else throw new CannotBeFoundException("You do not have any saved cart");
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    Console.WriteLine(ex.Message);
                                                 }
                                                 break;
+                                            case (int)CartEnum.SelectItemsToBuy:
+
+                                                foreach (var product in products)
+                                                {
+                                                    CartProduct? cartProduct = await context.CartProducts
+                                                                    .FindAsync(user.Id, product.Id);
+
+                                                    Console.Write($"\nId:{product.Id}/ Name: {product.Name.ToUpper()},\n" +
+                                                                  $"Price: {product.Price},\n" +
+                                                                  $"Description: {product.Description}\n" +
+                                                                  $"Count In cart:{cartProduct.ProductCountInCart}\n");
+                                                }
+
+
+
+                                                    //var wallets = context.Wallets.Where(w => w.UserId == user.Id);
+                                                    //if (wallets.Any())
+                                                    //{
+                                                    //    foreach (var wallet in context.Wallets.Where(w => w.User == user))
+                                                    //    {
+                                                    //        Console.WriteLine($"Id:{wallet.Id}/Balance:{wallet.Balance}");
+                                                    //    }
+                                                    //    // walletService.WalletsOfUser(user);
+                                                    //    Console.WriteLine("\nChoose the card that you want to pay with:\n");
+                                                    //    int walletId = Convert.ToInt32(Console.ReadLine());
+                                                    //    List<CartProduct>? cartProducts = context.CartProducts.Where(cp => cp.CartId == user.Id).Include(cp => cp.Product).ToList();
+                                                    //    foreach (var cartProduct in cartProducts)
+                                                    //    {
+                                                    //        Product product = cartProduct.Product;
+                                                    //        invoiceService.CreateInvoice(walletId, user, product, total);
+                                                    //    }
+                                                    //}
+                                                    //else throw new CannotBeFoundException("You do not have any saved cart");
+                                                    break;
                                             case (int)CartEnum.ReturnToMainPage:
                                                 isContinueCart = false;
                                                 break;

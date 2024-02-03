@@ -35,4 +35,19 @@ public class WalletService : IWalletService
         else throw new CannotBeNullException("Value cannot be null");
 
     }
+    //public void WalletsOfUser(User user)
+    //{
+    //    if (user is not null)
+    //    {
+    //        if (context.Wallets.Where(w => w.UserId == user.Id).Any())
+    //        {
+    //            foreach (var wallet in context.Wallets.Where(w => w.User == user))
+    //            {
+    //                Console.WriteLine($"Id:{wallet.Id}/Balance:{wallet.Balance}");
+    //            }
+    //        }
+    //        else throw new CannotBeFoundException("You do not have any saved cart");
+    //    } else throw new CannotBeFoundException("User cannot be found");
+       
+    //}
 }

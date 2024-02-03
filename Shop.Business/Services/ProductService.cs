@@ -59,15 +59,13 @@ public class ProductService : IProductService
             if (count <= product.AvailableCount)
             {
                 CartProduct? cartProduct = context.CartProducts.Find(user.Id, product.Id);
-                if (cartProduct is not null)
-                {
-                    throw new AlreadyExistException("Product is already in your cart");
-                }
+                if (cartProduct is not null) throw new AlreadyExistException("Product is already in your cart");
+                
                 CartProduct newCartProduct = new CartProduct()
                 {
                     ProductId = product.Id,
                     CartId = user.Id,
-                    ProductCountInCart = count
+                    ProductCountInCart = count,
                 };
                 context.CartProducts.Add(newCartProduct);
                 context.SaveChanges();
@@ -77,6 +75,18 @@ public class ProductService : IProductService
             else throw new MoreThanMaximumException("Count is more than available");
         }
         else throw new CannotBeFoundException("Product cannot be found");
+    }
+    public void DeactivateCartProduct(int productId, User user)
+    {
+        Product? product = context.Products.Find(productId);
+        if (product is not null && product.IsDeactive == false && user is not null)
+        {
+            CartProduct? cartProduct = context.CartProducts.Find(user.Id, product.Id);
+            if (cartProduct is null) throw new AlreadyExistException("Product is not in your cart");
+            cartProduct.IsDeactive = true;
+            Console.Out.WriteLine("Deleted to Cart Successfully");
+        }
+        else throw new CannotBeFoundException("Product cannot be found on your cart");
     }
 
 

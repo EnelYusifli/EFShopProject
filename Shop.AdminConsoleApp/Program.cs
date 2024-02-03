@@ -108,7 +108,7 @@ while (isContinue)
     Console.WriteLine("\n1)Create Product");
     Console.WriteLine("2)Create Category");
     Console.WriteLine("3)Deactivate User");
-    Console.WriteLine("3)Activate User");
+    Console.WriteLine("4)Activate User");
     Console.WriteLine("0)Exit\n");
     string? option = Console.ReadLine();
     int intOption;

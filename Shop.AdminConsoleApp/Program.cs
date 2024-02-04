@@ -232,13 +232,13 @@ while (isContinue)
                     Console.WriteLine("1)Update Category Name");
                     Console.WriteLine("2)Update Category Description");
                     string? optionUpdateCategory = Console.ReadLine();
-                    int IntOptionUpdateCategory;
-                    bool isOptionUpdateCategory = int.TryParse(optionUpdateCategory, out IntOptionUpdateCategory);
+                    int intOptionUpdateCategory;
+                    bool isOptionUpdateCategory = int.TryParse(optionUpdateCategory, out intOptionUpdateCategory);
                     if (isOptionUpdateCategory)
                     {
-                        if (IntOptionUpdateCategory > 0 && IntOptionUpdateCategory <= 2)
+                        if (intOptionUpdateCategory > 0 && intOptionUpdateCategory <= 2)
                         {
-                            switch (IntOptionUpdateCategory)
+                            switch (intOptionUpdateCategory)
                             {
                                 case (int)UpdateCategory.UpdateName:
                                     try
@@ -320,6 +320,71 @@ while (isContinue)
                     }
                     else Console.WriteLine("Please enter correct format");
                     break;
+                case (int)AdminPanel.UpdateProduct:
+                    Console.WriteLine("1)Update Product Name");
+                    Console.WriteLine("2)Update Product Description");
+                    Console.WriteLine("3)Update Product Price");
+                    Console.WriteLine("4)Update Product Available count");
+                    Console.WriteLine("5)Update Product Category");
+                    string? optionUpdateProduct = Console.ReadLine();
+                    int intOptionUpdateProduct;
+                    bool isOptionUpdateProduct = int.TryParse(optionUpdateProduct, out intOptionUpdateProduct);
+                    if (isOptionUpdateProduct)
+                    {
+                        if (intOptionUpdateProduct > 0 && intOptionUpdateProduct <= 5)
+                        {
+                            switch (intOptionUpdateProduct)
+                            {
+                                case (int)UpdateProduct.UpdateName:
+                                    try
+                                    {
+                                    productName:
+                                        foreach (var existProduct in context.Products)
+                                        {
+                                            Console.WriteLine($"\nId:{existProduct.Id}/" +
+                                                $"Name:{existProduct.Name.ToUpper()}\n" +
+                                                $"Description:{existProduct.Description}\n" +
+                                                $"Price:{existProduct.Price}\n" +
+                                                $"Available:{existProduct.AvailableCount}\n");
+                                                //$"Category:{existProduct.Category.Name}"
+                                                
+                                        }
+                                        Console.WriteLine("Enter product Id");
+                                        int productId = Convert.ToInt32(Console.ReadLine());
+                                        if (productId < 0)
+                                        {
+                                            Console.WriteLine("Id cannot be negative");
+                                            goto productName;
+                                        }
+                                        Product product = context.Products.Find(productId);
+                                        Console.WriteLine("Enter new Name:");
+                                        string name = Console.ReadLine();
+                                        if (name is not null)
+                                        {
+                                            if (product.Name.ToLower() != name.ToLower())
+                                                productService.UpdateProduct(product, name, product.Description,product.Price,product.AvailableCount,product.CategoryId);
+                                            else
+                                            {
+                                                Console.WriteLine("Name cannot be the same");
+                                                goto productName;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("Name cannot be null");
+                                            goto productName;
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine(ex.Message);
+                                    }
+                                    break;
+                            }
+                        }
+                    }
+                    break;
+
                 default:
                     isContinue = false;
                     break;

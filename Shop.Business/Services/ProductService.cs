@@ -120,4 +120,25 @@ public class ProductService : IProductService
         else throw new CannotBeFoundException("Product cannot be found");
     }
 
+    public void UpdateProduct(Product product, string name, string description,decimal price,int availableCount,int categoryId)
+    {
+        if (product is not null)
+        {
+            if (context.Products.Where(p => p.Name.ToLower() == name.ToLower() && p.Name.ToLower() != product.Name.ToLower()).Any())
+                throw new ShouldBeUniqueException("This Name is already taken");
+            product.Name = name;
+            product.Description = description;
+            product.Price = price;
+            product.AvailableCount = availableCount;
+            Category category=context.Categories.Find(categoryId);
+            if (category is not null)
+                product.CategoryId = categoryId;
+            else throw new CannotBeFoundException("Category cannot be found");
+            context.Products.Update(product);
+            context.SaveChanges();
+            Console.WriteLine("Updated Successfully");
+        }
+        else throw new CannotBeFoundException("Product cannot be found");
+    }
+
 }

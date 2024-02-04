@@ -38,7 +38,7 @@ public class InvoiceService : IInvoiceService
                         ProductId = product.Id,
                         //ProductCountInInvoice = count
                     };
-                   // product.AvailableCount -= count;
+                   //product.AvailableCount -= count;
 
                     if (product.AvailableCount == 0)
                                   product.IsDeactive = true;

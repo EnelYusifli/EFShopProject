@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Shop.Business.Services;
+﻿using Shop.Business.Services;
 using Shop.Business.Utilities.Exceptions;
 using Shop.Business.Utilities.Helper;
 using Shop.Core.Entities;
@@ -175,10 +174,13 @@ while (isMainPageContinue)
     bool isInt = int.TryParse(option, out intOption);
     if (isInt)
     {
-        if (intOption > 0 && intOption <= 3)
+        if (intOption >= 0 && intOption <= 3)
         {
             switch (intOption)
             {
+                case 0:
+                    isMainPageContinue = false;
+                    break;
                 case (int)MainPage.GoToHomePage:
 
                     foreach (var product in context.Products.OrderByDescending(p => p.CreatedDate).Take(5).Where(p => p.IsDeactive == false))
@@ -246,9 +248,7 @@ while (isMainPageContinue)
                     try
                     {
                         var products = context.Products
-                                        .Where(p => p.CartProducts.Any(cp => cp.CartId == user.Id))
-                                        .ToList();
-
+                                        .Where(p => p.CartProducts.Any(cp => cp.CartId == user.Id)).ToList();
                         if (products is not null)
                         {
                             decimal total = 0;
@@ -260,11 +260,11 @@ while (isMainPageContinue)
                                                     .FindAsync(user.Id, product.Id);
                                     if (cartProduct.IsDeactive == false)
                                     {
-                                    Console.Write($"\n Name: {product.Name.ToUpper()},\n" +
-                                                  $"Price: {product.Price},\n" +
-                                                  $"Description: {product.Description}\n" +
-                                                  $"Count In cart:{cartProduct.ProductCountInCart}\n");
-                                    total += product.Price * cartProduct.ProductCountInCart;
+                                        Console.Write($"\nId:{product.Id} Name: {product.Name.ToUpper()},\n" +
+                                                      $"Price: {product.Price},\n" +
+                                                      $"Description: {product.Description}\n" +
+                                                      $"Count In cart:{cartProduct.ProductCountInCart}\n");
+                                        total += product.Price * cartProduct.ProductCountInCart;
                                     }
 
                                 }
@@ -275,29 +275,30 @@ while (isMainPageContinue)
                             {
                                 Console.WriteLine("1)Buy All Items in the cart");
                                 Console.WriteLine("2)Select items to buy");
+                                Console.WriteLine("3)Remove Product");
                                 Console.WriteLine("0)Return to main page");
                                 string? cartOption = Console.ReadLine();
                                 int cartIntOption;
                                 bool isIntHomePage = int.TryParse(cartOption, out cartIntOption);
                                 if (isIntHomePage)
                                 {
-                                    if (cartIntOption >= 0 && cartIntOption <= 2)
+                                    if (cartIntOption >= 0 && cartIntOption <= 3)
                                     {
                                         switch (cartIntOption)
                                         {
                                             case (int)CartEnum.BuyAllProducts:
                                                 try
                                                 {
-                                                    var wallets = context.Wallets.Where(w => w.UserId == user.Id);
+                                                    var wallets = context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false);
                                                     if (wallets.Any())
                                                     {
-                                                        foreach (var wallet in context.Wallets.Where(w => w.User == user))
+                                                        foreach (var wallet in context.Wallets.Where(w => w.User == user && w.IsDeactive == false))
                                                         {
                                                             Console.WriteLine($"Id:{wallet.Id}/\nNumber:{wallet.Number}\nBalance:{wallet.Balance}");
                                                         }
                                                         Console.WriteLine("\nChoose the card that you want to pay with:\n");
                                                         int walletId = Convert.ToInt32(Console.ReadLine());
-                                                        List<Product> productsInCart = context.Products.Where(p => p.CartProducts.Any(cp => cp.CartId == user.Id)).ToList();
+                                                        List<Product> productsInCart = context.Products.Where(p => p.CartProducts.Where(cp=>cp.IsDeactive==false).Any(cp => cp.CartId == user.Id)).ToList();
                                                         invoiceService.CreateInvoice(walletId, user, productsInCart, total);
                                                     }
                                                     else throw new CannotBeFoundException("You do not have any saved card");
@@ -309,51 +310,43 @@ while (isMainPageContinue)
                                                 break;
                                             case (int)CartEnum.SelectItemsToBuy:
 
-                                                foreach (var product in products)
-                                                {
-                                                    if (product.IsDeactive == false)
-                                                    {
-                                                        CartProduct? cartProduct = await context.CartProducts
-                                                                        .FindAsync(user.Id, product.Id);
-
-                                                        Console.Write($"\nId:{product.Id}/ Name: {product.Name.ToUpper()},\n" +
-                                                                      $"Price: {product.Price},\n" +
-                                                                      $"Description: {product.Description}\n" +
-                                                                      $"Count In cart:{cartProduct.ProductCountInCart}\n");
-
-                                                    }
-                                                }
-
-
-
-                                                //var wallets = context.Wallets.Where(w => w.UserId == user.Id);
-                                                //if (wallets.Any())
+                                                //foreach (var product in products)
                                                 //{
-                                                //    foreach (var wallet in context.Wallets.Where(w => w.User == user))
+                                                //    if (product.IsDeactive == false)
                                                 //    {
-                                                //        Console.WriteLine($"Id:{wallet.Id}/Balance:{wallet.Balance}");
-                                                //    }
-                                                //    // walletService.WalletsOfUser(user);
-                                                //    Console.WriteLine("\nChoose the card that you want to pay with:\n");
-                                                //    int walletId = Convert.ToInt32(Console.ReadLine());
-                                                //    List<CartProduct>? cartProducts = context.CartProducts.Where(cp => cp.CartId == user.Id).Include(cp => cp.Product).ToList();
-                                                //    foreach (var cartProduct in cartProducts)
-                                                //    {
-                                                //        Product product = cartProduct.Product;
-                                                //        invoiceService.CreateInvoice(walletId, user, product, total);
+                                                //        CartProduct? cartProduct = await context.CartProducts
+                                                //                        .FindAsync(user.Id, product.Id);
+
+                                                //        Console.Write($"\nId:{product.Id}/ Name: {product.Name.ToUpper()},\n" +
+                                                //                      $"Price: {product.Price},\n" +
+                                                //                      $"Description: {product.Description}\n" +
+                                                //                      $"Count In cart:{cartProduct.ProductCountInCart}\n");
+
                                                 //    }
                                                 //}
-                                                //else throw new CannotBeFoundException("You do not have any saved cart");
+                                                break;
+                                            case (int)CartEnum.RemoveProduct:
+                                                try
+                                                {
+                                                    Console.WriteLine("Enter Product Id");
+                                                    int productId = Convert.ToInt32(Console.ReadLine());
+                                                    Console.WriteLine("Enter the count that you want to remove");
+                                                    int count = Convert.ToInt32(Console.ReadLine());
+                                                    productService.RemoveProductFromCart(productId, user,count);
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    Console.WriteLine(ex.Message);
+                                                }
+                                                
+
                                                 break;
                                             case (int)CartEnum.ReturnToMainPage:
                                                 isContinueCart = false;
                                                 break;
-
                                         }
-
-
                                     }
-                                    else Console.WriteLine("You do not have any product in your cart");
+                                   
                                 }
                             }
                         }
@@ -363,8 +356,6 @@ while (isMainPageContinue)
                     {
                         Console.WriteLine(ex.Message);
                     }
-
-
                     break;
                 case (int)MainPage.SeeUserInfo:
                     Console.WriteLine($"\nName:{user.Name.ToUpper()}\n" +
@@ -462,7 +453,7 @@ while (isMainPageContinue)
                                                             email:
                                                                 Console.WriteLine("Enter new email:");
                                                                 string email = Console.ReadLine();
-                                                                if (email is not null)
+                                                                if (email is not null && email.Length > 0)
                                                                 {
                                                                     if (user.Email.ToLower() != email.ToLower())
                                                                         userService.UpdateUser(user, user.Name, user.Surname, email, user.UserName, user.Password, user.Phone, user.Address);
@@ -490,7 +481,7 @@ while (isMainPageContinue)
                                                             username:
                                                                 Console.WriteLine("Enter new username:");
                                                                 string username = Console.ReadLine();
-                                                                if (username is not null)
+                                                                if (username is not null && username.Length > 0)
                                                                 {
                                                                     if (user.UserName.ToLower() != username.ToLower())
                                                                         userService.UpdateUser(user, user.Name, user.Surname, user.Email, username, user.Password, user.Phone, user.Address);
@@ -520,7 +511,13 @@ while (isMainPageContinue)
                                                                 Console.WriteLine("Enter new password:");
                                                                 string password = Console.ReadLine();
                                                                 if (user.Password.ToLower() != password.ToLower())
-                                                                    userService.UpdateUser(user, user.Name, user.Surname, user.Email, user.UserName, password, user.Phone, user.Address);
+                                                                    if (password.Length >= 8)
+                                                                        userService.UpdateUser(user, user.Name, user.Surname, user.Email, user.UserName, password, user.Phone, user.Address);
+                                                                    else
+                                                                    {
+                                                                        Console.WriteLine("Password length must be at least 8");
+                                                                        goto password;
+                                                                    }
                                                                 else
                                                                 {
                                                                     Console.WriteLine("Password cannot be the same");
@@ -586,10 +583,10 @@ while (isMainPageContinue)
                                         }
                                         break;
                                     case (int)UserInfo.RemoveCard:
-                                        bool hasWalletForRemove = context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive==false).Any();
+                                        bool hasWalletForRemove = context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false).Any();
                                         if (hasWalletForRemove)
                                         {
-                                            foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive==false))
+                                            foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false))
                                             {
                                                 Console.WriteLine($"Id:{wallet.Id}/" +
                                                                   $"Card:{wallet.Number}\n" +
@@ -635,6 +632,7 @@ while (isMainPageContinue)
                                     case (int)UserInfo.ReturnToHomePage:
                                         isUserInfoContinue = false;
                                         break;
+                                       
                                 }
                             }
                             else Console.WriteLine("Invalid option. Please select again.");
@@ -644,7 +642,9 @@ while (isMainPageContinue)
                     break;
             }
         }
+        else Console.WriteLine("Invalid option. Please select again.");
     }
+    else Console.WriteLine("Please enter correct format");
 }
 
 

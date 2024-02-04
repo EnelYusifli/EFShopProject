@@ -35,37 +35,71 @@ public class WalletService : IWalletService
         else throw new CannotBeNullException("Value cannot be null");
 
     }
-    public void DeactivateWallet(int walletId,User user)
+    public void DeactivateWallet(int walletId, User user)
     {
-        Wallet wallet=context.Wallets.Find(walletId);
-        if (wallet is not null)
+        if (user is not null && user.IsDeactive == false)
         {
-            if (wallet.IsDeactive == false)
+            bool hasWallet = context.Wallets.Where(w => w.Id == walletId && w.UserId == user.Id).Any();
+            if (hasWallet)
             {
-                wallet.IsDeactive = true;
-                wallet.ModifiedTime = DateTime.Now;
-                context.SaveChanges();
-                Console.WriteLine("Successfully Deactivated");
-            }
-            else throw new AlreadyExistException("Wallet is already deactive");
-        }
-        else throw new CannotBeFoundException("Wallet cannot be found");
-    }
-    public void ActivateWallet(int walletId, User user)
-    {
-        Wallet wallet = context.Wallets.Find(walletId);
-        if (wallet is not null)
-        {
+                Wallet wallet = context.Wallets.Find(walletId);
+                if (wallet is not null)
+                {
+                    if (wallet.IsDeactive == false)
+                    {
+                        wallet.IsDeactive = true;
+                        wallet.ModifiedTime = DateTime.Now;
+                        context.SaveChanges();
+                        Console.WriteLine("Successfully Deactivated");
+                    }
+                    else throw new AlreadyExistException("Wallet is already deactive");
+                }
+                else throw new CannotBeFoundException("Wallet cannot be found");
 
-            if (wallet.IsDeactive == true)
-            {
-                wallet.IsDeactive = false;
-                wallet.ModifiedTime = DateTime.Now;
-                context.SaveChanges();
-                Console.WriteLine("Successfully Activated");
             }
-            else throw new AlreadyExistException("Wallet is already Active");
+            else throw new CannotBeFoundException("Wallet cannot be found");
+
         }
-        else throw new CannotBeFoundException("Wallet cannot be found");
+        else throw new CannotBeFoundException("User cannot be found");
     }
+    
+    public void ActivateWallet(int walletId, User user)
+{
+        if (user is not null && user.IsDeactive == false)
+        {
+            bool hasWallet = context.Wallets.Where(w => w.Id == walletId && w.UserId == user.Id).Any();
+            if (hasWallet)
+            {
+                Wallet wallet = context.Wallets.Find(walletId);
+                if (wallet is not null)
+                {
+                    if (wallet.IsDeactive == true)
+                    {
+                        wallet.IsDeactive = false;
+                        wallet.ModifiedTime = DateTime.Now;
+                        context.SaveChanges();
+                        Console.WriteLine("Successfully Activated");
+                    }
+                    else throw new AlreadyExistException("Wallet is already active");
+                }
+                else throw new CannotBeFoundException("Wallet cannot be found");
+
+            }
+            else throw new CannotBeFoundException("Wallet cannot be found");
+
+        }
+        else throw new CannotBeFoundException("User cannot be found");
+    }
+
+public void IncreaseBalance(int walletId, User user)
+{
+    Wallet wallet = context.Wallets.Find(walletId);
+
+    if (wallet is not null && wallet.IsDeactive == false)
+    {
+
+
+    }
+    else throw new CannotBeFoundException("Wallet cannot be found");
+}
 }

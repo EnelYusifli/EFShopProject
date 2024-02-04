@@ -119,4 +119,43 @@ public void IncreaseBalance(int walletId, User user,decimal amount)
         }
         else throw new CannotBeFoundException("User cannot be found");
     }
+    public void TransferMoney(int walletIdToIncrease,int walletIdToTransfer,User user,decimal transferAmount)
+    {
+        if (user is not null && user.IsDeactive == false)
+        {
+            if (transferAmount > 0)
+            {
+                bool hasWallet = context.Wallets.Where(w => w.Id == walletIdToIncrease && w.UserId == user.Id).Any();
+                bool hasWalletToTranser = context.Wallets.Where(w => w.Id == walletIdToTransfer && w.UserId == user.Id).Any();
+                if (hasWallet && hasWalletToTranser)
+                {
+                    Wallet walletToIncrease = context.Wallets.Find(walletIdToIncrease);
+                    Wallet walletToTransfer = context.Wallets.Find(walletIdToTransfer);
+                    if (walletToIncrease != walletToTransfer)
+                    {
+                        if (walletToIncrease is not null && walletToIncrease.IsDeactive == false && walletToTransfer is not null && walletToTransfer.IsDeactive == false)
+                        {
+                            if (transferAmount > walletToTransfer.Balance)
+                                throw new MoreThanMaximumException("You do not have that much money in the card");
+                            walletToIncrease.Balance += transferAmount;
+                            walletToTransfer.Balance -= transferAmount;
+                            walletToIncrease.ModifiedTime = DateTime.Now;
+                            walletToTransfer.ModifiedTime = DateTime.Now;
+                            context.SaveChanges();
+                            Console.WriteLine("Successfully transferred");
+                        }
+                        else throw new CannotBeFoundException("Wallet cannot be found");
+
+                    }
+                    else throw new ShouldBeUniqueException("Cards cannot be the same");
+
+                }
+                else throw new CannotBeFoundException("Wallet cannot be found");
+
+            }
+            else throw new LessThanMinimumException("Value cannot be negative or 0");
+
+        }
+        else throw new CannotBeFoundException("User cannot be found");
+    }
 }

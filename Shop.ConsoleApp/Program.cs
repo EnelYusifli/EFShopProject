@@ -652,6 +652,35 @@ while (isMainPageContinue)
                                             Console.WriteLine(ex.Message);
                                         }
                                         break;
+                                    case (int)UserInfo.TransferMoney:
+                                        foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false))
+                                        {
+                                            Console.WriteLine($"Id:{wallet.Id}/" +
+                                                              $"Card:{wallet.Number}\n" +
+                                                              $"Balance:{wallet.Balance}");
+                                        }
+                                        Console.WriteLine("Enter Card Id To Get the Money");
+                                        int walletIdForInc = Convert.ToInt32(Console.ReadLine());
+                                        foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false))
+                                        {
+                                            Console.WriteLine($"Id:{wallet.Id}/" +
+                                                              $"Card:{wallet.Number}\n" +
+                                                              $"Balance:{wallet.Balance}");
+                                        }
+                                        Console.WriteLine("Enter Card Id To Transfer the Money");
+                                        int walletIdForDec = Convert.ToInt32(Console.ReadLine());
+                                        Console.WriteLine("Enter Amount to Transfer");
+                                        decimal transferAmount = Convert.ToDecimal(Console.ReadLine());
+                                        try
+                                        {
+                                            walletService.TransferMoney(walletIdForInc, walletIdForDec, user, transferAmount);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Console.WriteLine(ex.Message);
+                                        }
+
+                                        break;
                                     case (int)UserInfo.ReturnToHomePage:
                                         isUserInfoContinue = false;
                                         break;

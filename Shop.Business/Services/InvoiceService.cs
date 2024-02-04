@@ -31,10 +31,28 @@ public class InvoiceService : IInvoiceService
                     CartProduct cartProduct = context.CartProducts.Find(user.Id, product.Id);
                     if (cartProduct is not null)
                     {
-                        CreateProuctInvoice(invoice, product, cartProduct.ProductCountInCart);
+                        if (product.AvailableCount >= cartProduct.ProductCountInCart)
+                        {
+                            ProductInvoice productInvoice = new ProductInvoice()
+                            {
+                                Invoice = invoice,
+                                ProductId = product.Id,
+                                ProductCountInInvoice = cartProduct.ProductCountInCart
+                            };
+                            product.AvailableCount -= cartProduct.ProductCountInCart;
+                            context.ProductInvoices.Add(productInvoice);
+                            if (product.AvailableCount == 0)
+                            {
+                                product.IsDeactive = true;
+                                product.ModifiedTime = DateTime.Now;
+                            }
+                            context.Entry(product).State=Microsoft.EntityFrameworkCore.EntityState.Modified;
+                        }
+                        else throw new MoreThanMaximumException("The count is not available");
+                        //CreateProuctInvoice(invoice, product, cartProduct.ProductCountInCart);
                         wallet.Balance -= totalPrice;
                         cartProduct.ProductCountInCart = 0;
-                        cartProduct.IsDeactive = true;
+                        cartProduct.IsDeactive = true;   
                     }
                     else throw new CannotBeFoundException("User cannot be found");
                 };
@@ -48,32 +66,32 @@ public class InvoiceService : IInvoiceService
         else throw new CannotBeFoundException("User cannot be found");
     }
 
-    public void CreateProuctInvoice(Invoice invoice, Product product, int count)
-    {
-        //if (invoice is not null && product is not null && product.IsDeactive == false )
-        //{
-        if (product.AvailableCount >= count)
-        {
-            ProductInvoice productInvoice = new ProductInvoice()
-            {
-                Invoice = invoice,
-                ProductId = product.Id,
-                ProductCountInInvoice = count
-            };
-            product.AvailableCount -= count;
-            context.ProductInvoices.Add(productInvoice);
-            if (product.AvailableCount == 0)
-            {
-                product.IsDeactive = true;
-                product.ModifiedTime = DateTime.Now;
+//    public void CreateProuctInvoice(Invoice invoice, Product product, int count)
+//    {
+//        //if (invoice is not null && product is not null && product.IsDeactive == false )
+//        //{
+//        if (product.AvailableCount >= count)
+//        {
+//            ProductInvoice productInvoice = new ProductInvoice()
+//            {
+//                Invoice = invoice,
+//                ProductId = product.Id,
+//                ProductCountInInvoice = count
+//            };
+//            product.AvailableCount -= count;
+//            context.ProductInvoices.Add(productInvoice);
+//            if (product.AvailableCount == 0)
+//            {
+//                product.IsDeactive = true;
+//                product.ModifiedTime = DateTime.Now;
+//            }
+//            context.Products.Update(product);
+//        }
+//        else throw new MoreThanMaximumException("The count is not available");
 
-            }
-        }
-        else throw new MoreThanMaximumException("The count is not available");
-
-        //}
-        //else throw new CannotBeFoundException("Value cannot be found");
-    }
+//        //}
+//        //else throw new CannotBeFoundException("Value cannot be found");
+//    }
 }
 
 

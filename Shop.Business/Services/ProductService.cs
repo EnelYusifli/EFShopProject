@@ -126,7 +126,7 @@ public class ProductService : IProductService
             {
             product.CategoryId = categoryId;
             product.ModifiedTime = DateTime.Now;
-                context.Entry(product).State=Microsoft.EntityFrameworkCore.EntityState.Modified;
+            context.Entry(product).State=Microsoft.EntityFrameworkCore.EntityState.Modified;
             context.SaveChanges();
             Console.WriteLine("Updated Successfully");
             }

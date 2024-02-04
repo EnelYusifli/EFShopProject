@@ -3,7 +3,6 @@ public enum CartEnum
 {
     ReturnToMainPage,
     BuyAllProducts,
-    SelectItemsToBuy,
     RemoveProduct,
 
 }

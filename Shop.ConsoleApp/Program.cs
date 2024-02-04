@@ -275,8 +275,7 @@ while (isMainPageContinue)
                             while (isContinueCart)
                             {
                                 Console.WriteLine("1)Buy All Items in the cart");
-                                Console.WriteLine("2)Select items to buy");
-                                Console.WriteLine("3)Remove Product");
+                                Console.WriteLine("2)Remove Product");
                                 Console.WriteLine("0)Return to main page");
                                 string? cartOption = Console.ReadLine();
                                 int cartIntOption;
@@ -308,23 +307,6 @@ while (isMainPageContinue)
                                                 {
                                                     Console.WriteLine(ex.Message);
                                                 }
-                                                break;
-                                            case (int)CartEnum.SelectItemsToBuy:
-
-                                                //foreach (var product in products)
-                                                //{
-                                                //    if (product.IsDeactive == false)
-                                                //    {
-                                                //        CartProduct? cartProduct = await context.CartProducts
-                                                //                        .FindAsync(user.Id, product.Id);
-
-                                                //        Console.Write($"\nId:{product.Id}/ Name: {product.Name.ToUpper()},\n" +
-                                                //                      $"Price: {product.Price},\n" +
-                                                //                      $"Description: {product.Description}\n" +
-                                                //                      $"Count In cart:{cartProduct.ProductCountInCart}\n");
-
-                                                //    }
-                                                //}
                                                 break;
                                             case (int)CartEnum.RemoveProduct:
                                                 try

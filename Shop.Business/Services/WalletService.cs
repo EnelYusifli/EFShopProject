@@ -59,6 +59,22 @@ public class WalletService : IWalletService
             if (wallet.IsDeactive == false)
             {
                 wallet.IsDeactive = true;
+                context.SaveChanges();
+                Console.WriteLine("Successfully Deactivated");
+            }
+            else throw new AlreadyExistException("Wallet is already deactive");
+        }
+        else throw new CannotBeFoundException("Wallet cannot be found");
+    }
+    public void ActivateWallet(Wallet wallet)
+    {
+        if (wallet is not null)
+        {
+
+            if (wallet.IsDeactive == true)
+            {
+                wallet.IsDeactive = false;
+                context.SaveChanges();
                 Console.WriteLine("Successfully Activated");
             }
             else throw new AlreadyExistException("Wallet is already Active");

@@ -46,7 +46,7 @@ public class UserService : IUserService
     {
         if (email is null || password is null) throw new CannotBeNullException("Value cannot be null");
         User? user = context.Users.FirstOrDefault(u => u.Email == email);
-        if (user is null) throw new CannotBeFoundException("User email cannot be found");
+        if (user is null || user.IsDeactive==true) throw new CannotBeFoundException("User email cannot be found");
         if (user.Password != password) throw new IsNotCorrectException("Password is not correct");
         Console.Out.WriteLine("Logged in Successfully");
     }
@@ -55,7 +55,7 @@ public class UserService : IUserService
     {
         if (username is null || password is null) throw new CannotBeNullException("Value cannot be null");
         User? user = context.Users.FirstOrDefault(u => u.UserName == username);
-        if (user is null) throw new CannotBeFoundException("User email cannot be found");
+        if (user is null || user.IsDeactive == true) throw new CannotBeFoundException("Username cannot be found");
         if (user.Password != password) throw new IsNotCorrectException("Password is not correct");
         Console.Out.WriteLine("Logged in Successfully");
     }
@@ -65,7 +65,7 @@ public class UserService : IUserService
         {
             User user = context.Users.Where(u => u.Email.ToLower() == email.ToLower()).FirstOrDefault();
             {
-                if (user is not null)
+                if (user is not null && user.IsDeactive==false)
                     return user;
                 else throw new CannotBeFoundException("User cannot be found");
             }
@@ -79,7 +79,7 @@ public class UserService : IUserService
         {
             User user = context.Users.Where(u => u.UserName.ToLower() == username.ToLower()).FirstOrDefault();
             {
-                if (user is not null)
+                if (user is not null && user.IsDeactive == false)
                     return user;
                 else throw new CannotBeFoundException("User cannot be found");
             }
@@ -109,7 +109,7 @@ public class UserService : IUserService
     public void DeactivateUser(int userId)
     {
         User user = context.Users.Find(userId);
-        if (user is not null)
+        if (user is not null && user.Id!=1)
         {
             if (user.IsDeactive == false)
             {
@@ -124,7 +124,7 @@ public class UserService : IUserService
     public void ActivateUser(int userId)
     {
         User user = context.Users.Find(userId);
-        if (user is not null)
+        if (user is not null && user.Id!=1)
         {
             if (user.IsDeactive == true)
             {

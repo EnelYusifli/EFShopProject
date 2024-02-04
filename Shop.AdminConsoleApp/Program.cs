@@ -1,4 +1,5 @@
-﻿using Shop.Business.Services;
+﻿using Microsoft.EntityFrameworkCore;
+using Shop.Business.Services;
 using Shop.Business.Utilities.Helper;
 using Shop.Core.Entities;
 using Shop.DataAccess;
@@ -479,6 +480,51 @@ while (isContinue)
                                         {
                                             Console.WriteLine("Available count cannot be the same");
                                             goto productAvailable;
+                                        }
+
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine(ex.Message);
+                                    }
+                                    break;
+
+                                case (int)UpdateProduct.UpdateCategory:
+                                    try
+                                    {
+                                    productCategory:
+                                        var productsWithCategories = context.Products.Where(p=>p.IsDeactive==false).Include(p => p.Category);
+                                        foreach (var existProduct in productsWithCategories)
+                                        {
+                                            Console.WriteLine($"\nId:{existProduct.Id}/" +
+                                             $"Name:{existProduct.Name.ToUpper()}\n" +
+                                             $"Description:{existProduct.Description}\n" +
+                                             $"Price:${existProduct.Price}\n" +
+                                             $"Available:{existProduct.AvailableCount}\n" +
+                                             $"Category:{existProduct.Category.Name.ToUpper()}\n");
+
+                                        }
+                                        Console.WriteLine("Enter Product Id");
+                                        int productId = Convert.ToInt32(Console.ReadLine());
+                                        if (productId < 0)
+                                        {
+                                            Console.WriteLine("Id cannot be negative");
+                                            goto productCategory;
+                                        }
+                                        Product product = context.Products.Find(productId);
+                                        foreach (var existCategory in context.Categories)
+                                        {
+                                            Console.WriteLine($"\nId:{existCategory.Id}/" +
+                                                $"Name:{existCategory.Name.ToUpper()}\n");
+                                        }
+                                        Console.WriteLine("Enter new Category Id:");
+                                        int categoryId = Convert.ToInt32(Console.ReadLine());
+                                        if (product.CategoryId != categoryId)
+                                            productService.UpdateProduct(product, product.Name, product.Description, product.Price, product.AvailableCount, categoryId);
+                                        else
+                                        {
+                                            Console.WriteLine("Category cannot be the same");
+                                            goto productCategory;
                                         }
 
                                     }

@@ -124,13 +124,13 @@ public class ProductService : IProductService
             Category category = context.Categories.Find(categoryId);
             if (category is not null)
             {
-                product.CategoryId = categoryId;
-                product.ModifiedTime = DateTime.Now;
-            }
-            else throw new CannotBeFoundException("Category cannot be found");
-            context.Products.Update(product);
+            product.CategoryId = categoryId;
+            product.ModifiedTime = DateTime.Now;
+                context.Entry(product).State=Microsoft.EntityFrameworkCore.EntityState.Modified;
             context.SaveChanges();
             Console.WriteLine("Updated Successfully");
+            }
+            else throw new CannotBeFoundException("Category cannot be found");
         }
         else throw new CannotBeFoundException("Product cannot be found");
     }

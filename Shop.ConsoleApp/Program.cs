@@ -386,13 +386,15 @@ while (isMainPageContinue)
                         Console.WriteLine("2)Add New Card");
                         Console.WriteLine("3)Remove Card");
                         Console.WriteLine("4)Add Removed Card");
+                        Console.WriteLine("5)Increase Card balance");
+                        Console.WriteLine("6)Transfer money");
                         Console.WriteLine("0)Return to main page\n");
                         string? homePageOption = Console.ReadLine();
                         int homePageIntOption;
                         bool isIntHomePage = int.TryParse(homePageOption, out homePageIntOption);
                         if (isIntHomePage)
                         {
-                            if (homePageIntOption >= 0 && homePageIntOption <= 4)
+                            if (homePageIntOption >= 0 && homePageIntOption <= 6)
                             {
                                 switch (homePageIntOption)
                                 {
@@ -596,10 +598,10 @@ while (isMainPageContinue)
                                                                   $"Balance:{wallet.Balance}");
                                             }
                                             Console.WriteLine("Enter Card Id");
-                                            int walletId = Convert.ToInt32(Console.ReadLine());
+                                            int walletIdForDeact = Convert.ToInt32(Console.ReadLine());
                                             try
                                             {
-                                                walletService.DeactivateWallet(walletId, user);
+                                                walletService.DeactivateWallet(walletIdForDeact, user);
                                             }
                                             catch (Exception ex)
                                             {
@@ -619,10 +621,10 @@ while (isMainPageContinue)
                                                                   $"Balance:{wallet.Balance}");
                                             }
                                             Console.WriteLine("Enter Card Id");
-                                            int walletId = Convert.ToInt32(Console.ReadLine());
+                                            int walletIdForAddCard = Convert.ToInt32(Console.ReadLine());
                                             try
                                             {
-                                                walletService.ActivateWallet(walletId, user);
+                                                walletService.ActivateWallet(walletIdForAddCard, user);
                                             }
                                             catch (Exception ex)
                                             {
@@ -631,7 +633,26 @@ while (isMainPageContinue)
                                         }
                                         else Console.WriteLine("You do not have any deleted card");
                                         break;
-
+                                    case (int)UserInfo.IncreaseCardBalance:
+                                        foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false))
+                                        {
+                                            Console.WriteLine($"Id:{wallet.Id}/" +
+                                                              $"Card:{wallet.Number}\n" +
+                                                              $"Balance:{wallet.Balance}");
+                                        }
+                                        Console.WriteLine("Enter Card Id");
+                                        int walletIdForIncBalance = Convert.ToInt32(Console.ReadLine());
+                                        Console.WriteLine("Enter the amount of money");
+                                        decimal amount = Convert.ToDecimal(Console.ReadLine());
+                                        try
+                                        {
+                                            walletService.IncreaseBalance(walletIdForIncBalance, user, amount);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Console.WriteLine(ex.Message);
+                                        }
+                                        break;
                                     case (int)UserInfo.ReturnToHomePage:
                                         isUserInfoContinue = false;
                                         break;

@@ -5,5 +5,7 @@ public enum UserInfo
     UpdateUserInfo,
     AddNewCard,
     RemoveCard,
-    AddRemovedCard
+    AddRemovedCard,
+    IncreaseCardBalance,
+    TransferMoney,
 }

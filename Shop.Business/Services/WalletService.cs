@@ -91,15 +91,32 @@ public class WalletService : IWalletService
         else throw new CannotBeFoundException("User cannot be found");
     }
 
-public void IncreaseBalance(int walletId, User user)
+public void IncreaseBalance(int walletId, User user,decimal amount)
 {
-    Wallet wallet = context.Wallets.Find(walletId);
+        if (user is not null && user.IsDeactive == false)
+        {
+            if (amount > 0)
+            {
+                bool hasWallet = context.Wallets.Where(w => w.Id == walletId && w.UserId == user.Id).Any();
+                if (hasWallet)
+                {
+                    Wallet wallet = context.Wallets.Find(walletId);
+                    if (wallet is not null && wallet.IsDeactive == false)
+                    {
+                        wallet.Balance += amount;
+                        wallet.ModifiedTime=DateTime.Now;
+                        context.SaveChanges();
+                        Console.WriteLine("Successfully increased");
+                    }
+                    else throw new CannotBeFoundException("Wallet cannot be found");
 
-    if (wallet is not null && wallet.IsDeactive == false)
-    {
+                }
+                else throw new CannotBeFoundException("Wallet cannot be found");
 
+            }
+            else throw new LessThanMinimumException("Value cannot be negative or 0");
 
+        }
+        else throw new CannotBeFoundException("User cannot be found");
     }
-    else throw new CannotBeFoundException("Wallet cannot be found");
-}
 }

@@ -51,11 +51,11 @@ public class WalletService : IWalletService
 
     //}
 
-    public void DeactivateWallet(Wallet wallet)
+    public void DeactivateWallet(int walletId,User user)
     {
+        Wallet wallet=context.Wallets.Find(walletId);
         if (wallet is not null)
         {
-
             if (wallet.IsDeactive == false)
             {
                 wallet.IsDeactive = true;
@@ -66,8 +66,9 @@ public class WalletService : IWalletService
         }
         else throw new CannotBeFoundException("Wallet cannot be found");
     }
-    public void ActivateWallet(Wallet wallet)
+    public void ActivateWallet(int walletId, User user)
     {
+        Wallet wallet = context.Wallets.Find(walletId);
         if (wallet is not null)
         {
 

@@ -390,13 +390,15 @@ while (isMainPageContinue)
                     {
                         Console.WriteLine("\n1)Update User Details");
                         Console.WriteLine("2)Add New Card");
+                        Console.WriteLine("3)Remove Card");
+                        Console.WriteLine("4)Add Removed Card");
                         Console.WriteLine("0)Return to main page\n");
                         string? homePageOption = Console.ReadLine();
                         int homePageIntOption;
                         bool isIntHomePage = int.TryParse(homePageOption, out homePageIntOption);
                         if (isIntHomePage)
                         {
-                            if (homePageIntOption >= 0 && homePageIntOption <= 2)
+                            if (homePageIntOption >= 0 && homePageIntOption <= 4)
                             {
                                 switch (homePageIntOption)
                                 {
@@ -583,6 +585,53 @@ while (isMainPageContinue)
                                             Console.WriteLine(ex.Message);
                                         }
                                         break;
+                                    case (int)UserInfo.RemoveCard:
+                                        bool hasWalletForRemove = context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive==false).Any();
+                                        if (hasWalletForRemove)
+                                        {
+                                            foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive==false))
+                                            {
+                                                Console.WriteLine($"Id:{wallet.Id}/" +
+                                                                  $"Card:{wallet.Number}\n" +
+                                                                  $"Balance:{wallet.Balance}");
+                                            }
+                                            Console.WriteLine("Enter Card Id");
+                                            int walletId = Convert.ToInt32(Console.ReadLine());
+                                            try
+                                            {
+                                                walletService.DeactivateWallet(walletId, user);
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                Console.WriteLine(ex.Message);
+                                            }
+                                        }
+                                        else Console.WriteLine("You do not have any active card");
+                                        break;
+                                    case (int)UserInfo.AddRemovedCard:
+                                        bool hasWalletForAdd = context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == true).Any();
+                                        if (hasWalletForAdd)
+                                        {
+                                            foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == true))
+                                            {
+                                                Console.WriteLine($"Id:{wallet.Id}/" +
+                                                                  $"Card:{wallet.Number}\n" +
+                                                                  $"Balance:{wallet.Balance}");
+                                            }
+                                            Console.WriteLine("Enter Card Id");
+                                            int walletId = Convert.ToInt32(Console.ReadLine());
+                                            try
+                                            {
+                                                walletService.ActivateWallet(walletId, user);
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                Console.WriteLine(ex.Message);
+                                            }
+                                        }
+                                        else Console.WriteLine("You do not have any deleted card");
+                                        break;
+
                                     case (int)UserInfo.ReturnToHomePage:
                                         isUserInfoContinue = false;
                                         break;

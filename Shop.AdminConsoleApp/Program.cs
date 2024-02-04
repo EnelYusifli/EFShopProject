@@ -344,10 +344,8 @@ while (isContinue)
                                             Console.WriteLine($"\nId:{existProduct.Id}/" +
                                                 $"Name:{existProduct.Name.ToUpper()}\n" +
                                                 $"Description:{existProduct.Description}\n" +
-                                                $"Price:{existProduct.Price}\n" +
+                                                $"Price:${existProduct.Price}\n" +
                                                 $"Available:{existProduct.AvailableCount}\n");
-                                                //$"Category:{existProduct.Category.Name}"
-                                                
                                         }
                                         Console.WriteLine("Enter product Id");
                                         int productId = Convert.ToInt32(Console.ReadLine());
@@ -380,9 +378,120 @@ while (isContinue)
                                         Console.WriteLine(ex.Message);
                                     }
                                     break;
+
+                                case (int)UpdateProduct.UpdateDescription:
+                                    try
+                                    {
+                                    productDesc:
+                                        foreach (var existProduct in context.Products)
+                                        {
+                                               Console.WriteLine($"\nId:{existProduct.Id}/" +
+                                                $"Name:{existProduct.Name.ToUpper()}\n" +
+                                                $"Description:{existProduct.Description}\n" +
+                                                $"Price:${existProduct.Price}\n" +
+                                                $"Available:{existProduct.AvailableCount}\n");
+                                        }
+                                        Console.WriteLine("Enter Product Id");
+                                        int productId = Convert.ToInt32(Console.ReadLine());
+                                        if (productId < 0)
+                                        {
+                                            Console.WriteLine("Id cannot be negative");
+                                            goto productDesc;
+                                        }
+                                        Product product = context.Products.Find(productId);
+                                        Console.WriteLine("Enter new Description:");
+                                        string desc = Console.ReadLine();
+                                        if (product.Description.ToLower() != desc.ToLower())
+                                            productService.UpdateProduct(product, product.Name, desc,product.Price,product.AvailableCount,product.CategoryId);
+                                        else
+                                        {
+                                            Console.WriteLine("Description cannot be the same");
+                                            goto productDesc;
+                                        }
+
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine(ex.Message);
+                                    }
+                                    break;
+                                case (int)UpdateProduct.UpdatePrice:
+                                    try
+                                    {
+                                    productPrice:
+                                        foreach (var existProduct in context.Products)
+                                        {
+                                            Console.WriteLine($"\nId:{existProduct.Id}/" +
+                                             $"Name:{existProduct.Name.ToUpper()}\n" +
+                                             $"Description:{existProduct.Description}\n" +
+                                             $"Price:${existProduct.Price}\n" +
+                                             $"Available:{existProduct.AvailableCount}\n");
+                                        }
+                                        Console.WriteLine("Enter Product Id");
+                                        int productId = Convert.ToInt32(Console.ReadLine());
+                                        if (productId < 0)
+                                        {
+                                            Console.WriteLine("Id cannot be negative");
+                                            goto productPrice;
+                                        }
+                                        Product product = context.Products.Find(productId);
+                                        Console.WriteLine("Enter new Price:");
+                                       decimal price=Convert.ToDecimal(Console.ReadLine());
+                                        if (product.Price!= price)
+                                            productService.UpdateProduct(product, product.Name, product.Description, price, product.AvailableCount, product.CategoryId);
+                                        else
+                                        {
+                                            Console.WriteLine("Price cannot be the same");
+                                            goto productPrice;
+                                        }
+
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine(ex.Message);
+                                    }
+                                    break;
+                                case (int)UpdateProduct.UpdateAvailableCount:
+                                    try
+                                    {
+                                    productAvailable:
+                                        foreach (var existProduct in context.Products)
+                                        {
+                                            Console.WriteLine($"\nId:{existProduct.Id}/" +
+                                             $"Name:{existProduct.Name.ToUpper()}\n" +
+                                             $"Description:{existProduct.Description}\n" +
+                                             $"Price:${existProduct.Price}\n" +
+                                             $"Available:{existProduct.AvailableCount}\n");
+                                        }
+                                        Console.WriteLine("Enter Product Id");
+                                        int productId = Convert.ToInt32(Console.ReadLine());
+                                        if (productId < 0)
+                                        {
+                                            Console.WriteLine("Id cannot be negative");
+                                            goto productAvailable;
+                                        }
+                                        Product product = context.Products.Find(productId);
+                                        Console.WriteLine("Enter new Available count:");
+                                        int available = Convert.ToInt32(Console.ReadLine());
+                                        if (product.AvailableCount != available)
+                                            productService.UpdateProduct(product, product.Name, product.Description, product.Price, available, product.CategoryId);
+                                        else
+                                        {
+                                            Console.WriteLine("Available count cannot be the same");
+                                            goto productAvailable;
+                                        }
+
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine(ex.Message);
+                                    }
+                                    break;
                             }
                         }
+                        else Console.WriteLine("Invalid option. Please select again.");
                     }
+                    else Console.WriteLine("Please enter correct format");
                     break;
 
                 default:

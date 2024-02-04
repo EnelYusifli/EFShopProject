@@ -3,5 +3,7 @@ public enum UserInfo
 {
     ReturnToHomePage,
     UpdateUserInfo,
-    AddNewCard
+    AddNewCard,
+    RemoveCard,
+    AddRemovedCard
 }

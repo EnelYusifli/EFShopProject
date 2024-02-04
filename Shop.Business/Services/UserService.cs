@@ -136,7 +136,7 @@ public class UserService : IUserService
         }
         else throw new CannotBeFoundException("User cannot be found");
     }
-    public void UpdateUser(User user, string name, string surname, string email, string username, string password, string phone, string address)
+    public void UpdateUser(User user, string name, string? surname, string email, string username, string password, string? phone, string? address)
     {
         if (user is not null)
         {
@@ -153,7 +153,7 @@ public class UserService : IUserService
             user.Address = address;
             context.SaveChanges();
             Console.WriteLine("Successfully updated");
-        }throw new CannotBeFoundException("User cannot be found");
+        }else throw new CannotBeFoundException("User cannot be found");
     }
 
 

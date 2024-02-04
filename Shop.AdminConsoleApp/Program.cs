@@ -111,13 +111,15 @@ while (isContinue)
     Console.WriteLine("4)Activate User");
     Console.WriteLine("5)Deactivate Product");
     Console.WriteLine("6)Activate Product");
+    Console.WriteLine("7)Update Product");
+    Console.WriteLine("8)Update Category");
     Console.WriteLine("0)Exit\n");
     string? option = Console.ReadLine();
     int intOption;
     bool isInt = int.TryParse(option, out intOption);
     if (isInt)
     {
-        if (intOption > 0 && intOption <= 6)
+        if (intOption > 0 && intOption <= 8)
         {
             switch (intOption)
             {
@@ -145,7 +147,7 @@ while (isContinue)
                     {
                         Console.WriteLine(ex.Message);
                     }
-                 
+
                     break;
                 case (int)AdminPanel.CreateCategory:
                     try
@@ -155,7 +157,7 @@ while (isContinue)
                         Console.WriteLine("Enter description");
                         string? categoryDescription = Console.ReadLine();
                         categoryService.CreateCategory(categoryName, categoryDescription);
-                        
+
                     }
                     catch (Exception ex)
                     {
@@ -165,13 +167,13 @@ while (isContinue)
                 case (int)AdminPanel.DeactivateUser:
                     try
                     {
-                        foreach (var userForDeactivate in context.Users.Where(u => u.IsDeactive==false))
+                        foreach (var userForDeactivate in context.Users.Where(u => u.IsDeactive == false))
                         {
                             Console.WriteLine($"\nId:{userForDeactivate.Id}/Name:{userForDeactivate.Name.ToUpper()}\n");
                         }
-                            Console.WriteLine("\nEnter user id");
-                            int userId= Convert.ToInt32(Console.ReadLine());
-                            userService.DeactivateUser(userId);
+                        Console.WriteLine("\nEnter user id");
+                        int userId = Convert.ToInt32(Console.ReadLine());
+                        userService.DeactivateUser(userId);
                     }
                     catch (Exception ex)
                     {
@@ -226,12 +228,106 @@ while (isContinue)
                         Console.WriteLine(ex.Message);
                     }
                     break;
+                case (int)AdminPanel.UpdateCategory:
+                    Console.WriteLine("1)Update Category Name");
+                    Console.WriteLine("2)Update Category Description");
+                    string? optionUpdateCategory = Console.ReadLine();
+                    int IntOptionUpdateCategory;
+                    bool isOptionUpdateCategory = int.TryParse(optionUpdateCategory, out IntOptionUpdateCategory);
+                    if (isOptionUpdateCategory)
+                    {
+                        if (IntOptionUpdateCategory > 0 && IntOptionUpdateCategory <= 2)
+                        {
+                            switch (IntOptionUpdateCategory)
+                            {
+                                case (int)UpdateCategory.UpdateName:
+                                    try
+                                    {
+                                    categoryName:
+                                        foreach (var existCategory in context.Categories)
+                                        {
+                                            Console.WriteLine($"\nId:{existCategory.Id}/" +
+                                                $"Name:{existCategory.Name.ToUpper()}\n");
+                                        }
+                                        Console.WriteLine("Enter Category Id");
+                                        int categoryId = Convert.ToInt32(Console.ReadLine());
+                                        if (categoryId < 0)
+                                        {
+                                            Console.WriteLine("Id cannot be negative");
+                                            goto categoryName;
+                                        }
+                                        Category category = context.Categories.Find(categoryId);
+                                        Console.WriteLine("Enter new Name:");
+                                        string name = Console.ReadLine();
+                                        if (name is not null)
+                                        {
+                                            if (category.Name.ToLower() != name.ToLower())
+                                                categoryService.UpdateCategory(category, name, category.Description);
+                                            else
+                                            {
+                                                Console.WriteLine("Name cannot be the same");
+                                                goto categoryName;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Console.WriteLine("Name cannot be null");
+                                            goto categoryName;
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine(ex.Message);
+                                    }
+                                    break;
+                                case (int)UpdateCategory.UpdateDescription:
+                                    try
+                                    {
+                                    categoryDesc:
+                                        foreach (var existCategory in context.Categories)
+                                        {
+                                            Console.WriteLine($"\nId:{existCategory.Id}/" +
+                                                $"Name:{existCategory.Name.ToUpper()}\n" +
+                                                $"Description:{existCategory.Description}");
+                                        }
+                                        Console.WriteLine("Enter Category Id");
+                                        int categoryId = Convert.ToInt32(Console.ReadLine());
+                                        if (categoryId < 0)
+                                        {
+                                            Console.WriteLine("Id cannot be negative");
+                                            goto categoryDesc;
+                                        }
+                                        Category category = context.Categories.Find(categoryId);
+                                        Console.WriteLine("Enter new Description:");
+                                        string desc = Console.ReadLine();
+                                            if (category.Description.ToLower() != desc.ToLower())
+                                                categoryService.UpdateCategory(category, category.Name, desc);
+                                            else
+                                            {
+                                                Console.WriteLine("Description cannot be the same");
+                                                goto categoryDesc;
+                                            }
+                                        
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.WriteLine(ex.Message);
+                                    }
+                                    break;
+                            }
+                        }
+                        else Console.WriteLine("Invalid option. Please select again.");
+                    }
+                    else Console.WriteLine("Please enter correct format");
+                    break;
                 default:
-                    isContinue= false;
+                    isContinue = false;
                     break;
             }
         }
+        else Console.WriteLine("Invalid option. Please select again.");
     }
+    else Console.WriteLine("Please enter correct format");
 }
 
 

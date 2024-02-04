@@ -417,7 +417,7 @@ while (isMainPageContinue)
                                             bool isIntUpdateUser = int.TryParse(updateUserOption, out updateUserIntOption);
                                             if (isIntUpdateUser)
                                             {
-                                                if (updateUserIntOption >= 0 && updateUserIntOption <= 6)
+                                                if (updateUserIntOption >= 0 && updateUserIntOption <= 7)
                                                 {
                                                     switch (updateUserIntOption)
                                                     {
@@ -546,7 +546,7 @@ while (isMainPageContinue)
                                                             break;
                                                         case (int)UserUpdateEnum.UpdateAddress:
                                                         address:
-                                                            Console.WriteLine("Enter new surname:");
+                                                            Console.WriteLine("Enter new address:");
                                                             string address = Console.ReadLine();
                                                             if (user.Address.ToLower() != address.ToLower())
                                                                 userService.UpdateUser(user, user.Name, user.Surname, user.Email, user.UserName, user.Password, user.Phone, address);

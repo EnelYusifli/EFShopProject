@@ -7,5 +7,7 @@ public enum AdminPanel
     ActivateUser,
     DeactivateProduct,
     ActivateProduct,
+    UpdateProduct,
+    UpdateCategory,
 }
 

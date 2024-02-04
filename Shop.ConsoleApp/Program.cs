@@ -259,7 +259,7 @@ while (isMainPageContinue)
                                 {
                                     CartProduct? cartProduct = await context.CartProducts
                                                     .FindAsync(user.Id, product.Id);
-                                    if (cartProduct.IsDeactive == false)
+                                    if (cartProduct.IsDeactive == false && cartProduct.ProductCountInCart!=0)
                                     {
                                         Console.Write($"\nId:{product.Id} Name: {product.Name.ToUpper()},\n" +
                                                       $"Price: {product.Price},\n" +
@@ -534,7 +534,6 @@ while (isMainPageContinue)
                                                                 Console.WriteLine("Password is uncorrect");
                                                                 goto password;
                                                             }
-
                                                             break;
                                                         case (int)UserUpdateEnum.UpdatePhone:
                                                         phone:

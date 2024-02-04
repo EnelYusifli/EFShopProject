@@ -51,7 +51,7 @@ public class ProductService : IProductService
         }
         else throw new CannotBeNullException("Name cannot be null");
     }
-   
+
     public void DeactivateCartProduct(int productId, User user)
     {
         Product? product = context.Products.Find(productId);
@@ -73,11 +73,17 @@ public class ProductService : IProductService
             if (product.IsDeactive == true)
             {
                 product.IsDeactive = false;
+                List<CartProduct> cartProducts = context.CartProducts.Where(cp => cp.ProductId == productId && cp.ProductCountInCart != 0).ToList();
+                foreach (var cartProduct in cartProducts)
+                {
+                    cartProduct.IsDeactive = false;
+                    cartProduct.ModifiedTime = DateTime.Now;
+                }
                 product.ModifiedTime = DateTime.Now;
                 context.SaveChanges();
-                Console.WriteLine("Successfully Deactivated");
+                Console.WriteLine("Successfully Activated");
             }
-            else throw new AlreadyExistException("Product is already active");
+            else throw new AlreadyExistException("Product is already deactive");
         }
         else throw new CannotBeFoundException("Product cannot be found");
     }
@@ -90,6 +96,12 @@ public class ProductService : IProductService
             if (product.IsDeactive == false)
             {
                 product.IsDeactive = true;
+                List<CartProduct> cartProducts = context.CartProducts.Where(cp => cp.ProductId == productId && cp.ProductCountInCart != 0).ToList();
+                foreach (var cartProduct in cartProducts)
+                {
+                    cartProduct.IsDeactive = true;
+                    cartProduct.ModifiedTime = DateTime.Now;
+                }
                 product.ModifiedTime = DateTime.Now;
                 context.SaveChanges();
                 Console.WriteLine("Successfully Deactivated");

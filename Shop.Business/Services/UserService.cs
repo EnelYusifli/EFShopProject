@@ -114,7 +114,22 @@ public class UserService : IUserService
             if (user.IsDeactive == false)
             {
                 user.IsDeactive = true;
-                user.ModifiedTime=DateTime.Now;
+                Cart cart = context.Carts.Find(userId);
+                cart.IsDeactive = true;
+                List<CartProduct> cartProducts = context.CartProducts.Where(cp => cp.CartId == userId && cp.ProductCountInCart != 0).ToList();
+                List<Wallet> wallets = context.Wallets.Where(w => w.UserId == userId).ToList();
+                foreach (var cartProduct in cartProducts)
+                {
+                    cartProduct.IsDeactive = true;
+                    cartProduct.ModifiedTime = DateTime.Now;
+                }
+                foreach (var wallet in wallets)
+                {
+                    wallet.IsDeactive = true;
+                    wallet.ModifiedTime = DateTime.Now;
+                }
+                cart.ModifiedTime = DateTime.Now;
+                user.ModifiedTime = DateTime.Now;
                 context.SaveChanges();
                 Console.WriteLine("Successfully Deactivated");
             }
@@ -130,6 +145,21 @@ public class UserService : IUserService
             if (user.IsDeactive == true)
             {
                 user.IsDeactive = false;
+                Cart cart = context.Carts.Find(userId);
+                cart.IsDeactive = false;
+                List<CartProduct> cartProducts = context.CartProducts.Where(cp => cp.CartId == userId && cp.ProductCountInCart!=0).ToList();
+                List<Wallet> wallets = context.Wallets.Where(w => w.UserId == userId).ToList();
+                foreach (var cartProduct in cartProducts)
+                {
+                    cartProduct.IsDeactive = false;
+                    cartProduct.ModifiedTime = DateTime.Now;
+                }
+                foreach (var wallet in wallets)
+                {
+                    wallet.IsDeactive = false;
+                    wallet.ModifiedTime = DateTime.Now;
+                }
+                cart.ModifiedTime = DateTime.Now;
                 user.ModifiedTime = DateTime.Now;
                 context.SaveChanges();
                 Console.WriteLine("Successfully Activated");

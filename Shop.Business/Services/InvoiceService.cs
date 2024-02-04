@@ -33,6 +33,7 @@ public class InvoiceService : IInvoiceService
                     {
                         CreateProuctInvoice(invoice, product, cartProduct.ProductCountInCart);
                         wallet.Balance -= totalPrice;
+                        cartProduct.ProductCountInCart = 0;
                         cartProduct.IsDeactive = true;
                     }
                     else throw new CannotBeFoundException("User cannot be found");

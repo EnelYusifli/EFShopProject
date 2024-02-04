@@ -32,6 +32,7 @@ public class CategoryService : ICategoryService
                     throw new ShouldBeUniqueException("This Name is already taken");
                 category.Name = name;
                 category.Description = description;
+                category.ModifiedTime= DateTime.Now;
                 context.Categories.Update(category);
                 context.SaveChanges();
                 Console.WriteLine("Updated Successfully");

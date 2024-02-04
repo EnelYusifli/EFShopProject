@@ -114,6 +114,7 @@ public class UserService : IUserService
             if (user.IsDeactive == false)
             {
                 user.IsDeactive = true;
+                user.ModifiedTime=DateTime.Now;
                 context.SaveChanges();
                 Console.WriteLine("Successfully Deactivated");
             }
@@ -129,6 +130,7 @@ public class UserService : IUserService
             if (user.IsDeactive == true)
             {
                 user.IsDeactive = false;
+                user.ModifiedTime = DateTime.Now;
                 context.SaveChanges();
                 Console.WriteLine("Successfully Activated");
             }
@@ -151,6 +153,7 @@ public class UserService : IUserService
             user.Password = password;
             user.Phone = phone;
             user.Address = address;
+            user.ModifiedTime = DateTime.Now;
             context.SaveChanges();
             Console.WriteLine("Successfully updated");
         }else throw new CannotBeFoundException("User cannot be found");

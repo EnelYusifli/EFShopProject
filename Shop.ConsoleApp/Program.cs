@@ -20,6 +20,7 @@ ShopDbContext context = new ShopDbContext();
 UserService userService = new UserService();
 ProductService productService = new ProductService();
 WalletService walletService = new WalletService();
+CartService cartService=new CartService();
 InvoiceService invoiceService = new InvoiceService();
 while (isContinue)
 {
@@ -227,7 +228,7 @@ while (isMainPageContinue)
                                             int productId = Convert.ToInt32(Console.ReadLine());
                                             Console.WriteLine("And the count you want to add");
                                             int productCount = Convert.ToInt32(Console.ReadLine());
-                                            productService.AddProductToCart(productId, user, productCount);
+                                            cartService.AddProductToCart(productId, user, productCount);
                                         }
                                         catch (Exception ex)
                                         {
@@ -332,7 +333,7 @@ while (isMainPageContinue)
                                                     int productId = Convert.ToInt32(Console.ReadLine());
                                                     Console.WriteLine("Enter the count that you want to remove");
                                                     int count = Convert.ToInt32(Console.ReadLine());
-                                                    productService.RemoveProductFromCart(productId, user,count);
+                                                    cartService.RemoveProductFromCart(productId, user,count);
                                                 }
                                                 catch (Exception ex)
                                                 {
@@ -346,8 +347,10 @@ while (isMainPageContinue)
                                                 break;
                                         }
                                     }
-                                   
+                                    else Console.WriteLine("Invalid option. Please select again.");
+
                                 }
+                                else Console.WriteLine("Please enter correct format");
                             }
                         }
 

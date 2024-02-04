@@ -2,7 +2,6 @@
 using Shop.Business.Utilities.Exceptions;
 using Shop.Core.Entities;
 using Shop.DataAccess;
-using System.ComponentModel.Design;
 
 namespace Shop.Business.Services;
 
@@ -48,24 +47,28 @@ public class InvoiceService : IInvoiceService
         else throw new CannotBeFoundException("User cannot be found");
     }
 
-    public void CreateProuctInvoice(Invoice invoice,Product product,int count)
+    public void CreateProuctInvoice(Invoice invoice, Product product, int count)
     {
         //if (invoice is not null && product is not null && product.IsDeactive == false )
         //{
-            if (product.AvailableCount >= count)
+        if (product.AvailableCount >= count)
+        {
+            ProductInvoice productInvoice = new ProductInvoice()
             {
-                ProductInvoice productInvoice = new ProductInvoice()
-                {
-                    Invoice = invoice,
-                    ProductId = product.Id,
-                    ProductCountInInvoice = count
-                };
-                product.AvailableCount -= count;
-                context.ProductInvoices.Add(productInvoice);
-                if (product.AvailableCount == 0)
-                    product.IsDeactive = true;
+                Invoice = invoice,
+                ProductId = product.Id,
+                ProductCountInInvoice = count
+            };
+            product.AvailableCount -= count;
+            context.ProductInvoices.Add(productInvoice);
+            if (product.AvailableCount == 0)
+            {
+                product.IsDeactive = true;
+                product.ModifiedTime = DateTime.Now;
+
             }
-            else throw new MoreThanMaximumException("The count is not available");
+        }
+        else throw new MoreThanMaximumException("The count is not available");
 
         //}
         //else throw new CannotBeFoundException("Value cannot be found");

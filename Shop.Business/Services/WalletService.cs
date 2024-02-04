@@ -35,22 +35,6 @@ public class WalletService : IWalletService
         else throw new CannotBeNullException("Value cannot be null");
 
     }
-    //public void WalletsOfUser(User user)
-    //{
-    //    if (user is not null)
-    //    {
-    //        if (context.Wallets.Where(w => w.UserId == user.Id).Any())
-    //        {
-    //            foreach (var wallet in context.Wallets.Where(w => w.User == user))
-    //            {
-    //                Console.WriteLine($"Id:{wallet.Id}/Balance:{wallet.Balance}");
-    //            }
-    //        }
-    //        else throw new CannotBeFoundException("You do not have any saved cart");
-    //    } else throw new CannotBeFoundException("User cannot be found");
-
-    //}
-
     public void DeactivateWallet(int walletId,User user)
     {
         Wallet wallet=context.Wallets.Find(walletId);
@@ -59,6 +43,7 @@ public class WalletService : IWalletService
             if (wallet.IsDeactive == false)
             {
                 wallet.IsDeactive = true;
+                wallet.ModifiedTime = DateTime.Now;
                 context.SaveChanges();
                 Console.WriteLine("Successfully Deactivated");
             }
@@ -75,6 +60,7 @@ public class WalletService : IWalletService
             if (wallet.IsDeactive == true)
             {
                 wallet.IsDeactive = false;
+                wallet.ModifiedTime = DateTime.Now;
                 context.SaveChanges();
                 Console.WriteLine("Successfully Activated");
             }

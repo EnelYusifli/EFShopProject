@@ -33,10 +33,11 @@ while (isContinue)
     bool isIntLogin = int.TryParse(loginOption, out loginIntOption);
     if (isIntLogin)
     {
-        if (loginIntOption > 0 && loginIntOption <= 2)
+        if (loginIntOption >= 0 && loginIntOption <= 2)
         {
             switch (loginIntOption)
             {
+                
                 case (int)LoginMethod.LoginWithMail:
                     try
                     {
@@ -112,20 +113,31 @@ while (isContinue)
     Console.WriteLine("4)Activate User");
     Console.WriteLine("5)Deactivate Product");
     Console.WriteLine("6)Activate Product");
-    Console.WriteLine("7)Update Product");
-    Console.WriteLine("8)Update Category");
-    Console.WriteLine("9)Get Invoice Report By Time");
-    Console.WriteLine("10)Get The Most Cart Products");
+    Console.WriteLine("7)Deactivate Category");
+    Console.WriteLine("8)Activate Category");
+    Console.WriteLine("9)Update Product");
+    Console.WriteLine("10)Update Category");
+    Console.WriteLine("11)Get Invoice Report By Time");
+    Console.WriteLine("12)Get The Most Cart Products");
+    Console.WriteLine("13)Show Deactive Users");
+    Console.WriteLine("14)Show Active Users");
+    Console.WriteLine("15)Show Deactive Products");
+    Console.WriteLine("16)Show Active Products");
+    Console.WriteLine("17)Show Deactive Categories");
+    Console.WriteLine("18)Show Active Categories");
     Console.WriteLine("0)Exit\n");
     string? option = Console.ReadLine();
     int intOption;
     bool isInt = int.TryParse(option, out intOption);
     if (isInt)
     {
-        if (intOption > 0 && intOption <= 10)
+        if (intOption >= 0 && intOption <= 18)
         {
             switch (intOption)
             {
+                case 0:
+                    isContinue = false;
+                    break;
                 case (int)AdminPanel.CreateProduct:
                     try
                     {
@@ -143,8 +155,8 @@ while (isContinue)
                                 $"Name:{category.Name.ToUpper()}\n");
                         }
                         Console.WriteLine("Enter Category Id");
-                        int categoryId = Convert.ToInt32(Console.ReadLine());
-                        productService.CreateProduct(name, description, price, count, categoryId);
+                        int categoryIdForPro = Convert.ToInt32(Console.ReadLine());
+                        productService.CreateProduct(name, description, price, count, categoryIdForPro);
                     }
                     catch (Exception ex)
                     {
@@ -170,7 +182,7 @@ while (isContinue)
                 case (int)AdminPanel.DeactivateUser:
                     try
                     {
-                        foreach (var userForDeactivate in context.Users.Where(u => u.IsDeactive == false))
+                        foreach (var userForDeactivate in context.Users.Where(u => u.IsDeactive == false && u.Id!=1))
                         {
                             Console.WriteLine($"\nId:{userForDeactivate.Id}/Name:{userForDeactivate.Name.ToUpper()}\n");
                         }
@@ -225,6 +237,40 @@ while (isContinue)
                         Console.WriteLine("\nEnter product id");
                         int productId = Convert.ToInt32(Console.ReadLine());
                         productService.ActivateProduct(productId);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    break;
+                case (int)AdminPanel.DeactivateCategory:
+                    foreach (var category in context.Categories.Where(c=>c.IsDeactive==false))
+                    {
+                        Console.WriteLine($"\nId:{category.Id}\n" +
+                            $"Name:{category.Name.ToUpper()}\n");
+                    }
+                    Console.WriteLine("Enter Category Id");
+                    int categoryId = Convert.ToInt32(Console.ReadLine());
+                    try
+                    {
+                        categoryService.DeactivateCategory(categoryId);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    break;
+                case (int)AdminPanel.ActivateCategory:
+                    foreach (var category in context.Categories.Where(c => c.IsDeactive == true))
+                    {
+                        Console.WriteLine($"\nId:{category.Id}\n" +
+                            $"Name:{category.Name.ToUpper()}\n");
+                    }
+                    Console.WriteLine("Enter Category Id");
+                    int categoryIdForActivate = Convert.ToInt32(Console.ReadLine());
+                    try
+                    {
+                        categoryService.ActivateCategory(categoryIdForActivate);
                     }
                     catch (Exception ex)
                     {
@@ -293,13 +339,13 @@ while (isContinue)
                                                 $"Name:{existCategory.Name.ToUpper()}\n");
                                         }
                                         Console.WriteLine("Enter Category Id");
-                                        int categoryId = Convert.ToInt32(Console.ReadLine());
-                                        if (categoryId < 0)
+                                        int categoryIdForUpdate = Convert.ToInt32(Console.ReadLine());
+                                        if (categoryIdForUpdate < 0)
                                         {
                                             Console.WriteLine("Id cannot be negative");
                                             goto categoryName;
                                         }
-                                        Category category = context.Categories.Find(categoryId);
+                                        Category category = context.Categories.Find(categoryIdForUpdate);
                                         Console.WriteLine("Enter new Name:");
                                         string name = Console.ReadLine();
                                         if (name is not null)
@@ -334,13 +380,13 @@ while (isContinue)
                                                 $"Description:{existCategory.Description}");
                                         }
                                         Console.WriteLine("Enter Category Id");
-                                        int categoryId = Convert.ToInt32(Console.ReadLine());
-                                        if (categoryId < 0)
+                                        int categoryIdForCat = Convert.ToInt32(Console.ReadLine());
+                                        if (categoryIdForCat < 0)
                                         {
                                             Console.WriteLine("Id cannot be negative");
                                             goto categoryDesc;
                                         }
-                                        Category category = context.Categories.Find(categoryId);
+                                        Category category = context.Categories.Find(categoryIdForCat);
                                         Console.WriteLine("Enter new Description:");
                                         string desc = Console.ReadLine();
                                             if (category.Description.ToLower() != desc.ToLower())
@@ -560,9 +606,9 @@ while (isContinue)
                                                 $"Name:{existCategory.Name.ToUpper()}\n");
                                         }
                                         Console.WriteLine("Enter new Category Id:");
-                                        int categoryId = Convert.ToInt32(Console.ReadLine());
-                                        if (product.CategoryId != categoryId)
-                                            productService.UpdateProduct(product, product.Name, product.Description, product.Price, product.AvailableCount, categoryId);
+                                        int categoryIdForUpt = Convert.ToInt32(Console.ReadLine());
+                                        if (product.CategoryId != categoryIdForUpt)
+                                            productService.UpdateProduct(product, product.Name, product.Description, product.Price, product.AvailableCount, categoryIdForUpt);
                                         else
                                         {
                                             Console.WriteLine("Category cannot be the same");

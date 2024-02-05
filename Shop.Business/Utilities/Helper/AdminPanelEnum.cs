@@ -7,9 +7,17 @@ public enum AdminPanel
     ActivateUser,
     DeactivateProduct,
     ActivateProduct,
+    DeactivateCategory,
+    ActivateCategory,
     UpdateProduct,
     UpdateCategory,
     GetInvoiceReport,
-    GetTheMostAddedProducts
+    GetTheMostAddedProducts,
+    ShowDeactiveUsers,
+    ShowActiveUsers,
+    ShowDeactiveProducts,
+    ShowActiveProducts,
+    ShowDeactiveCategories,
+    ShowActiveCategories,
 }
 

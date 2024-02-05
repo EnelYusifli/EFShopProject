@@ -138,6 +138,66 @@ while (isContinue)
                 case 0:
                     isContinue = false;
                     break;
+                case (int)AdminPanel.ShowActiveCategories:
+                    int count6 = 0;
+                    foreach (var category in context.Categories.Where(c => c.IsDeactive == false))
+                    {
+                        Console.WriteLine($"\nId:{category.Id}\n" +
+                            $"Name:{category.Name.ToUpper()}\n");
+                        count6++;
+                    }
+                    if (count6 == 0) Console.WriteLine("There is no active category");
+                    break;
+                case (int)AdminPanel.ShowDeactiveCategories:
+                    int count5 = 0;
+                    foreach (var category in context.Categories.Where(c => c.IsDeactive == true))
+                    {
+                        Console.WriteLine($"\nId:{category.Id}\n" +
+                            $"Name:{category.Name.ToUpper()}\n");
+                        count5++;
+                    }
+                    if (count5 == 0) Console.WriteLine("There is no deactive category");
+                    break;
+                case (int)AdminPanel.ShowDeactiveUsers:
+                    int count7 = 0;
+                    foreach (var deactUser in context.Users.Where(u => u.IsDeactive == true))
+                    {
+                        Console.WriteLine($"\nId:{deactUser.Id}\n" +
+                            $"Name:{deactUser.Name.ToUpper()}\n");
+                        count7++;
+                    }
+                    if (count7 == 0) Console.WriteLine("There is no deactive user");
+                    break;
+                case (int)AdminPanel.ShowActiveUsers:
+                    int count1 = 0;
+                    foreach (var actUser in context.Users.Where(u => u.IsDeactive == false))
+                    {
+                        Console.WriteLine($"\nId:{actUser.Id}\n" +
+                            $"Name:{actUser.Name.ToUpper()}\n");
+                        count1++;
+                    }
+                    if (count1 == 0) Console.WriteLine("There is no active user");
+                    break;
+                case (int)AdminPanel.ShowActiveProducts:
+                    int count2 = 0;
+                    foreach (var actPro in context.Products.Where(u => u.IsDeactive == false))
+                    {
+                        Console.WriteLine($"\nId:{actPro.Id}\n" +
+                            $"Name:{actPro.Name.ToUpper()}\n");
+                        count2++;
+                    }
+                    if (count2 == 0) Console.WriteLine("There is no active product");
+                    break;
+                case (int)AdminPanel.ShowDeactiveProducts:
+                    int count3 = 0;
+                    foreach (var deactPro in context.Products.Where(u => u.IsDeactive == true))
+                    {
+                        Console.WriteLine($"\nId:{deactPro.Id}\n" +
+                            $"Name:{deactPro.Name.ToUpper()}\n");
+                        count3++;
+                    }
+                    if (count3 == 0) Console.WriteLine("There is no deactive product");
+                    break;
                 case (int)AdminPanel.CreateProduct:
                     try
                     {

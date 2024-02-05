@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Shop.Business.Services;
-using Shop.Business.Utilities.Exceptions;
 using Shop.Business.Utilities.Helper;
 using Shop.Core.Entities;
 using Shop.DataAccess;
@@ -249,18 +248,12 @@ while (isMainPageContinue)
                 case (int)MainPage.GoToCart:
                     try
                     {
-
-                        //var products = context.Products.Include(p=>p.CartProducts.Where(cp => cp.CartId == user.Id))
                         var cart = await context.Carts.Include(c => c.CartProducts.Where(cp => !cp.IsDeactive)).ThenInclude(cp => cp.Product).FirstOrDefaultAsync(c => c.Id == user.Id);
-                            decimal total = 0;
+                        decimal total = 0;
                         if (cart is not null)
                         {
                             foreach (var cartProduct in cart.CartProducts)
                             {
-                                //if (cartProduct.IsDeactive == false)
-                                //{
-                                //    CartProduct? cartProduct = await context.CartProducts
-                                //                    .FindAsync(user.Id, product.Id);
                                 if (cartProduct.IsDeactive == false && cartProduct.ProductCountInCart != 0)
                                 {
                                     Console.Write($"\nId:{cartProduct.Product.Id} Name: {cartProduct.Product.Name.ToUpper()},\n" +
@@ -288,27 +281,27 @@ while (isMainPageContinue)
                                     switch (cartIntOption)
                                     {
                                         case (int)CartEnum.BuyAllProducts:
-                                            try
+                                            var wallets = context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false);
+                                            if (wallets.Any())
                                             {
-                                                var wallets = context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false);
-                                                if (wallets.Any())
+                                                foreach (var wallet in context.Wallets.Where(w => w.User == user && w.IsDeactive == false))
                                                 {
-                                                    foreach (var wallet in context.Wallets.Where(w => w.User == user && w.IsDeactive == false))
-                                                    {
-                                                        Console.WriteLine($"Id:{wallet.Id}/\nNumber:{wallet.Number}\nBalance:{wallet.Balance}");
-                                                    }
-                                                    Console.WriteLine("\nChoose the card that you want to pay with:\n");
-                                                    int walletId = Convert.ToInt32(Console.ReadLine());
-                                                    List<Product> productsInCart = context.Products.Where(p => p.CartProducts.Where(cp => cp.IsDeactive == false).Any(cp => cp.CartId == user.Id)).ToList();
-                                                    invoiceService.CreateInvoice(walletId, user, productsInCart, total);
+                                                    Console.WriteLine($"Id:{wallet.Id}/Number:{wallet.Number}\nBalance:{wallet.Balance}");
                                                 }
-                                                else throw new CannotBeFoundException("You do not have any saved card");
+                                                Console.WriteLine("\nChoose the card that you want to pay with:\n");
+                                                int walletIdForPay = Convert.ToInt32(Console.ReadLine());
+                                                List<Product> productsInCart = context.Products.Where(p => p.CartProducts.Where(cp => !cp.IsDeactive).Any(cp => cp.CartId == user.Id)).ToList();
+                                                try
+                                                {
+                                                    invoiceService.BuyProduct(walletIdForPay, user, productsInCart, total);
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    Console.WriteLine(ex.Message);
+                                                }
                                             }
-                                            catch (Exception ex)
-                                            {
-                                                Console.WriteLine(ex.Message);
-                                            }
-                                            break;
+                                                break;
+                                    
                                         case (int)CartEnum.RemoveProduct:
                                             try
                                             {
@@ -336,348 +329,348 @@ while (isMainPageContinue)
                             else Console.WriteLine("Please enter correct format");
                         }
                     }
-        
+
                     catch (Exception ex)
                     {
-            Console.WriteLine(ex.Message);
+                        Console.WriteLine(ex.Message);
                     }
-        break;
+                    break;
                 case (int)MainPage.SeeUserInfo:
-            Console.WriteLine($"\nName:{user.Name.ToUpper()}\n" +
-                $"Surname:{user.Surname.ToUpper()}\n" +
-                $"Email:{user.Email.ToLower()}\n" +
-                $"Username:{user.UserName}\n" +
-                $"Phone:{user.Phone}\n" +
-                $"Address:{user.Address}\n");
-            bool hasWallet = context.Wallets.Where(w => w.UserId == user.Id).Any();
-            if (hasWallet)
-            {
-                foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id))
-                {
-                    Console.WriteLine($"Card:{wallet.Number}\n" +
-                                      $"Balance:{wallet.Balance}");
-                }
-
-            }
-            else Console.WriteLine("You do not have any saved card");
-
-            bool isUserInfoContinue = true;
-            while (isUserInfoContinue)
-            {
-                Console.WriteLine("\n1)Update User Details");
-                Console.WriteLine("2)Add New Card");
-                Console.WriteLine("3)Remove Card");
-                Console.WriteLine("4)Add Removed Card");
-                Console.WriteLine("5)Increase Card balance");
-                Console.WriteLine("6)Transfer money");
-                Console.WriteLine("0)Return to main page\n");
-                string? homePageOption = Console.ReadLine();
-                int homePageIntOption;
-                bool isIntHomePage = int.TryParse(homePageOption, out homePageIntOption);
-                if (isIntHomePage)
-                {
-                    if (homePageIntOption >= 0 && homePageIntOption <= 6)
+                    Console.WriteLine($"\nName:{user.Name.ToUpper()}\n" +
+                        $"Surname:{user.Surname.ToUpper()}\n" +
+                        $"Email:{user.Email.ToLower()}\n" +
+                        $"Username:{user.UserName}\n" +
+                        $"Phone:{user.Phone}\n" +
+                        $"Address:{user.Address}\n");
+                    bool hasWallet = context.Wallets.Where(w => w.UserId == user.Id).Any();
+                    if (hasWallet)
                     {
-                        switch (homePageIntOption)
+                        foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id))
                         {
-                            case (int)UserInfo.UpdateUserInfo:
-                                bool isContinueUpdateUser = true;
-                                while (isContinueUpdateUser)
+                            Console.WriteLine($"Card:{wallet.Number}\n" +
+                                              $"Balance:{wallet.Balance}");
+                        }
+
+                    }
+                    else Console.WriteLine("You do not have any saved card");
+
+                    bool isUserInfoContinue = true;
+                    while (isUserInfoContinue)
+                    {
+                        Console.WriteLine("\n1)Update User Details");
+                        Console.WriteLine("2)Add New Card");
+                        Console.WriteLine("3)Remove Card");
+                        Console.WriteLine("4)Add Removed Card");
+                        Console.WriteLine("5)Increase Card balance");
+                        Console.WriteLine("6)Transfer money");
+                        Console.WriteLine("0)Return to main page\n");
+                        string? homePageOption = Console.ReadLine();
+                        int homePageIntOption;
+                        bool isIntHomePage = int.TryParse(homePageOption, out homePageIntOption);
+                        if (isIntHomePage)
+                        {
+                            if (homePageIntOption >= 0 && homePageIntOption <= 6)
+                            {
+                                switch (homePageIntOption)
                                 {
-                                    Console.WriteLine("1)Update Name");
-                                    Console.WriteLine("2)Update Surname");
-                                    Console.WriteLine("3)Update Email");
-                                    Console.WriteLine("4)Update Username");
-                                    Console.WriteLine("5)Update Password");
-                                    Console.WriteLine("6)Update Phone");
-                                    Console.WriteLine("7)Update Address");
-                                    Console.WriteLine("0)Return to user details page");
-                                    string? updateUserOption = Console.ReadLine();
-                                    int updateUserIntOption;
-                                    bool isIntUpdateUser = int.TryParse(updateUserOption, out updateUserIntOption);
-                                    if (isIntUpdateUser)
-                                    {
-                                        if (updateUserIntOption >= 0 && updateUserIntOption <= 7)
+                                    case (int)UserInfo.UpdateUserInfo:
+                                        bool isContinueUpdateUser = true;
+                                        while (isContinueUpdateUser)
                                         {
-                                            switch (updateUserIntOption)
+                                            Console.WriteLine("1)Update Name");
+                                            Console.WriteLine("2)Update Surname");
+                                            Console.WriteLine("3)Update Email");
+                                            Console.WriteLine("4)Update Username");
+                                            Console.WriteLine("5)Update Password");
+                                            Console.WriteLine("6)Update Phone");
+                                            Console.WriteLine("7)Update Address");
+                                            Console.WriteLine("0)Return to user details page");
+                                            string? updateUserOption = Console.ReadLine();
+                                            int updateUserIntOption;
+                                            bool isIntUpdateUser = int.TryParse(updateUserOption, out updateUserIntOption);
+                                            if (isIntUpdateUser)
                                             {
-                                                case (int)UserUpdateEnum.UpdateName:
-                                                name:
-                                                    Console.WriteLine("Enter new Name:");
-                                                    string name = Console.ReadLine();
-                                                    if (name is not null)
+                                                if (updateUserIntOption >= 0 && updateUserIntOption <= 7)
+                                                {
+                                                    switch (updateUserIntOption)
                                                     {
-                                                        if (user.Name.ToLower() != name.ToLower())
-                                                            userService.UpdateUser(user, name, user.Surname, user.Email, user.UserName, user.Password, user.Phone, user.Address);
-                                                        else
-                                                        {
-                                                            Console.WriteLine("Name cannot be the same");
-                                                            goto name;
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        Console.WriteLine("Name cannot be null");
-                                                        goto name;
-                                                    }
-                                                    break;
-
-                                                case (int)UserUpdateEnum.UpdateSurname:
-                                                surname:
-                                                    Console.WriteLine("Enter new surname:");
-                                                    string surname = Console.ReadLine();
-                                                    if (user.Surname.ToLower() != surname.ToLower())
-                                                        userService.UpdateUser(user, user.Name, surname, user.Email, user.UserName, user.Password, user.Phone, user.Address);
-                                                    else
-                                                    {
-                                                        Console.WriteLine("Surname cannot be the same");
-                                                        goto surname;
-                                                    }
-                                                    break;
-                                                case (int)UserUpdateEnum.UpdateEmail:
-                                                    try
-                                                    {
-                                                    email:
-                                                        Console.WriteLine("Enter new email:");
-                                                        string email = Console.ReadLine();
-                                                        if (email is not null && email.Length > 0)
-                                                        {
-                                                            if (user.Email.ToLower() != email.ToLower())
-                                                                userService.UpdateUser(user, user.Name, user.Surname, email, user.UserName, user.Password, user.Phone, user.Address);
-                                                            else
+                                                        case (int)UserUpdateEnum.UpdateName:
+                                                        name:
+                                                            Console.WriteLine("Enter new Name:");
+                                                            string name = Console.ReadLine();
+                                                            if (name is not null)
                                                             {
-                                                                Console.WriteLine("Email cannot be the same");
-                                                                goto email;
+                                                                if (user.Name.ToLower() != name.ToLower())
+                                                                    userService.UpdateUser(user, name, user.Surname, user.Email, user.UserName, user.Password, user.Phone, user.Address);
+                                                                else
+                                                                {
+                                                                    Console.WriteLine("Name cannot be the same");
+                                                                    goto name;
+                                                                }
                                                             }
-                                                        }
-                                                        else
-                                                        {
-                                                            Console.WriteLine("Email cannot be null");
-                                                            goto email;
-                                                        }
-                                                    }
-                                                    catch (Exception ex)
-                                                    {
-                                                        Console.WriteLine(ex.Message);
-                                                    }
-
-                                                    break;
-                                                case (int)UserUpdateEnum.UpdateUsername:
-                                                    try
-                                                    {
-                                                    username:
-                                                        Console.WriteLine("Enter new username:");
-                                                        string username = Console.ReadLine();
-                                                        if (username is not null && username.Length > 0)
-                                                        {
-                                                            if (user.UserName.ToLower() != username.ToLower())
-                                                                userService.UpdateUser(user, user.Name, user.Surname, user.Email, username, user.Password, user.Phone, user.Address);
                                                             else
                                                             {
-                                                                Console.WriteLine("Username cannot be the same");
-                                                                goto username;
+                                                                Console.WriteLine("Name cannot be null");
+                                                                goto name;
                                                             }
-                                                        }
-                                                        else
-                                                        {
-                                                            Console.WriteLine("Username cannot be null");
-                                                            goto username;
-                                                        }
-                                                    }
-                                                    catch (Exception ex)
-                                                    {
-                                                        Console.WriteLine(ex.Message);
-                                                    }
-                                                    break;
-                                                case (int)UserUpdateEnum.UpdatePassword:
-                                                password:
-                                                    Console.WriteLine("Enter old password:");
-                                                    string oldPassword = Console.ReadLine();
-                                                    if (oldPassword == user.Password)
-                                                    {
-                                                        Console.WriteLine("Enter new password:");
-                                                        string password = Console.ReadLine();
-                                                        if (user.Password.ToLower() != password.ToLower())
-                                                            if (password.Length >= 8)
-                                                                userService.UpdateUser(user, user.Name, user.Surname, user.Email, user.UserName, password, user.Phone, user.Address);
+                                                            break;
+
+                                                        case (int)UserUpdateEnum.UpdateSurname:
+                                                        surname:
+                                                            Console.WriteLine("Enter new surname:");
+                                                            string surname = Console.ReadLine();
+                                                            if (user.Surname.ToLower() != surname.ToLower())
+                                                                userService.UpdateUser(user, user.Name, surname, user.Email, user.UserName, user.Password, user.Phone, user.Address);
                                                             else
                                                             {
-                                                                Console.WriteLine("Password length must be at least 8");
+                                                                Console.WriteLine("Surname cannot be the same");
+                                                                goto surname;
+                                                            }
+                                                            break;
+                                                        case (int)UserUpdateEnum.UpdateEmail:
+                                                            try
+                                                            {
+                                                            email:
+                                                                Console.WriteLine("Enter new email:");
+                                                                string email = Console.ReadLine();
+                                                                if (email is not null && email.Length > 0)
+                                                                {
+                                                                    if (user.Email.ToLower() != email.ToLower())
+                                                                        userService.UpdateUser(user, user.Name, user.Surname, email, user.UserName, user.Password, user.Phone, user.Address);
+                                                                    else
+                                                                    {
+                                                                        Console.WriteLine("Email cannot be the same");
+                                                                        goto email;
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    Console.WriteLine("Email cannot be null");
+                                                                    goto email;
+                                                                }
+                                                            }
+                                                            catch (Exception ex)
+                                                            {
+                                                                Console.WriteLine(ex.Message);
+                                                            }
+
+                                                            break;
+                                                        case (int)UserUpdateEnum.UpdateUsername:
+                                                            try
+                                                            {
+                                                            username:
+                                                                Console.WriteLine("Enter new username:");
+                                                                string username = Console.ReadLine();
+                                                                if (username is not null && username.Length > 0)
+                                                                {
+                                                                    if (user.UserName.ToLower() != username.ToLower())
+                                                                        userService.UpdateUser(user, user.Name, user.Surname, user.Email, username, user.Password, user.Phone, user.Address);
+                                                                    else
+                                                                    {
+                                                                        Console.WriteLine("Username cannot be the same");
+                                                                        goto username;
+                                                                    }
+                                                                }
+                                                                else
+                                                                {
+                                                                    Console.WriteLine("Username cannot be null");
+                                                                    goto username;
+                                                                }
+                                                            }
+                                                            catch (Exception ex)
+                                                            {
+                                                                Console.WriteLine(ex.Message);
+                                                            }
+                                                            break;
+                                                        case (int)UserUpdateEnum.UpdatePassword:
+                                                        password:
+                                                            Console.WriteLine("Enter old password:");
+                                                            string oldPassword = Console.ReadLine();
+                                                            if (oldPassword == user.Password)
+                                                            {
+                                                                Console.WriteLine("Enter new password:");
+                                                                string password = Console.ReadLine();
+                                                                if (user.Password.ToLower() != password.ToLower())
+                                                                    if (password.Length >= 8)
+                                                                        userService.UpdateUser(user, user.Name, user.Surname, user.Email, user.UserName, password, user.Phone, user.Address);
+                                                                    else
+                                                                    {
+                                                                        Console.WriteLine("Password length must be at least 8");
+                                                                        goto password;
+                                                                    }
+                                                                else
+                                                                {
+                                                                    Console.WriteLine("Password cannot be the same");
+                                                                    goto password;
+                                                                }
+                                                            }
+                                                            else
+                                                            {
+                                                                Console.WriteLine("Password is uncorrect");
                                                                 goto password;
                                                             }
-                                                        else
-                                                        {
-                                                            Console.WriteLine("Password cannot be the same");
-                                                            goto password;
-                                                        }
+                                                            break;
+                                                        case (int)UserUpdateEnum.UpdatePhone:
+                                                        phone:
+                                                            Console.WriteLine("Enter new Phone:");
+                                                            string phone = Console.ReadLine();
+                                                            if (user.Phone.ToLower() != phone.ToLower())
+                                                                userService.UpdateUser(user, user.Name, user.Surname, user.Email, user.UserName, user.Password, phone, user.Address);
+                                                            else
+                                                            {
+                                                                Console.WriteLine("Phone cannot be the same");
+                                                                goto phone;
+                                                            }
+                                                            break;
+                                                        case (int)UserUpdateEnum.UpdateAddress:
+                                                        address:
+                                                            Console.WriteLine("Enter new address:");
+                                                            string address = Console.ReadLine();
+                                                            if (user.Address.ToLower() != address.ToLower())
+                                                                userService.UpdateUser(user, user.Name, user.Surname, user.Email, user.UserName, user.Password, user.Phone, address);
+                                                            else
+                                                            {
+                                                                Console.WriteLine("Address cannot be the same");
+                                                                goto address;
+                                                            }
+                                                            break;
+                                                        case (int)UserUpdateEnum.ReturnToHomePage:
+                                                            isContinueUpdateUser = false;
+                                                            break;
                                                     }
-                                                    else
-                                                    {
-                                                        Console.WriteLine("Password is uncorrect");
-                                                        goto password;
-                                                    }
-                                                    break;
-                                                case (int)UserUpdateEnum.UpdatePhone:
-                                                phone:
-                                                    Console.WriteLine("Enter new Phone:");
-                                                    string phone = Console.ReadLine();
-                                                    if (user.Phone.ToLower() != phone.ToLower())
-                                                        userService.UpdateUser(user, user.Name, user.Surname, user.Email, user.UserName, user.Password, phone, user.Address);
-                                                    else
-                                                    {
-                                                        Console.WriteLine("Phone cannot be the same");
-                                                        goto phone;
-                                                    }
-                                                    break;
-                                                case (int)UserUpdateEnum.UpdateAddress:
-                                                address:
-                                                    Console.WriteLine("Enter new address:");
-                                                    string address = Console.ReadLine();
-                                                    if (user.Address.ToLower() != address.ToLower())
-                                                        userService.UpdateUser(user, user.Name, user.Surname, user.Email, user.UserName, user.Password, user.Phone, address);
-                                                    else
-                                                    {
-                                                        Console.WriteLine("Address cannot be the same");
-                                                        goto address;
-                                                    }
-                                                    break;
-                                                case (int)UserUpdateEnum.ReturnToHomePage:
-                                                    isContinueUpdateUser = false;
-                                                    break;
+                                                }
+                                                else Console.WriteLine("Invalid option. Please select again.");
+                                            }
+                                            else Console.WriteLine("Please enter correct format");
+                                        }
+                                        break;
+
+                                    case (int)UserInfo.AddNewCard:
+                                        try
+                                        {
+                                            Console.WriteLine("Enter card number");
+                                            string cardNumber = Console.ReadLine();
+                                            Console.WriteLine("Enter CVC");
+                                            string cvc = Console.ReadLine();
+                                            Console.WriteLine("Enter balance");
+                                            decimal balance = Convert.ToDecimal(Console.ReadLine());
+                                            walletService.CreateCard(user, cardNumber, cvc, balance);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Console.WriteLine(ex.Message);
+                                        }
+                                        break;
+                                    case (int)UserInfo.RemoveCard:
+                                        bool hasWalletForRemove = context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false).Any();
+                                        if (hasWalletForRemove)
+                                        {
+                                            foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false))
+                                            {
+                                                Console.WriteLine($"Id:{wallet.Id}/" +
+                                                                  $"Card:{wallet.Number}\n" +
+                                                                  $"Balance:{wallet.Balance}");
+                                            }
+                                            Console.WriteLine("Enter Card Id");
+                                            int walletIdForDeact = Convert.ToInt32(Console.ReadLine());
+                                            try
+                                            {
+                                                walletService.DeactivateWallet(walletIdForDeact, user);
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                Console.WriteLine(ex.Message);
                                             }
                                         }
-                                        else Console.WriteLine("Invalid option. Please select again.");
-                                    }
-                                    else Console.WriteLine("Please enter correct format");
-                                }
-                                break;
+                                        else Console.WriteLine("You do not have any active card");
+                                        break;
+                                    case (int)UserInfo.AddRemovedCard:
+                                        bool hasWalletForAdd = context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == true).Any();
+                                        if (hasWalletForAdd)
+                                        {
+                                            foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == true))
+                                            {
+                                                Console.WriteLine($"Id:{wallet.Id}/" +
+                                                                  $"Card:{wallet.Number}\n" +
+                                                                  $"Balance:{wallet.Balance}");
+                                            }
+                                            Console.WriteLine("Enter Card Id");
+                                            int walletIdForAddCard = Convert.ToInt32(Console.ReadLine());
+                                            try
+                                            {
+                                                walletService.ActivateWallet(walletIdForAddCard, user);
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                Console.WriteLine(ex.Message);
+                                            }
+                                        }
+                                        else Console.WriteLine("You do not have any deleted card");
+                                        break;
+                                    case (int)UserInfo.IncreaseCardBalance:
+                                        foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false))
+                                        {
+                                            Console.WriteLine($"Id:{wallet.Id}/" +
+                                                              $"Card:{wallet.Number}\n" +
+                                                              $"Balance:{wallet.Balance}");
+                                        }
+                                        Console.WriteLine("Enter Card Id");
+                                        int walletIdForIncBalance = Convert.ToInt32(Console.ReadLine());
+                                        Console.WriteLine("Enter the amount of money");
+                                        decimal amount = Convert.ToDecimal(Console.ReadLine());
+                                        try
+                                        {
+                                            walletService.IncreaseBalance(walletIdForIncBalance, user, amount);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Console.WriteLine(ex.Message);
+                                        }
+                                        break;
+                                    case (int)UserInfo.TransferMoney:
+                                        foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false))
+                                        {
+                                            Console.WriteLine($"Id:{wallet.Id}/" +
+                                                              $"Card:{wallet.Number}\n" +
+                                                              $"Balance:{wallet.Balance}");
+                                        }
+                                        Console.WriteLine("Enter Card Id To Get the Money");
+                                        int walletIdForInc = Convert.ToInt32(Console.ReadLine());
+                                        foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false))
+                                        {
+                                            Console.WriteLine($"Id:{wallet.Id}/" +
+                                                              $"Card:{wallet.Number}\n" +
+                                                              $"Balance:{wallet.Balance}");
+                                        }
+                                        Console.WriteLine("Enter Card Id To Transfer the Money");
+                                        int walletIdForDec = Convert.ToInt32(Console.ReadLine());
+                                        Console.WriteLine("Enter Amount to Transfer");
+                                        decimal transferAmount = Convert.ToDecimal(Console.ReadLine());
+                                        try
+                                        {
+                                            walletService.TransferMoney(walletIdForInc, walletIdForDec, user, transferAmount);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Console.WriteLine(ex.Message);
+                                        }
 
-                            case (int)UserInfo.AddNewCard:
-                                try
-                                {
-                                    Console.WriteLine("Enter card number");
-                                    string cardNumber = Console.ReadLine();
-                                    Console.WriteLine("Enter CVC");
-                                    string cvc = Console.ReadLine();
-                                    Console.WriteLine("Enter balance");
-                                    decimal balance = Convert.ToDecimal(Console.ReadLine());
-                                    walletService.CreateCard(user, cardNumber, cvc, balance);
-                                }
-                                catch (Exception ex)
-                                {
-                                    Console.WriteLine(ex.Message);
-                                }
-                                break;
-                            case (int)UserInfo.RemoveCard:
-                                bool hasWalletForRemove = context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false).Any();
-                                if (hasWalletForRemove)
-                                {
-                                    foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false))
-                                    {
-                                        Console.WriteLine($"Id:{wallet.Id}/" +
-                                                          $"Card:{wallet.Number}\n" +
-                                                          $"Balance:{wallet.Balance}");
-                                    }
-                                    Console.WriteLine("Enter Card Id");
-                                    int walletIdForDeact = Convert.ToInt32(Console.ReadLine());
-                                    try
-                                    {
-                                        walletService.DeactivateWallet(walletIdForDeact, user);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Console.WriteLine(ex.Message);
-                                    }
-                                }
-                                else Console.WriteLine("You do not have any active card");
-                                break;
-                            case (int)UserInfo.AddRemovedCard:
-                                bool hasWalletForAdd = context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == true).Any();
-                                if (hasWalletForAdd)
-                                {
-                                    foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == true))
-                                    {
-                                        Console.WriteLine($"Id:{wallet.Id}/" +
-                                                          $"Card:{wallet.Number}\n" +
-                                                          $"Balance:{wallet.Balance}");
-                                    }
-                                    Console.WriteLine("Enter Card Id");
-                                    int walletIdForAddCard = Convert.ToInt32(Console.ReadLine());
-                                    try
-                                    {
-                                        walletService.ActivateWallet(walletIdForAddCard, user);
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        Console.WriteLine(ex.Message);
-                                    }
-                                }
-                                else Console.WriteLine("You do not have any deleted card");
-                                break;
-                            case (int)UserInfo.IncreaseCardBalance:
-                                foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false))
-                                {
-                                    Console.WriteLine($"Id:{wallet.Id}/" +
-                                                      $"Card:{wallet.Number}\n" +
-                                                      $"Balance:{wallet.Balance}");
-                                }
-                                Console.WriteLine("Enter Card Id");
-                                int walletIdForIncBalance = Convert.ToInt32(Console.ReadLine());
-                                Console.WriteLine("Enter the amount of money");
-                                decimal amount = Convert.ToDecimal(Console.ReadLine());
-                                try
-                                {
-                                    walletService.IncreaseBalance(walletIdForIncBalance, user, amount);
-                                }
-                                catch (Exception ex)
-                                {
-                                    Console.WriteLine(ex.Message);
-                                }
-                                break;
-                            case (int)UserInfo.TransferMoney:
-                                foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false))
-                                {
-                                    Console.WriteLine($"Id:{wallet.Id}/" +
-                                                      $"Card:{wallet.Number}\n" +
-                                                      $"Balance:{wallet.Balance}");
-                                }
-                                Console.WriteLine("Enter Card Id To Get the Money");
-                                int walletIdForInc = Convert.ToInt32(Console.ReadLine());
-                                foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false))
-                                {
-                                    Console.WriteLine($"Id:{wallet.Id}/" +
-                                                      $"Card:{wallet.Number}\n" +
-                                                      $"Balance:{wallet.Balance}");
-                                }
-                                Console.WriteLine("Enter Card Id To Transfer the Money");
-                                int walletIdForDec = Convert.ToInt32(Console.ReadLine());
-                                Console.WriteLine("Enter Amount to Transfer");
-                                decimal transferAmount = Convert.ToDecimal(Console.ReadLine());
-                                try
-                                {
-                                    walletService.TransferMoney(walletIdForInc, walletIdForDec, user, transferAmount);
-                                }
-                                catch (Exception ex)
-                                {
-                                    Console.WriteLine(ex.Message);
-                                }
+                                        break;
+                                    case (int)UserInfo.ReturnToHomePage:
+                                        isUserInfoContinue = false;
+                                        break;
 
-                                break;
-                            case (int)UserInfo.ReturnToHomePage:
-                                isUserInfoContinue = false;
-                                break;
-
+                                }
+                            }
+                            else Console.WriteLine("Invalid option. Please select again.");
                         }
+                        else Console.WriteLine("Please enter correct format");
                     }
-                    else Console.WriteLine("Invalid option. Please select again.");
-                }
-                else Console.WriteLine("Please enter correct format");
+                    break;
             }
-            break;
         }
+        else Console.WriteLine("Invalid option. Please select again.");
     }
-    else Console.WriteLine("Invalid option. Please select again.");
-}
     else Console.WriteLine("Please enter correct format");
 }
 

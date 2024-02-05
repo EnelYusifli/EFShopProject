@@ -158,4 +158,19 @@ public void IncreaseBalance(int walletId, User user,decimal amount)
         }
         else throw new CannotBeFoundException("User cannot be found");
     }
+
+    public void PayForInvoice(int walletId, User user, decimal amount)
+    {
+        Wallet wallet = context.Wallets.FirstOrDefault(w => w.Id == walletId && w.UserId == user.Id);
+        if (amount <= 0) throw new LessThanMinimumException("Your cart is empty");
+        if (wallet is not null && wallet.IsDeactive==false)
+        {
+            if (wallet.Balance < amount)
+                throw new LessThanMinimumException("Balance of this wallet is not enough");
+            wallet.Balance -= amount;
+            wallet.ModifiedTime = DateTime.Now;
+            context.Entry(wallet).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+        }
+        else throw new CannotBeFoundException("You do not have any saved card");
+    }
 }

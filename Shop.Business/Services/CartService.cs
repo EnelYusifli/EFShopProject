@@ -10,6 +10,7 @@ public class CartService: ICartService
     ShopDbContext context = new();
     public void AddProductToCart(int productId, User user, int count = 1)
     {
+        if (count <= 0) throw new LessThanMinimumException("Value cannot be 0 or negative");
         Product? product = context.Products.Find(productId);
         if (product is not null && product.IsDeactive == false && user is not null && user.IsDeactive == false)
         {

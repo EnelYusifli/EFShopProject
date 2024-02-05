@@ -10,5 +10,6 @@ public enum AdminPanel
     UpdateProduct,
     UpdateCategory,
     GetInvoiceReport,
+    GetTheMostAddedProducts
 }
 

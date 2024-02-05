@@ -22,6 +22,7 @@ public class ShopDbContext : DbContext
     public DbSet<ProductInvoice>? ProductInvoices { get; set; }
     public DbSet<CartProduct>? CartProducts { get; set; }
     public DbSet<InvoiceReportProcedure>? InvoiceReport { get; set; }
+    public DbSet<TheMostAddedProducts>? TheMostAddedProducts { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>()
@@ -86,11 +87,18 @@ public class ShopDbContext : DbContext
             .HasKey(pd => new { pd.ProductId, pd.DiscountId });
         modelBuilder.Entity<InvoiceReportProcedure>()
             .ToTable(nameof(InvoiceReportProcedure), t => t.ExcludeFromMigrations()).HasNoKey();
+        modelBuilder.Entity<TheMostAddedProducts>()
+            .ToTable(nameof(TheMostAddedProducts), t => t.ExcludeFromMigrations()).HasNoKey();
     }
     public IEnumerable<InvoiceReportProcedure> GetInvoiceReport(DateTime startTime, DateTime endTime)
     {
-        return InvoiceReport.FromSqlInterpolated($"EXEC usp_GetInvoiceReport {startTime}, {endTime}").ToList();
+        if (startTime < endTime)
+            return InvoiceReport.FromSqlInterpolated($"EXEC usp_GetInvoiceReport {startTime}, {endTime}").ToList();
+        else throw new Exception("Start Time Cannot be after End Time");
     }
-
-
+    public IEnumerable<TheMostAddedProducts> GetTheMostAddedProducts(int count)
+    {
+        if (count <= 0) throw new Exception("Count cannot be negative or 0");
+        return TheMostAddedProducts.FromSqlInterpolated($"EXEC usp_GetTheMostAddedProducts {count}").ToList();
+    }
 }

@@ -115,13 +115,14 @@ while (isContinue)
     Console.WriteLine("7)Update Product");
     Console.WriteLine("8)Update Category");
     Console.WriteLine("9)Get Invoice Report By Time");
+    Console.WriteLine("10)Get The Most Cart Products");
     Console.WriteLine("0)Exit\n");
     string? option = Console.ReadLine();
     int intOption;
     bool isInt = int.TryParse(option, out intOption);
     if (isInt)
     {
-        if (intOption > 0 && intOption <= 9)
+        if (intOption > 0 && intOption <= 10)
         {
             switch (intOption)
             {
@@ -247,6 +248,23 @@ while (isContinue)
                         }
                         Console.WriteLine($"Total sale:{total}");
 
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    break;
+                case (int)AdminPanel.GetTheMostAddedProducts:
+                    Console.WriteLine("Enter the count of products");
+                    int countOfPro = Convert.ToInt32(Console.ReadLine());
+                    try
+                    {
+                        var result = context.GetTheMostAddedProducts(countOfPro);
+                        Console.WriteLine("Product Name\t             Count");
+                        foreach (var item in result)
+                        {
+                            Console.WriteLine($"{item.Name.ToUpper()}\t  {item.ProductCount}");
+                        }
                     }
                     catch (Exception ex)
                     {

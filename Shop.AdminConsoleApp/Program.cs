@@ -114,13 +114,14 @@ while (isContinue)
     Console.WriteLine("6)Activate Product");
     Console.WriteLine("7)Update Product");
     Console.WriteLine("8)Update Category");
+    Console.WriteLine("9)Get Invoice Report By Time");
     Console.WriteLine("0)Exit\n");
     string? option = Console.ReadLine();
     int intOption;
     bool isInt = int.TryParse(option, out intOption);
     if (isInt)
     {
-        if (intOption > 0 && intOption <= 8)
+        if (intOption > 0 && intOption <= 9)
         {
             switch (intOption)
             {
@@ -223,6 +224,29 @@ while (isContinue)
                         Console.WriteLine("\nEnter product id");
                         int productId = Convert.ToInt32(Console.ReadLine());
                         productService.ActivateProduct(productId);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    break;
+                case (int)AdminPanel.GetInvoiceReport:
+                    Console.WriteLine("Enter Start Time");
+                    DateTime startTime = Convert.ToDateTime(Console.ReadLine());
+                    Console.WriteLine("Enter End Time");
+                    DateTime endTime = Convert.ToDateTime(Console.ReadLine());
+                    try
+                    {
+                        var result = context.GetInvoiceReport(startTime, endTime);
+                        Console.WriteLine("Id\tTotalPrice\tCreatedDate");
+                        decimal total = 0;
+                        foreach (var item in result)
+                        {
+                            Console.WriteLine($"{item.Id}\t{item.TotalPrice}\t        {item.CreatedDate}");
+                            total += item.TotalPrice;
+                        }
+                        Console.WriteLine($"Total sale:{total}");
+
                     }
                     catch (Exception ex)
                     {

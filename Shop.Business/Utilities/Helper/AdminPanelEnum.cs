@@ -9,5 +9,6 @@ public enum AdminPanel
     ActivateProduct,
     UpdateProduct,
     UpdateCategory,
+    GetInvoiceReport,
 }
 

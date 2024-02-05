@@ -38,7 +38,7 @@ namespace Shop.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Carts", (string)null);
+                    b.ToTable("Carts");
                 });
 
             modelBuilder.Entity("Shop.Core.Entities.CartProduct", b =>
@@ -65,7 +65,7 @@ namespace Shop.DataAccess.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("CartProducts", (string)null);
+                    b.ToTable("CartProducts");
                 });
 
             modelBuilder.Entity("Shop.Core.Entities.Category", b =>
@@ -97,7 +97,7 @@ namespace Shop.DataAccess.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Categories", (string)null);
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("Shop.Core.Entities.Discount", b =>
@@ -128,7 +128,7 @@ namespace Shop.DataAccess.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Discounts", (string)null);
+                    b.ToTable("Discounts");
                 });
 
             modelBuilder.Entity("Shop.Core.Entities.Invoice", b =>
@@ -158,7 +158,7 @@ namespace Shop.DataAccess.Migrations
 
                     b.HasIndex("WalletId");
 
-                    b.ToTable("Invoices", (string)null);
+                    b.ToTable("Invoices");
                 });
 
             modelBuilder.Entity("Shop.Core.Entities.Product", b =>
@@ -201,7 +201,7 @@ namespace Shop.DataAccess.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("Shop.Core.Entities.ProductDiscount", b =>
@@ -228,7 +228,7 @@ namespace Shop.DataAccess.Migrations
 
                     b.HasIndex("DiscountId");
 
-                    b.ToTable("ProductDiscounts", (string)null);
+                    b.ToTable("ProductDiscounts");
                 });
 
             modelBuilder.Entity("Shop.Core.Entities.ProductInvoice", b =>
@@ -255,7 +255,7 @@ namespace Shop.DataAccess.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("ProductInvoices", (string)null);
+                    b.ToTable("ProductInvoices");
                 });
 
             modelBuilder.Entity("Shop.Core.Entities.User", b =>
@@ -311,7 +311,7 @@ namespace Shop.DataAccess.Migrations
                     b.HasIndex("UserName")
                         .IsUnique();
 
-                    b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Shop.Core.Entities.Wallet", b =>
@@ -352,7 +352,7 @@ namespace Shop.DataAccess.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Wallets", (string)null);
+                    b.ToTable("Wallets");
                 });
 
             modelBuilder.Entity("Shop.Core.Entities.Cart", b =>

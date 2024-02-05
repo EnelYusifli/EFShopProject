@@ -1,9 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Shop.Core.Entities;
+using Shop.Core.Entities.Views;
 
 namespace Shop.DataAccess;
 
-public class ShopDbContext:DbContext
+public class ShopDbContext : DbContext
 {
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -19,6 +21,7 @@ public class ShopDbContext:DbContext
     public DbSet<ProductDiscount>? ProductDiscounts { get; set; }
     public DbSet<ProductInvoice>? ProductInvoices { get; set; }
     public DbSet<CartProduct>? CartProducts { get; set; }
+    public DbSet<InvoiceReportProcedure>? InvoiceReport { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>()
@@ -80,6 +83,14 @@ public class ShopDbContext:DbContext
         modelBuilder.Entity<CartProduct>()
             .HasKey(cp => new { cp.CartId, cp.ProductId });
         modelBuilder.Entity<ProductDiscount>()
-            .HasKey(pd => new {  pd.ProductId, pd.DiscountId });
+            .HasKey(pd => new { pd.ProductId, pd.DiscountId });
+        modelBuilder.Entity<InvoiceReportProcedure>()
+            .ToTable(nameof(InvoiceReportProcedure), t => t.ExcludeFromMigrations()).HasNoKey();
     }
+    public IEnumerable<InvoiceReportProcedure> GetInvoiceReport(DateTime startTime, DateTime endTime)
+    {
+        return InvoiceReport.FromSqlInterpolated($"EXEC usp_GetInvoiceReport {startTime}, {endTime}").ToList();
+    }
+
+
 }

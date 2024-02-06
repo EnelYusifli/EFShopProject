@@ -25,8 +25,7 @@ CategoryService categoryService = new CategoryService();
 WalletService walletService = new WalletService();
 while (isContinue)
 {
-    Console.WriteLine("1)Login With Email");
-    Console.WriteLine("2)Login With Username");
+    Console.WriteLine("\n1)Login With Email \t 2)Login With Username\n");
     Console.WriteLine("Select an option");
     string? loginOption = Console.ReadLine();
     int loginIntOption;
@@ -37,7 +36,7 @@ while (isContinue)
         {
             switch (loginIntOption)
             {
-                
+
                 case (int)LoginMethod.LoginWithMail:
                     try
                     {
@@ -46,13 +45,17 @@ while (isContinue)
                         Console.WriteLine("Enter Password");
                         string password = userService.ReadPasswordFromConsole();
                         string hashedPassword = userService.HashPassword(password);
+                        Console.ForegroundColor = ConsoleColor.Green;
                         userService.LoginAdminWithEmail(email, password);
+                        Console.ResetColor();
                     YesOrNo:
                         Console.WriteLine("\nDo you want to continue? (yes/no)");
                         string? continueOption = Console.ReadLine();
                         if (continueOption is null || continueOption.ToLower() != "yes" && continueOption.ToLower() != "no")
                         {
+                            Console.ForegroundColor = ConsoleColor.Yellow;
                             Console.WriteLine("Please write yes/no");
+                            Console.ResetColor();
                             goto YesOrNo;
                         }
                         if (continueOption.ToLower() == "no")
@@ -66,7 +69,9 @@ while (isContinue)
                     }
                     catch (Exception ex)
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine(ex.Message);
+                        Console.ResetColor();
                     }
                     break;
                 case (int)LoginMethod.LoginWithUsername:
@@ -77,13 +82,17 @@ while (isContinue)
                         Console.WriteLine("Enter Password");
                         string password = userService.ReadPasswordFromConsole();
                         string hashedPassword = userService.HashPassword(password);
+                        Console.ForegroundColor = ConsoleColor.Green;
                         userService.LoginAdminWithUsername(username, password);
+                        Console.ResetColor();
                     YesOrNo:
                         Console.WriteLine("\nDo you want to continue? (yes/no)");
                         string? continueOption = Console.ReadLine();
                         if (continueOption is null || continueOption.ToLower() != "yes" && continueOption.ToLower() != "no")
                         {
+                            Console.ForegroundColor = ConsoleColor.Yellow;
                             Console.WriteLine("Please write yes/no");
+                            Console.ResetColor();
                             goto YesOrNo;
                         }
                         if (continueOption.ToLower() == "no")
@@ -96,7 +105,9 @@ while (isContinue)
                     }
                     catch (Exception ex)
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine(ex.Message);
+                        Console.ResetColor();
                     }
                     break;
             }
@@ -111,24 +122,30 @@ while (isContinue)
 {
     Console.WriteLine("\n1)Create Product");
     Console.WriteLine("2)Create Category");
+    Console.WriteLine("-------------------");
     Console.WriteLine("3)Deactivate User");
     Console.WriteLine("4)Activate User");
     Console.WriteLine("5)Deactivate Product");
     Console.WriteLine("6)Activate Product");
     Console.WriteLine("7)Deactivate Category");
     Console.WriteLine("8)Activate Category");
+    Console.WriteLine("-------------------");
     Console.WriteLine("9)Update Product");
     Console.WriteLine("10)Update Category");
+    Console.WriteLine("-------------------");
     Console.WriteLine("11)Get Invoice Report By Time");
     Console.WriteLine("12)Get Canceled Invoice Report By Time");
     Console.WriteLine("13)Get The Most Cart Products");
+    Console.WriteLine("-------------------");
     Console.WriteLine("14)Show Deactive Users");
     Console.WriteLine("15)Show Active Users");
     Console.WriteLine("16)Show Deactive Products");
     Console.WriteLine("17)Show Active Products");
     Console.WriteLine("18)Show Deactive Categories");
     Console.WriteLine("19)Show Active Categories");
+    Console.WriteLine("-------------------");
     Console.WriteLine("0)Exit\n");
+    Console.WriteLine("Choose an option");
     string? option = Console.ReadLine();
     int intOption;
     bool isInt = int.TryParse(option, out intOption);
@@ -143,63 +160,101 @@ while (isContinue)
                     break;
                 case (int)AdminPanel.ShowActiveCategories:
                     int count6 = 0;
+                    Console.ForegroundColor = ConsoleColor.Magenta;
                     foreach (var category in context.Categories.Where(c => c.IsDeactive == false))
                     {
                         Console.WriteLine($"\nId:{category.Id}\n" +
                             $"Name:{category.Name.ToUpper()}\n");
                         count6++;
                     }
-                    if (count6 == 0) Console.WriteLine("There is no active category");
+                    Console.ResetColor();
+                    if (count6 == 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine("There is no active category");
+                        Console.ResetColor();
+                    }
+
                     break;
                 case (int)AdminPanel.ShowDeactiveCategories:
                     int count5 = 0;
+                    Console.ForegroundColor = ConsoleColor.Magenta;
                     foreach (var category in context.Categories.Where(c => c.IsDeactive == true))
                     {
                         Console.WriteLine($"\nId:{category.Id}\n" +
                             $"Name:{category.Name.ToUpper()}\n");
                         count5++;
                     }
-                    if (count5 == 0) Console.WriteLine("There is no deactive category");
+                    Console.ResetColor();
+                    if (count5 == 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine("There is no deactive category");
+                        Console.ResetColor();
+                    }
                     break;
                 case (int)AdminPanel.ShowDeactiveUsers:
                     int count7 = 0;
+                    Console.ForegroundColor = ConsoleColor.Magenta;
                     foreach (var deactUser in context.Users.Where(u => u.IsDeactive == true))
                     {
                         Console.WriteLine($"\nId:{deactUser.Id}\n" +
                             $"Name:{deactUser.Name.ToUpper()}\n");
                         count7++;
                     }
-                    if (count7 == 0) Console.WriteLine("There is no deactive user");
+                    Console.ResetColor();
+                    if (count7 == 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine("There is no deactive user");
+                        Console.ResetColor();
+                    }
                     break;
                 case (int)AdminPanel.ShowActiveUsers:
                     int count1 = 0;
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                     foreach (var actUser in context.Users.Where(u => u.IsDeactive == false))
                     {
                         Console.WriteLine($"\nId:{actUser.Id}\n" +
                             $"Name:{actUser.Name.ToUpper()}\n");
                         count1++;
                     }
+                    Console.ResetColor();
                     if (count1 == 0) Console.WriteLine("There is no active user");
                     break;
                 case (int)AdminPanel.ShowActiveProducts:
                     int count2 = 0;
+                    Console.ForegroundColor = ConsoleColor.Magenta;
                     foreach (var actPro in context.Products.Where(u => u.IsDeactive == false))
                     {
                         Console.WriteLine($"\nId:{actPro.Id}\n" +
                             $"Name:{actPro.Name.ToUpper()}\n");
                         count2++;
                     }
-                    if (count2 == 0) Console.WriteLine("There is no active product");
+                    Console.ResetColor();
+                    if (count2 == 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine("There is no active product");
+                        Console.ResetColor();
+                    }
                     break;
                 case (int)AdminPanel.ShowDeactiveProducts:
                     int count3 = 0;
+                    Console.ForegroundColor = ConsoleColor.Magenta;
                     foreach (var deactPro in context.Products.Where(u => u.IsDeactive == true))
                     {
                         Console.WriteLine($"\nId:{deactPro.Id}\n" +
                             $"Name:{deactPro.Name.ToUpper()}\n");
                         count3++;
                     }
-                    if (count3 == 0) Console.WriteLine("There is no deactive product");
+                    Console.ResetColor();
+                    if (count3 == 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine("There is no deactive product");
+                        Console.ResetColor();
+                    }
                     break;
                 case (int)AdminPanel.CreateProduct:
                     try
@@ -212,18 +267,24 @@ while (isContinue)
                         decimal price = Convert.ToDecimal(Console.ReadLine());
                         Console.WriteLine("Enter availability count");
                         int count = Convert.ToInt32(Console.ReadLine());
+                        Console.ForegroundColor = ConsoleColor.Blue;
                         foreach (var category in context.Categories)
                         {
                             Console.WriteLine($"\nId:{category.Id}\n" +
                                 $"Name:{category.Name.ToUpper()}\n");
                         }
+                        Console.ResetColor();
                         Console.WriteLine("Enter Category Id");
                         int categoryIdForPro = Convert.ToInt32(Console.ReadLine());
+                        Console.ForegroundColor = ConsoleColor.Green;
                         productService.CreateProduct(name, description, price, count, categoryIdForPro);
+                        Console.ResetColor();
                     }
                     catch (Exception ex)
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine(ex.Message);
+                        Console.ResetColor();
                     }
 
                     break;
@@ -234,110 +295,150 @@ while (isContinue)
                         string? categoryName = Console.ReadLine();
                         Console.WriteLine("Enter description");
                         string? categoryDescription = Console.ReadLine();
+                        Console.ForegroundColor = ConsoleColor.Green;
                         categoryService.CreateCategory(categoryName, categoryDescription);
+                        Console.ResetColor();
 
                     }
                     catch (Exception ex)
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine(ex.Message);
+                        Console.ResetColor();
                     }
                     break;
                 case (int)AdminPanel.DeactivateUser:
                     try
                     {
-                        foreach (var userForDeactivate in context.Users.Where(u => u.IsDeactive == false && u.Id!=1))
+                        Console.ForegroundColor = ConsoleColor.Magenta;
+                        foreach (var userForDeactivate in context.Users.Where(u => u.IsDeactive == false && u.Id != 1))
                         {
                             Console.WriteLine($"\nId:{userForDeactivate.Id}/Name:{userForDeactivate.Name.ToUpper()}\n");
                         }
+                        Console.ResetColor();
                         Console.WriteLine("\nEnter user id");
                         int userId = Convert.ToInt32(Console.ReadLine());
+                        Console.ForegroundColor = ConsoleColor.Green;
                         userService.DeactivateUser(userId);
+                        Console.ResetColor();
                     }
                     catch (Exception ex)
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine(ex.Message);
+                        Console.ResetColor();
                     }
                     break;
                 case (int)AdminPanel.ActivateUser:
                     try
                     {
+                        Console.ForegroundColor = ConsoleColor.Magenta;
                         foreach (var userForActivate in context.Users.Where(u => u.IsDeactive == true))
                         {
                             Console.WriteLine($"\nId:{userForActivate.Id}/Name:{userForActivate.Name.ToUpper()}\n");
                         }
+                        Console.ResetColor();
                         Console.WriteLine("\nEnter user id");
                         int userId = Convert.ToInt32(Console.ReadLine());
+                        Console.ForegroundColor = ConsoleColor.Green;
                         userService.ActivateUser(userId);
+                        Console.ResetColor();
                     }
                     catch (Exception ex)
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine(ex.Message);
+                        Console.ResetColor();
                     }
                     break;
                 case (int)AdminPanel.DeactivateProduct:
                     try
                     {
+                        Console.ForegroundColor = ConsoleColor.Magenta;
                         foreach (var productForDeactivate in context.Products.Where(p => p.IsDeactive == false))
                         {
                             Console.WriteLine($"\nId:{productForDeactivate.Id}/Name:{productForDeactivate.Name.ToUpper()}\n");
                         }
+                        Console.ResetColor();
                         Console.WriteLine("\nEnter product id");
                         int productId = Convert.ToInt32(Console.ReadLine());
+                        Console.ForegroundColor = ConsoleColor.Green;
                         productService.DeactivateProduct(productId);
+                        Console.ResetColor();
                     }
                     catch (Exception ex)
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine(ex.Message);
+                        Console.ResetColor();
                     }
                     break;
                 case (int)AdminPanel.ActivateProduct:
                     try
                     {
+                        Console.ForegroundColor = ConsoleColor.Magenta;
                         foreach (var productForDeactivate in context.Products.Where(p => p.IsDeactive == true))
                         {
                             Console.WriteLine($"\nId:{productForDeactivate.Id}/Name:{productForDeactivate.Name.ToUpper()}\n");
                         }
+                        Console.ResetColor();
                         Console.WriteLine("\nEnter product id");
                         int productId = Convert.ToInt32(Console.ReadLine());
+                        Console.ForegroundColor = ConsoleColor.Green;
                         productService.ActivateProduct(productId);
+                        Console.ResetColor();
                     }
                     catch (Exception ex)
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine(ex.Message);
+                        Console.ResetColor();
                     }
                     break;
                 case (int)AdminPanel.DeactivateCategory:
-                    foreach (var category in context.Categories.Where(c=>c.IsDeactive==false))
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    foreach (var category in context.Categories.Where(c => c.IsDeactive == false))
                     {
                         Console.WriteLine($"\nId:{category.Id}\n" +
                             $"Name:{category.Name.ToUpper()}\n");
                     }
+                    Console.ResetColor();
                     Console.WriteLine("Enter Category Id");
                     int categoryId = Convert.ToInt32(Console.ReadLine());
                     try
                     {
+                        Console.ForegroundColor = ConsoleColor.Green;
                         categoryService.DeactivateCategory(categoryId);
+                        Console.ResetColor();
                     }
                     catch (Exception ex)
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine(ex.Message);
+                        Console.ResetColor();
                     }
                     break;
                 case (int)AdminPanel.ActivateCategory:
+                    Console.ForegroundColor = ConsoleColor.Magenta;
                     foreach (var category in context.Categories.Where(c => c.IsDeactive == true))
                     {
                         Console.WriteLine($"\nId:{category.Id}\n" +
                             $"Name:{category.Name.ToUpper()}\n");
                     }
+                    Console.ResetColor();
                     Console.WriteLine("Enter Category Id");
                     int categoryIdForActivate = Convert.ToInt32(Console.ReadLine());
                     try
                     {
+                        Console.ForegroundColor = ConsoleColor.Green;
                         categoryService.ActivateCategory(categoryIdForActivate);
+                        Console.ResetColor();
                     }
                     catch (Exception ex)
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine(ex.Message);
+                        Console.ResetColor();
                     }
                     break;
                 case (int)AdminPanel.GetInvoiceReport:
@@ -350,17 +451,21 @@ while (isContinue)
                         var result = context.GetInvoiceReport(startTime, endTime);
                         Console.WriteLine("TotalPrice\tCreatedDate");
                         decimal total = 0;
+                        Console.ForegroundColor = ConsoleColor.DarkGreen;
                         foreach (var item in result)
                         {
                             Console.WriteLine($"{item.TotalPrice}\t        {item.CreatedDate}");
                             total += item.TotalPrice;
                         }
                         Console.WriteLine($"Total sale:{total}");
+                        Console.ResetColor();
 
                     }
                     catch (Exception ex)
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine(ex.Message);
+                        Console.ResetColor();
                     }
                     break;
                 case (int)AdminPanel.GetCanceledInvoiceReport:
@@ -370,6 +475,7 @@ while (isContinue)
                     DateTime canceledEndTime = Convert.ToDateTime(Console.ReadLine());
                     try
                     {
+                        Console.ForegroundColor = ConsoleColor.DarkCyan;
                         var result = context.GetCanceledInvoiceReport(canceledStartTime, canceledEndTime);
                         Console.WriteLine("TotalPrice\tCreatedDate");
                         decimal total = 0;
@@ -377,11 +483,14 @@ while (isContinue)
                         {
                             Console.WriteLine($"{item.TotalPrice}\t        {item.CreatedDate}");
                         }
+                        Console.ResetColor();
 
                     }
                     catch (Exception ex)
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine(ex.Message);
+                        Console.ResetColor();
                     }
                     break;
 
@@ -393,14 +502,18 @@ while (isContinue)
                     {
                         var result = context.GetTheMostAddedProducts(countOfPro);
                         Console.WriteLine("Product Name\t             Count");
+                        Console.ForegroundColor = ConsoleColor.Magenta;
                         foreach (var item in result)
                         {
                             Console.WriteLine($"{item.Name.ToUpper()}\t  {item.ProductCount}");
                         }
+                        Console.ResetColor();
                     }
                     catch (Exception ex)
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine(ex.Message);
+                        Console.ResetColor();
                     }
                     break;
                 case (int)AdminPanel.UpdateCategory:
@@ -419,11 +532,13 @@ while (isContinue)
                                     try
                                     {
                                     categoryName:
+                                        Console.ForegroundColor = ConsoleColor.Magenta;
                                         foreach (var existCategory in context.Categories)
                                         {
                                             Console.WriteLine($"\nId:{existCategory.Id}/" +
                                                 $"Name:{existCategory.Name.ToUpper()}\n");
                                         }
+                                        Console.ResetColor();
                                         Console.WriteLine("Enter Category Id");
                                         int categoryIdForUpdate = Convert.ToInt32(Console.ReadLine());
                                         if (categoryIdForUpdate < 0)
@@ -437,34 +552,45 @@ while (isContinue)
                                         if (name is not null)
                                         {
                                             if (category.Name.ToLower() != name.ToLower())
+                                            {
+                                                Console.ForegroundColor = ConsoleColor.Green;
                                                 categoryService.UpdateCategory(category, name, category.Description);
+                                                Console.ResetColor();
+                                            }
                                             else
                                             {
+                                                Console.ForegroundColor = ConsoleColor.Yellow;
                                                 Console.WriteLine("Name cannot be the same");
+                                                Console.ResetColor();
                                                 goto categoryName;
                                             }
                                         }
                                         else
                                         {
+                                            Console.ForegroundColor = ConsoleColor.Yellow;
                                             Console.WriteLine("Name cannot be null");
+                                            Console.ResetColor();
                                             goto categoryName;
                                         }
                                     }
                                     catch (Exception ex)
                                     {
+                                        Console.ForegroundColor = ConsoleColor.Red;
                                         Console.WriteLine(ex.Message);
+                                        Console.ResetColor();
                                     }
                                     break;
                                 case (int)UpdateCategory.UpdateDescription:
                                     try
                                     {
                                     categoryDesc:
+                                        Console.ForegroundColor = ConsoleColor.Magenta;
                                         foreach (var existCategory in context.Categories)
                                         {
                                             Console.WriteLine($"\nId:{existCategory.Id}/" +
                                                 $"Name:{existCategory.Name.ToUpper()}\n" +
                                                 $"Description:{existCategory.Description}");
-                                        }
+                                        }Console.ResetColor();
                                         Console.WriteLine("Enter Category Id");
                                         int categoryIdForCat = Convert.ToInt32(Console.ReadLine());
                                         if (categoryIdForCat < 0)
@@ -475,18 +601,26 @@ while (isContinue)
                                         Category category = context.Categories.Find(categoryIdForCat);
                                         Console.WriteLine("Enter new Description:");
                                         string desc = Console.ReadLine();
-                                            if (category.Description.ToLower() != desc.ToLower())
-                                                categoryService.UpdateCategory(category, category.Name, desc);
-                                            else
-                                            {
-                                                Console.WriteLine("Description cannot be the same");
-                                                goto categoryDesc;
-                                            }
-                                        
+                                        if (category.Description.ToLower() != desc.ToLower())
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Green;
+                                            categoryService.UpdateCategory(category, category.Name, desc);
+                                            Console.ResetColor();
+                                        }
+                                        else
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Yellow;
+                                            Console.WriteLine("Description cannot be the same");
+                                            Console.ResetColor();
+                                            goto categoryDesc;
+                                        }
+
                                     }
                                     catch (Exception ex)
                                     {
+                                        Console.ForegroundColor = ConsoleColor.Red;
                                         Console.WriteLine(ex.Message);
+                                        Console.ResetColor();
                                     }
                                     break;
                             }
@@ -496,11 +630,12 @@ while (isContinue)
                     else Console.WriteLine("Please enter correct format");
                     break;
                 case (int)AdminPanel.UpdateProduct:
-                    Console.WriteLine("1)Update Product Name");
+                    Console.WriteLine("\n1)Update Product Name");
                     Console.WriteLine("2)Update Product Description");
                     Console.WriteLine("3)Update Product Price");
                     Console.WriteLine("4)Update Product Available count");
-                    Console.WriteLine("5)Update Product Category");
+                    Console.WriteLine("5)Update Product Category\n");
+                    Console.WriteLine("Choose an option");
                     string? optionUpdateProduct = Console.ReadLine();
                     int intOptionUpdateProduct;
                     bool isOptionUpdateProduct = int.TryParse(optionUpdateProduct, out intOptionUpdateProduct);
@@ -514,6 +649,7 @@ while (isContinue)
                                     try
                                     {
                                     productName:
+                                        Console.ForegroundColor = ConsoleColor.Magenta;
                                         foreach (var existProduct in context.Products)
                                         {
                                             Console.WriteLine($"\nId:{existProduct.Id}/" +
@@ -522,6 +658,7 @@ while (isContinue)
                                                 $"Price:${existProduct.Price}\n" +
                                                 $"Available:{existProduct.AvailableCount}\n");
                                         }
+                                        Console.ResetColor();
                                         Console.WriteLine("Enter product Id");
                                         int productId = Convert.ToInt32(Console.ReadLine());
                                         if (productId < 0)
@@ -535,22 +672,32 @@ while (isContinue)
                                         if (name is not null)
                                         {
                                             if (product.Name.ToLower() != name.ToLower())
-                                                productService.UpdateProduct(product, name, product.Description,product.Price,product.AvailableCount,product.CategoryId);
+                                            {
+                                                Console.ForegroundColor = ConsoleColor.Green;
+                                                productService.UpdateProduct(product, name, product.Description, product.Price, product.AvailableCount, product.CategoryId);
+                                                Console.ResetColor();
+                                            }
                                             else
                                             {
+                                                Console.ForegroundColor = ConsoleColor.Yellow;
                                                 Console.WriteLine("Name cannot be the same");
+                                                Console.ResetColor();
                                                 goto productName;
                                             }
                                         }
                                         else
                                         {
+                                            Console.ForegroundColor = ConsoleColor.Yellow;
                                             Console.WriteLine("Name cannot be null");
+                                            Console.ResetColor();
                                             goto productName;
                                         }
                                     }
                                     catch (Exception ex)
                                     {
+                                        Console.ForegroundColor = ConsoleColor.Red;
                                         Console.WriteLine(ex.Message);
+                                        Console.ResetColor();
                                     }
                                     break;
 
@@ -558,14 +705,16 @@ while (isContinue)
                                     try
                                     {
                                     productDesc:
+                                        Console.ForegroundColor = ConsoleColor.Magenta;
                                         foreach (var existProduct in context.Products)
                                         {
-                                               Console.WriteLine($"\nId:{existProduct.Id}/" +
-                                                $"Name:{existProduct.Name.ToUpper()}\n" +
-                                                $"Description:{existProduct.Description}\n" +
-                                                $"Price:${existProduct.Price}\n" +
-                                                $"Available:{existProduct.AvailableCount}\n");
+                                            Console.WriteLine($"\nId:{existProduct.Id}/" +
+                                             $"Name:{existProduct.Name.ToUpper()}\n" +
+                                             $"Description:{existProduct.Description}\n" +
+                                             $"Price:${existProduct.Price}\n" +
+                                             $"Available:{existProduct.AvailableCount}\n");
                                         }
+                                        Console.ResetColor();
                                         Console.WriteLine("Enter Product Id");
                                         int productId = Convert.ToInt32(Console.ReadLine());
                                         if (productId < 0)
@@ -577,23 +726,32 @@ while (isContinue)
                                         Console.WriteLine("Enter new Description:");
                                         string desc = Console.ReadLine();
                                         if (product.Description.ToLower() != desc.ToLower())
-                                            productService.UpdateProduct(product, product.Name, desc,product.Price,product.AvailableCount,product.CategoryId);
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Green;
+                                            productService.UpdateProduct(product, product.Name, desc, product.Price, product.AvailableCount, product.CategoryId);
+                                            Console.ResetColor();
+                                        }
                                         else
                                         {
+                                            Console.ForegroundColor = ConsoleColor.Yellow;
                                             Console.WriteLine("Description cannot be the same");
+                                            Console.ResetColor();
                                             goto productDesc;
                                         }
 
                                     }
                                     catch (Exception ex)
                                     {
+                                        Console.ForegroundColor = ConsoleColor.Red;
                                         Console.WriteLine(ex.Message);
+                                        Console.ResetColor();
                                     }
                                     break;
                                 case (int)UpdateProduct.UpdatePrice:
                                     try
                                     {
                                     productPrice:
+                                        Console.ForegroundColor = ConsoleColor.Magenta;
                                         foreach (var existProduct in context.Products)
                                         {
                                             Console.WriteLine($"\nId:{existProduct.Id}/" +
@@ -602,6 +760,7 @@ while (isContinue)
                                              $"Price:${existProduct.Price}\n" +
                                              $"Available:{existProduct.AvailableCount}\n");
                                         }
+                                        Console.ResetColor();
                                         Console.WriteLine("Enter Product Id");
                                         int productId = Convert.ToInt32(Console.ReadLine());
                                         if (productId < 0)
@@ -611,25 +770,34 @@ while (isContinue)
                                         }
                                         Product product = context.Products.Find(productId);
                                         Console.WriteLine("Enter new Price:");
-                                       decimal price=Convert.ToDecimal(Console.ReadLine());
-                                        if (product.Price!= price)
+                                        decimal price = Convert.ToDecimal(Console.ReadLine());
+                                        if (product.Price != price)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Green;
                                             productService.UpdateProduct(product, product.Name, product.Description, price, product.AvailableCount, product.CategoryId);
+                                            Console.ResetColor();
+                                        }
                                         else
                                         {
+                                            Console.ForegroundColor = ConsoleColor.Yellow;
                                             Console.WriteLine("Price cannot be the same");
+                                            Console.ResetColor();
                                             goto productPrice;
                                         }
 
                                     }
                                     catch (Exception ex)
                                     {
+                                        Console.ForegroundColor = ConsoleColor.Red;
                                         Console.WriteLine(ex.Message);
+                                        Console.ResetColor();
                                     }
                                     break;
                                 case (int)UpdateProduct.UpdateAvailableCount:
                                     try
                                     {
                                     productAvailable:
+                                        Console.ForegroundColor = ConsoleColor.Magenta;
                                         foreach (var existProduct in context.Products)
                                         {
                                             Console.WriteLine($"\nId:{existProduct.Id}/" +
@@ -638,6 +806,7 @@ while (isContinue)
                                              $"Price:${existProduct.Price}\n" +
                                              $"Available:{existProduct.AvailableCount}\n");
                                         }
+                                        Console.ResetColor();
                                         Console.WriteLine("Enter Product Id");
                                         int productId = Convert.ToInt32(Console.ReadLine());
                                         if (productId < 0)
@@ -649,17 +818,25 @@ while (isContinue)
                                         Console.WriteLine("Enter new Available count:");
                                         int available = Convert.ToInt32(Console.ReadLine());
                                         if (product.AvailableCount != available)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Green;
                                             productService.UpdateProduct(product, product.Name, product.Description, product.Price, available, product.CategoryId);
+                                            Console.ResetColor();
+                                        }
                                         else
                                         {
+                                            Console.ForegroundColor = ConsoleColor.Yellow;
                                             Console.WriteLine("Available count cannot be the same");
+                                            Console.ResetColor();
                                             goto productAvailable;
                                         }
 
                                     }
                                     catch (Exception ex)
                                     {
+                                        Console.ForegroundColor = ConsoleColor.Red;
                                         Console.WriteLine(ex.Message);
+                                        Console.ResetColor();
                                     }
                                     break;
 
@@ -667,7 +844,8 @@ while (isContinue)
                                     try
                                     {
                                     productCategory:
-                                        var productsWithCategories = context.Products.Where(p=>p.IsDeactive==false).Include(p => p.Category);
+                                        var productsWithCategories = context.Products.Where(p => p.IsDeactive == false).Include(p => p.Category);
+                                        Console.ForegroundColor = ConsoleColor.DarkYellow;
                                         foreach (var existProduct in productsWithCategories)
                                         {
                                             Console.WriteLine($"\nId:{existProduct.Id}/" +
@@ -676,35 +854,46 @@ while (isContinue)
                                              $"Price:${existProduct.Price}\n" +
                                              $"Available:{existProduct.AvailableCount}\n" +
                                              $"Category:{existProduct.Category.Name.ToUpper()}\n");
-
-                                        }
+                                        }Console.ResetColor();
                                         Console.WriteLine("Enter Product Id");
                                         int productId = Convert.ToInt32(Console.ReadLine());
                                         if (productId < 0)
                                         {
+                                            Console.ForegroundColor = ConsoleColor.Yellow;
                                             Console.WriteLine("Id cannot be negative");
+                                            Console.ResetColor();
                                             goto productCategory;
                                         }
                                         Product product = context.Products.Find(productId);
+                                        Console.ForegroundColor = ConsoleColor.Magenta;
                                         foreach (var existCategory in context.Categories)
                                         {
                                             Console.WriteLine($"\nId:{existCategory.Id}/" +
                                                 $"Name:{existCategory.Name.ToUpper()}\n");
                                         }
+                                        Console.ResetColor();
                                         Console.WriteLine("Enter new Category Id:");
                                         int categoryIdForUpt = Convert.ToInt32(Console.ReadLine());
                                         if (product.CategoryId != categoryIdForUpt)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Green;
                                             productService.UpdateProduct(product, product.Name, product.Description, product.Price, product.AvailableCount, categoryIdForUpt);
+                                            Console.ResetColor();
+                                        }
                                         else
                                         {
+                                            Console.ForegroundColor = ConsoleColor.Yellow;
                                             Console.WriteLine("Category cannot be the same");
+                                            Console.ResetColor();
                                             goto productCategory;
                                         }
 
                                     }
                                     catch (Exception ex)
                                     {
+                                        Console.ForegroundColor = ConsoleColor.Red;
                                         Console.WriteLine(ex.Message);
+                                        Console.ResetColor();
                                     }
                                     break;
                             }

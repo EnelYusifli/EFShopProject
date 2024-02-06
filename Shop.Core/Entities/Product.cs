@@ -13,5 +13,4 @@ public class Product:BaseEntities
     public int CategoryId { get; set; }
     public ICollection<ProductInvoice>? ProductInvoices { get; set; }
     public ICollection<CartProduct>? CartProducts { get; set; }
-    public ICollection<ProductDiscount>? ProductDiscounts { get; set; }
 }

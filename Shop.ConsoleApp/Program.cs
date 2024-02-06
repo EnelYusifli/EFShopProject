@@ -174,7 +174,9 @@ while (isContinue)
     else Console.WriteLine("Please enter correct format");
 }
 bool isMainPageContinue = true;
-Console.WriteLine("\nWe wish you a pleasant experience :))\n");
+Console.ForegroundColor = ConsoleColor.DarkMagenta;
+Console.WriteLine("\n                          We wish you a pleasant experience :))\n");
+Console.ResetColor();
 while (isMainPageContinue)
 {
     Console.WriteLine("\n1)Go To HomePage");

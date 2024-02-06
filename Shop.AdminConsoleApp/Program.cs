@@ -44,7 +44,8 @@ while (isContinue)
                         Console.WriteLine("Enter Email");
                         string email = Console.ReadLine();
                         Console.WriteLine("Enter Password");
-                        string password = Console.ReadLine();
+                        string password = userService.ReadPasswordFromConsole();
+                        string hashedPassword = userService.HashPassword(password);
                         userService.LoginAdminWithEmail(email, password);
                     YesOrNo:
                         Console.WriteLine("\nDo you want to continue? (yes/no)");
@@ -74,7 +75,8 @@ while (isContinue)
                         Console.WriteLine("Enter Username");
                         string username = Console.ReadLine();
                         Console.WriteLine("Enter Password");
-                        string password = Console.ReadLine();
+                        string password = userService.ReadPasswordFromConsole();
+                        string hashedPassword = userService.HashPassword(password);
                         userService.LoginAdminWithUsername(username, password);
                     YesOrNo:
                         Console.WriteLine("\nDo you want to continue? (yes/no)");

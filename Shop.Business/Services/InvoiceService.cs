@@ -10,8 +10,6 @@ namespace Shop.Business.Services;
 public class InvoiceService : IInvoiceService
 {
     ShopDbContext context = new ShopDbContext();
-    WalletService walletService = new();
-
     public void CreateInvoice(User user, List<Product> products, decimal total)
     {
         if (user is not null && user.IsDeactive == false)

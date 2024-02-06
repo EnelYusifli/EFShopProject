@@ -17,7 +17,13 @@ public class CartService: ICartService
             if (count <= product.AvailableCount)
             {
                 CartProduct? cartProduct = context.CartProducts.Find(user.Id, product.Id);
-                if (cartProduct is not null && cartProduct.IsDeactive == false) throw new AlreadyExistException("Product is already in your cart");
+                if (cartProduct is not null && cartProduct.IsDeactive == false)
+                {
+                    cartProduct.ProductCountInCart += count;
+                    context.SaveChanges();
+                    Console.Out.WriteLine("Added to Cart Successfully");
+                    return;
+                };
                 if (cartProduct is not null && cartProduct.IsDeactive == true)
                 {
                     cartProduct.IsDeactive = false;

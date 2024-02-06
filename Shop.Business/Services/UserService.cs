@@ -2,6 +2,8 @@
 using Shop.Business.Utilities.Exceptions;
 using Shop.Core.Entities;
 using Shop.DataAccess;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace Shop.Business.Services;
 
@@ -46,7 +48,7 @@ public class UserService : IUserService
     {
         if (email is null || password is null) throw new CannotBeNullException("Value cannot be null");
         User? user = context.Users.FirstOrDefault(u => u.Email == email);
-        if (user is null || user.IsDeactive==true) throw new CannotBeFoundException("User email cannot be found");
+        if (user is null || user.IsDeactive == true) throw new CannotBeFoundException("User email cannot be found");
         if (user.Password != password) throw new IsNotCorrectException("Password is not correct");
         Console.Out.WriteLine("Logged in Successfully");
     }
@@ -65,7 +67,7 @@ public class UserService : IUserService
         {
             User user = context.Users.Where(u => u.Email.ToLower() == email.ToLower()).FirstOrDefault();
             {
-                if (user is not null && user.IsDeactive==false)
+                if (user is not null && user.IsDeactive == false)
                     return user;
                 else throw new CannotBeFoundException("User cannot be found");
             }
@@ -109,7 +111,7 @@ public class UserService : IUserService
     public void DeactivateUser(int userId)
     {
         User user = context.Users.Find(userId);
-        if (user is not null && user.Id!=1)
+        if (user is not null && user.Id != 1)
         {
             if (user.IsDeactive == false)
             {
@@ -140,14 +142,14 @@ public class UserService : IUserService
     public void ActivateUser(int userId)
     {
         User user = context.Users.Find(userId);
-        if (user is not null && user.Id!=1)
+        if (user is not null && user.Id != 1)
         {
             if (user.IsDeactive == true)
             {
                 user.IsDeactive = false;
                 Cart cart = context.Carts.Find(userId);
                 cart.IsDeactive = false;
-                List<CartProduct> cartProducts = context.CartProducts.Where(cp => cp.CartId == userId && cp.ProductCountInCart!=0).ToList();
+                List<CartProduct> cartProducts = context.CartProducts.Where(cp => cp.CartId == userId && cp.ProductCountInCart != 0).ToList();
                 List<Wallet> wallets = context.Wallets.Where(w => w.UserId == userId).ToList();
                 foreach (var cartProduct in cartProducts)
                 {
@@ -186,9 +188,39 @@ public class UserService : IUserService
             user.ModifiedTime = DateTime.Now;
             context.SaveChanges();
             Console.WriteLine("Successfully updated");
-        }else throw new CannotBeFoundException("User cannot be found");
+        }
+        else throw new CannotBeFoundException("User cannot be found");
     }
+    public string HashPassword(string input)
+    {
+        using (SHA256 sha256Hash = SHA256.Create())
+        {
+            byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < bytes.Length; i++)
+            {
+                builder.Append(bytes[i].ToString("x2"));
+            }
+            return builder.ToString();
+        }
+    }
+    public string ReadPasswordFromConsole()
+    {
+        StringBuilder password = new StringBuilder();
+        ConsoleKeyInfo keyInfo;
 
+        do
+        {
+            keyInfo = Console.ReadKey(intercept: true);
+            if (keyInfo.Key != ConsoleKey.Enter)
+            {
+                // Mask the character with '*'
+                Console.Write("*");
+                password.Append(keyInfo.KeyChar);
+            }
+        } while (keyInfo.Key != ConsoleKey.Enter);
 
-
+        Console.WriteLine(); // Move to the next line after the password is entered
+        return password.ToString();
+    }
 }

@@ -47,7 +47,8 @@ while (isContinue)
                         Console.WriteLine("Enter Email");
                         string email = Console.ReadLine();
                         Console.WriteLine("Enter Password");
-                        string password = Console.ReadLine();
+                        string password = userService.ReadPasswordFromConsole();
+                        string hashedPassword = userService.HashPassword(password);
                         Console.WriteLine("Enter UserName For App");
                         string username = Console.ReadLine();
                         Console.WriteLine("Enter Phone");
@@ -97,7 +98,8 @@ while (isContinue)
                                         Console.WriteLine("Enter Email");
                                         string email = Console.ReadLine();
                                         Console.WriteLine("Enter Password");
-                                        string password = Console.ReadLine();
+                                        string password = userService.ReadPasswordFromConsole();
+                                        string hashedPassword = userService.HashPassword(password);
                                         userService.LoginUserWithEmail(email, password);
                                     YesOrNo:
                                         Console.WriteLine("\nDo you want to continue? (yes/no)");
@@ -127,7 +129,8 @@ while (isContinue)
                                         Console.WriteLine("Enter Username");
                                         string username = Console.ReadLine();
                                         Console.WriteLine("Enter Password");
-                                        string password = Console.ReadLine();
+                                        string password = userService.ReadPasswordFromConsole();
+                                        string hashedPassword = userService.HashPassword(password);
                                         userService.LoginUserWithUsername(username, password);
                                     YesOrNo:
                                         Console.WriteLine("\nDo you want to continue? (yes/no)");
@@ -252,7 +255,8 @@ while (isMainPageContinue)
                         decimal total = 0;
                         if (cart is not null)
                         {
-                            foreach (var cartProduct in cart.CartProducts)
+                        List<CartProduct>? cartProducts=cart.CartProducts.Where(cp => !cp.IsDeactive).ToList();
+                            foreach (var cartProduct in cartProducts)
                             {
                                 if (cartProduct.IsDeactive == false && cartProduct.ProductCountInCart != 0)
                                 {
@@ -286,6 +290,7 @@ while (isMainPageContinue)
                                             try
                                             {
                                                 invoiceService.BuyProduct( user, productsInCart, total);
+                                                isContinueCart = false;
                                             }
                                             catch (Exception ex)
                                             {
@@ -302,6 +307,7 @@ while (isMainPageContinue)
                                                 Console.WriteLine("Enter the count that you want to remove");
                                                 int count = Convert.ToInt32(Console.ReadLine());
                                                 cartService.RemoveProductFromCart(productId, user, count);
+                                                isContinueCart = false;
                                             }
                                             catch (Exception ex)
                                             {

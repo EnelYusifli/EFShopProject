@@ -1,4 +1,5 @@
-﻿using Shop.Business.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using Shop.Business.Interfaces;
 using Shop.Business.Utilities.Exceptions;
 using Shop.Core.Entities;
 using Shop.DataAccess;
@@ -214,13 +215,29 @@ public class UserService : IUserService
             keyInfo = Console.ReadKey(intercept: true);
             if (keyInfo.Key != ConsoleKey.Enter)
             {
-                // Mask the character with '*'
                 Console.Write("*");
                 password.Append(keyInfo.KeyChar);
             }
         } while (keyInfo.Key != ConsoleKey.Enter);
 
-        Console.WriteLine(); // Move to the next line after the password is entered
+        Console.WriteLine();
         return password.ToString();
     }
+
+    //public void GetBoughtProducts(User user)
+    //{
+    //    if (user is not null)
+    //    {
+    //        List<ProductIncoive> productIncoives = context.ProductInvoices.Where(pi => !pi.IsDeactive).Include(pi => pi.Invoice.Where(i=>i.IsPaid)).ThenInclude(i => pi.Product).ToList();
+    //        if(invoices is not null)
+    //        {
+    //            foreach (var invoice in invoices)
+    //            {
+    //                Console.WriteLine($"Bought date:{invoice.ModifiedTime}\n" +
+    //                    $"Product Name:{}");
+    //            }
+    //        }
+    //    }
+    //    else throw new CannotBeFoundException("User Cannot be found");
+    //}
 }

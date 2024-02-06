@@ -519,6 +519,7 @@ while (isContinue)
                 case (int)AdminPanel.UpdateCategory:
                     Console.WriteLine("1)Update Category Name");
                     Console.WriteLine("2)Update Category Description");
+                    Console.WriteLine("Choose an option");
                     string? optionUpdateCategory = Console.ReadLine();
                     int intOptionUpdateCategory;
                     bool isOptionUpdateCategory = int.TryParse(optionUpdateCategory, out intOptionUpdateCategory);

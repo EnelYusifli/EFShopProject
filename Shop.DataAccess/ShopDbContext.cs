@@ -16,6 +16,7 @@ public class ShopDbContext : DbContext
     public DbSet<Product>? Products { get; set; }
     public DbSet<Cart>? Carts { get; set; }
     public DbSet<Category>? Categories { get; set; }
+    public DbSet<Brand>? Brands { get; set; }
     public DbSet<Invoice>? Invoices { get; set; }
     public DbSet<ProductInvoice>? ProductInvoices { get; set; }
     public DbSet<CartProduct>? CartProducts { get; set; }
@@ -39,6 +40,9 @@ public class ShopDbContext : DbContext
         modelBuilder.Entity<Category>()
             .HasIndex(c => c.Name)
             .IsUnique();
+        modelBuilder.Entity<Brand>()
+            .HasIndex(b => b.Name)
+            .IsUnique();
         modelBuilder.Entity<User>()
             .HasMany(u => u.Wallets)
             .WithOne(w => w.User);
@@ -57,7 +61,11 @@ public class ShopDbContext : DbContext
         modelBuilder.Entity<Product>()
             .HasOne(p => p.Category)
             .WithMany(c => c.Products)
-            .HasForeignKey(p => p.CategoryId);
+            .HasForeignKey(p => p.CategoryId); 
+        modelBuilder.Entity<Product>()
+            .HasOne(p => p.Brand)
+            .WithMany(b => b.Products)
+            .HasForeignKey(p => p.BrandId);
         modelBuilder.Entity<Product>()
             .HasMany(p => p.ProductInvoices)
             .WithOne(pi => pi.Product)

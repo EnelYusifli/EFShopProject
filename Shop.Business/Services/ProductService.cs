@@ -133,5 +133,8 @@ public class ProductService : IProductService
         }
         else throw new CannotBeFoundException("Product cannot be found");
     }
+    //public void SearchForProductVia() 
+    //{
 
+    //}
 }

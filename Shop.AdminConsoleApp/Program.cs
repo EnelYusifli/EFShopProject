@@ -120,20 +120,21 @@ while (isContinue)
     Console.WriteLine("9)Update Product");
     Console.WriteLine("10)Update Category");
     Console.WriteLine("11)Get Invoice Report By Time");
-    Console.WriteLine("12)Get The Most Cart Products");
-    Console.WriteLine("13)Show Deactive Users");
-    Console.WriteLine("14)Show Active Users");
-    Console.WriteLine("15)Show Deactive Products");
-    Console.WriteLine("16)Show Active Products");
-    Console.WriteLine("17)Show Deactive Categories");
-    Console.WriteLine("18)Show Active Categories");
+    Console.WriteLine("12)Get Canceled Invoice Report By Time");
+    Console.WriteLine("13)Get The Most Cart Products");
+    Console.WriteLine("14)Show Deactive Users");
+    Console.WriteLine("15)Show Active Users");
+    Console.WriteLine("16)Show Deactive Products");
+    Console.WriteLine("17)Show Active Products");
+    Console.WriteLine("18)Show Deactive Categories");
+    Console.WriteLine("19)Show Active Categories");
     Console.WriteLine("0)Exit\n");
     string? option = Console.ReadLine();
     int intOption;
     bool isInt = int.TryParse(option, out intOption);
     if (isInt)
     {
-        if (intOption >= 0 && intOption <= 18)
+        if (intOption >= 0 && intOption <= 19)
         {
             switch (intOption)
             {
@@ -347,11 +348,11 @@ while (isContinue)
                     try
                     {
                         var result = context.GetInvoiceReport(startTime, endTime);
-                        Console.WriteLine("Id\tTotalPrice\tCreatedDate");
+                        Console.WriteLine("TotalPrice\tCreatedDate");
                         decimal total = 0;
                         foreach (var item in result)
                         {
-                            Console.WriteLine($"{item.Id}\t{item.TotalPrice}\t        {item.CreatedDate}");
+                            Console.WriteLine($"{item.TotalPrice}\t        {item.CreatedDate}");
                             total += item.TotalPrice;
                         }
                         Console.WriteLine($"Total sale:{total}");
@@ -362,6 +363,31 @@ while (isContinue)
                         Console.WriteLine(ex.Message);
                     }
                     break;
+                case (int)AdminPanel.GetCanceledInvoiceReport:
+                    Console.WriteLine("Enter Start Time");
+                    DateTime canceledStartTime = Convert.ToDateTime(Console.ReadLine());
+                    Console.WriteLine("Enter End Time");
+                    DateTime canceledEndTime = Convert.ToDateTime(Console.ReadLine());
+                    try
+                    {
+                        var result = context.GetCanceledInvoiceReport(canceledStartTime, canceledEndTime);
+                        Console.WriteLine("TotalPrice\tCreatedDate");
+                        decimal total = 0;
+                        foreach (var item in result)
+                        {
+                            Console.WriteLine($"{item.TotalPrice}\t        {item.CreatedDate}");
+                            total += item.TotalPrice;
+                        }
+                        Console.WriteLine($"Total sale:{total}");
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+                    break;
+
+
                 case (int)AdminPanel.GetTheMostAddedProducts:
                     Console.WriteLine("Enter the count of products");
                     int countOfPro = Convert.ToInt32(Console.ReadLine());

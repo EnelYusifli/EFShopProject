@@ -43,7 +43,6 @@ public class ProductService : IProductService
                         else throw new CannotBeFoundException("Category cannot be found");
                     }
                     else throw new LessThanMinimumException("Id should be more than 0");
-
                 }
                 else throw new LessThanMinimumException("Price should be more than 0");
             }

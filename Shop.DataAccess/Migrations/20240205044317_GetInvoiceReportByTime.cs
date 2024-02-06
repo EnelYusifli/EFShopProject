@@ -11,8 +11,8 @@ namespace Shop.DataAccess.Migrations
             migrationBuilder.Sql(@"CREATE PROCEDURE usp_GetInvoiceReport @startTime DateTime,@endTime DateTime
                                     AS
 
-                                    SELECT Id,TotalPrice,CreatedDate FROM Invoices
-                                    WHERE CreatedDate>@startTime AND CreatedDate<@endTime
+                                    SELECT TotalPrice,CreatedDate FROM Invoices
+                                    WHERE CreatedDate>@startTime AND CreatedDate<@endTime AND IsPaid = 1;
                                     EXEC usp_GetInvoiceReport @startTime, @endTime");
         }
 

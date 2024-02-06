@@ -12,6 +12,7 @@ public enum AdminPanel
     UpdateProduct,
     UpdateCategory,
     GetInvoiceReport,
+    GetCanceledInvoiceReport,
     GetTheMostAddedProducts,
     ShowDeactiveUsers,
     ShowActiveUsers,

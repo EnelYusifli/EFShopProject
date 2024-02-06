@@ -23,6 +23,7 @@ public class ShopDbContext : DbContext
     public DbSet<CartProduct>? CartProducts { get; set; }
     public DbSet<InvoiceReportProcedure>? InvoiceReport { get; set; }
     public DbSet<TheMostAddedProducts>? TheMostAddedProducts { get; set; }
+    public DbSet<CanceledInvoiceReport>? CanceledInvoiceReport { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>()
@@ -89,11 +90,19 @@ public class ShopDbContext : DbContext
             .ToTable(nameof(InvoiceReportProcedure), t => t.ExcludeFromMigrations()).HasNoKey();
         modelBuilder.Entity<TheMostAddedProducts>()
             .ToTable(nameof(TheMostAddedProducts), t => t.ExcludeFromMigrations()).HasNoKey();
+        modelBuilder.Entity<CanceledInvoiceReport>()
+            .ToTable(nameof(CanceledInvoiceReport), t => t.ExcludeFromMigrations()).HasNoKey();
     }
     public IEnumerable<InvoiceReportProcedure> GetInvoiceReport(DateTime startTime, DateTime endTime)
     {
         if (startTime < endTime)
             return InvoiceReport.FromSqlInterpolated($"EXEC usp_GetInvoiceReport {startTime}, {endTime}").ToList();
+        else throw new Exception("Start Time Cannot be after End Time");
+    }
+    public IEnumerable<CanceledInvoiceReport> GetCanceledInvoiceReport(DateTime startTime, DateTime endTime)
+    {
+        if (startTime < endTime)
+            return CanceledInvoiceReport.FromSqlInterpolated($"EXEC usp_GetCanceledInvoiceReport {startTime}, {endTime}").ToList();
         else throw new Exception("Start Time Cannot be after End Time");
     }
     public IEnumerable<TheMostAddedProducts> GetTheMostAddedProducts(int count)

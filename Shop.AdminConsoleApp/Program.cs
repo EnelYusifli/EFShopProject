@@ -376,9 +376,7 @@ while (isContinue)
                         foreach (var item in result)
                         {
                             Console.WriteLine($"{item.TotalPrice}\t        {item.CreatedDate}");
-                            total += item.TotalPrice;
                         }
-                        Console.WriteLine($"Total sale:{total}");
 
                     }
                     catch (Exception ex)

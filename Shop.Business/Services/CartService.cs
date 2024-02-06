@@ -5,7 +5,7 @@ using Shop.DataAccess;
 
 namespace Shop.Business.Services;
 
-public class CartService: ICartService
+public class CartService : ICartService
 {
     ShopDbContext context = new();
     public void AddProductToCart(int productId, User user, int count = 1)
@@ -23,10 +23,10 @@ public class CartService: ICartService
                         throw new MoreThanMaximumException("Count is More than Available");
                     else
                     {
-                    cartProduct.ProductCountInCart += count;
-                    context.SaveChanges();
-                    Console.Out.WriteLine("Added to Cart Successfully");
-                    return;
+                        cartProduct.ProductCountInCart += count;
+                        context.SaveChanges();
+                        Console.Out.WriteLine("Added to Cart Successfully");
+                        return;
                     }
                 };
                 if (cartProduct is not null && cartProduct.IsDeactive == true)

@@ -270,11 +270,11 @@ while (isMainPageContinue)
                 case (int)MainPage.GoToCart:
                     try
                     {
-                        var cart = context.Carts.Include(c => c.CartProducts.Where(cp => !cp.IsDeactive)).ThenInclude(cp => cp.Product).FirstOrDefault(c => c.Id == user.Id);
+                        var cartProducts = context.CartProducts.Where(cp=>!cp.IsDeactive).Where(cp => cp.Cart.Id == user.Id).Include(cp => cp.Product);
                         decimal total = 0;
-                        if (cart is not null)
+                        if (cartProducts is not null)
                         {
-                        List<CartProduct>? cartProducts=cart.CartProducts.Where(cp => !cp.IsDeactive).ToList();
+                       
                             Console.ForegroundColor = ConsoleColor.Magenta;
                             foreach (var cartProduct in cartProducts)
                             {
@@ -310,7 +310,6 @@ while (isMainPageContinue)
                                                 List<Product> productsInCart = context.Products.Where(p => p.CartProducts.Where(cp => !cp.IsDeactive).Any(cp => cp.CartId == user.Id)).ToList();
                                             try
                                             {
-                                                Console.ForegroundColor = ConsoleColor.Green;
                                                 invoiceService.BuyProduct( user, productsInCart, total);
                                                 isContinueCart = false;
                                                 Console.ResetColor();
@@ -378,7 +377,7 @@ while (isMainPageContinue)
                         foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id))
                         {
                             Console.WriteLine($"Card:{wallet.Number}\n" +
-                                              $"Balance:{wallet.Balance}");
+                                              $"Balance:{wallet.Balance}\n");
                         }
                         Console.ResetColor();
 
@@ -704,7 +703,7 @@ while (isMainPageContinue)
                                             {
                                                 Console.WriteLine($"Id:{wallet.Id}/" +
                                                                   $"Card:{wallet.Number}\n" +
-                                                                  $"Balance:{wallet.Balance}");
+                                                                  $"Balance:{wallet.Balance}\n");
                                             }
                                             Console.ResetColor();
                                             Console.WriteLine("Enter Card Id");
@@ -735,7 +734,7 @@ while (isMainPageContinue)
                                         {
                                             Console.WriteLine($"Id:{wallet.Id}/" +
                                                               $"Card:{wallet.Number}\n" +
-                                                              $"Balance:{wallet.Balance}");
+                                                              $"Balance:{wallet.Balance}\n");
                                         }
                                             Console.ResetColor();
                                         Console.WriteLine("Enter Card Id");
@@ -761,7 +760,7 @@ while (isMainPageContinue)
                                         {
                                             Console.WriteLine($"Id:{wallet.Id}/" +
                                                               $"Card:{wallet.Number}\n" +
-                                                              $"Balance:{wallet.Balance}");
+                                                              $"Balance:{wallet.Balance}\n");
                                         }
                                         Console.ResetColor();
                                         Console.WriteLine("Enter Card Id To Get the Money");
@@ -771,7 +770,7 @@ while (isMainPageContinue)
                                         {
                                             Console.WriteLine($"Id:{wallet.Id}/" +
                                                               $"Card:{wallet.Number}\n" +
-                                                              $"Balance:{wallet.Balance}");
+                                                              $"Balance:{wallet.Balance}\n");
                                         }
                                         Console.ResetColor();
                                         Console.WriteLine("Enter Card Id To Transfer the Money");

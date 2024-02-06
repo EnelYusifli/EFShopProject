@@ -8,10 +8,10 @@ public class ProductService : IProductService
 {
     ShopDbContext context = new ShopDbContext();
 
-    public async void CreateProduct(string productName, string description, decimal price, int availableCount, int categoryId, int brandId)
+    public void CreateProduct(string productName, string description, decimal price, int availableCount, int categoryId, int brandId)
     {
 
-        if (productName is not null)
+        if (productName is not null && productName.Length > 1)
         {
             if (availableCount > 0)
             {
@@ -36,8 +36,9 @@ public class ProductService : IProductService
                                     Category = category,
                                     Brand = brand
                                 };
-                                await context.Products.AddAsync(product);
-                                await context.SaveChangesAsync();
+                                context.Products.Add(product);
+                                context.SaveChanges();
+                                Console.WriteLine("Successfully created");
                             }
                             else throw new ShouldBeUniqueException("Product Name must be unique");
                         }
@@ -72,18 +73,27 @@ public class ProductService : IProductService
         {
             if (product.IsDeactive == true)
             {
-                product.IsDeactive = false;
-                List<CartProduct> cartProducts = context.CartProducts.Where(cp => cp.ProductId == productId && cp.ProductCountInCart != 0).ToList();
-                foreach (var cartProduct in cartProducts)
+                Brand brand = context.Brands.Find(product.BrandId);
+                Category category = context.Categories.Find(product.CategoryId);
+                if (brand.IsDeactive == true || category.IsDeactive == true)
+                    throw new IsNotCorrectException("Product cannot be activated if its brand or category is deactive");
+                else
                 {
-                    cartProduct.IsDeactive = false;
-                    cartProduct.ModifiedTime = DateTime.Now;
+                    product.IsDeactive = false;
+                    List<CartProduct> cartProducts = context.CartProducts.Where(cp => cp.ProductId == productId && cp.ProductCountInCart != 0).ToList();
+                    foreach (var cartProduct in cartProducts)
+                    {
+                        cartProduct.IsDeactive = false;
+                        cartProduct.ModifiedTime = DateTime.Now;
+                    }
+                    product.ModifiedTime = DateTime.Now;
+                    context.SaveChanges();
+                    Console.WriteLine("Successfully Activated");
                 }
-                product.ModifiedTime = DateTime.Now;
-                context.SaveChanges();
-                Console.WriteLine("Successfully Activated");
+               
+
             }
-            else throw new AlreadyExistException("Product is already deactive");
+            else throw new AlreadyExistException("Product is already active");
         }
         else throw new CannotBeFoundException("Product cannot be found");
     }

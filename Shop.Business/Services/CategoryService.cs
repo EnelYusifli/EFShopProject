@@ -11,7 +11,7 @@ public class CategoryService : ICategoryService
     ProductService productService = new ProductService();
     public void CreateCategory(string name, string description)
     {
-        if (name is not null)
+        if (name is not null && name.Length > 1)
         {
             bool isDublicate = context.Categories.Where(c => c.Name.ToLower() == name.ToLower()).Any();
             if (isDublicate) throw new AlreadyExistException("This category is already exist");
@@ -24,6 +24,7 @@ public class CategoryService : ICategoryService
             context.SaveChanges();
             Console.WriteLine("Added successfully");
         }
+        else throw new CannotBeNullException("Name cannot be null");
     }
     public void UpdateCategory(Category category, string name, string description)
     {

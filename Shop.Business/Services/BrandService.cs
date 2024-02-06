@@ -11,7 +11,7 @@ public class BrandService:IBrandService
     ProductService productService = new ProductService();
     public void CreateBrand(string name)
     {
-        if (name is not null)
+        if (name is not null && name.Length>0)
         {
             bool isDublicate = context.Brands.Where(b => b.Name.ToLower() == name.ToLower()).Any();
             if (isDublicate) throw new AlreadyExistException("This brand is already exist");
@@ -22,7 +22,7 @@ public class BrandService:IBrandService
             context.Brands.Add(brand);
             context.SaveChanges();
             Console.WriteLine("Added successfully");
-        }
+        }else throw new CannotBeNullException("Name cannot be null");
     }
     public void UpdateBrand(Brand brand, string name)
     {

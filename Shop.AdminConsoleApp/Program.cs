@@ -123,29 +123,33 @@ while (isContinue)
 {
     Console.WriteLine("\n1)Create Product");
     Console.WriteLine("2)Create Category");
+    Console.WriteLine("3)Create Brand");
     Console.WriteLine("-------------------");
-    Console.WriteLine("3)Deactivate User");
-    Console.WriteLine("4)Activate User");
-    Console.WriteLine("5)Deactivate Product");
-    Console.WriteLine("6)Activate Product");
-    Console.WriteLine("7)Deactivate Category");
-    Console.WriteLine("8)Activate Category");
+    Console.WriteLine("4)Deactivate User");
+    Console.WriteLine("5)Activate User");
+    Console.WriteLine("6)Deactivate Product");
+    Console.WriteLine("7)Activate Product");
+    Console.WriteLine("8)Deactivate Category");
+    Console.WriteLine("9)Activate Category"); 
+    Console.WriteLine("10)Deactivate Brand");
+    Console.WriteLine("11)Activate Brand");
     Console.WriteLine("-------------------");
-    Console.WriteLine("9)Update Product");
-    Console.WriteLine("10)Update Category");
+    Console.WriteLine("12)Update Product");
+    Console.WriteLine("13)Update Category");
+    Console.WriteLine("14)Update Brand");
     Console.WriteLine("-------------------");
-    Console.WriteLine("11)Get Invoice Report By Time");
-    Console.WriteLine("12)Get Canceled Invoice Report By Time");
-    Console.WriteLine("13)Get The Most Cart Products");
+    Console.WriteLine("15)Get Invoice Report By Time");
+    Console.WriteLine("16)Get Canceled Invoice Report By Time");
+    Console.WriteLine("17)Get The Most Cart Products");
     Console.WriteLine("-------------------");
-    Console.WriteLine("14)Show Deactive Users");
-    Console.WriteLine("15)Show Active Users");
-    Console.WriteLine("16)Show Deactive Products");
-    Console.WriteLine("17)Show Active Products");
-    Console.WriteLine("18)Show Deactive Categories");
-    Console.WriteLine("19)Show Active Categories"); 
-    Console.WriteLine("20)Show Deactive Brands");
-    Console.WriteLine("21)Show Active Brands");
+    Console.WriteLine("18)Show Deactive Users");
+    Console.WriteLine("19)Show Active Users");
+    Console.WriteLine("20)Show Deactive Products");
+    Console.WriteLine("21)Show Active Products");
+    Console.WriteLine("22)Show Deactive Categories");
+    Console.WriteLine("23)Show Active Categories"); 
+    Console.WriteLine("24)Show Deactive Brands");
+    Console.WriteLine("25)Show Active Brands");
     Console.WriteLine("-------------------");
     Console.WriteLine("0)Exit\n");
     Console.WriteLine("Choose an option");
@@ -154,7 +158,7 @@ while (isContinue)
     bool isInt = int.TryParse(option, out intOption);
     if (isInt)
     {
-        if (intOption >= 0 && intOption <= 21)
+        if (intOption >= 0 && intOption <= 25)
         {
             switch (intOption)
             {
@@ -321,7 +325,7 @@ while (isContinue)
                                 $"Name:{brand.Name.ToUpper()}\n");
                         }
                         Console.ResetColor();
-                        Console.WriteLine("Enter Category Id");
+                        Console.WriteLine("Enter Brand Id");
                         int brandIdForPro = Convert.ToInt32(Console.ReadLine());
                         Console.ForegroundColor = ConsoleColor.Green;
                         productService.CreateProduct(name, description, price, count, categoryIdForPro, brandIdForPro);
@@ -344,6 +348,23 @@ while (isContinue)
                         string? categoryDescription = Console.ReadLine();
                         Console.ForegroundColor = ConsoleColor.Green;
                         categoryService.CreateCategory(categoryName, categoryDescription);
+                        Console.ResetColor();
+
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(ex.Message);
+                        Console.ResetColor();
+                    }
+                    break;
+                case (int)AdminPanel.CreateBrand:
+                    try
+                    {
+                        Console.WriteLine("Enter Name");
+                        string? brandName = Console.ReadLine();
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        brandService.CreateBrand(brandName);
                         Console.ResetColor();
 
                     }
@@ -488,6 +509,52 @@ while (isContinue)
                         Console.ResetColor();
                     }
                     break;
+                case (int)AdminPanel.DeactivateBrand:
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    foreach (var brand in context.Brands.Where(c => c.IsDeactive == false))
+                    {
+                        Console.WriteLine($"\nId:{brand.Id}\n" +
+                            $"Name:{brand.Name.ToUpper()}\n");
+                    }
+                    Console.ResetColor();
+                    Console.WriteLine("Enter Brand Id");
+                    int brandId = Convert.ToInt32(Console.ReadLine());
+                    try
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        brandService.DeactivateBrand(brandId);
+                        Console.ResetColor();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(ex.Message);
+                        Console.ResetColor();
+                    }
+                    break;
+                case (int)AdminPanel.ActivateBrand:
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    foreach (var brand in context.Brands.Where(c => c.IsDeactive == true))
+                    {
+                        Console.WriteLine($"\nId:{brand.Id}\n" +
+                            $"Name:{brand.Name.ToUpper()}\n");
+                    }
+                    Console.ResetColor();
+                    Console.WriteLine("Enter Brand Id");
+                    int brandIdForActivate = Convert.ToInt32(Console.ReadLine());
+                    try
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        brandService.ActivateBrand(brandIdForActivate);
+                        Console.ResetColor();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(ex.Message);
+                        Console.ResetColor();
+                    }
+                    break;
                 case (int)AdminPanel.GetInvoiceReport:
                     Console.WriteLine("Enter Start Time");
                     DateTime startTime = Convert.ToDateTime(Console.ReadLine());
@@ -563,6 +630,65 @@ while (isContinue)
                         Console.ResetColor();
                     }
                     break;
+                case (int)AdminPanel.UpdateBrand:
+                    try
+                    {
+                    brandName:
+                        Console.ForegroundColor = ConsoleColor.Magenta;
+                        foreach (var existBrand in context.Brands)
+                        {
+                            Console.WriteLine($"\nId:{existBrand.Id}/" +
+                                $"Name:{existBrand.Name.ToUpper()}\n");
+                        }
+                        Console.ResetColor();
+                        Console.WriteLine("Enter Brand Id");
+                        int brandIdForUpdate = Convert.ToInt32(Console.ReadLine());
+                        if (brandIdForUpdate < 0)
+                        {
+                            Console.WriteLine("Id cannot be negative");
+                            goto brandName;
+                        }
+                        Brand brand = context.Brands.Find(brandIdForUpdate);
+                        if(brand is null)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine("Brand cannot be found");
+                            Console.ResetColor();
+                            goto brandName;
+                        }
+                        Console.WriteLine("Enter new Name:");
+                        string name = Console.ReadLine();
+                        if (name is not null)
+                        {
+                            if (brand.Name.ToLower() != name.ToLower())
+                            {
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                brandService.UpdateBrand(brand,name);
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine("Name cannot be the same");
+                                Console.ResetColor();
+                                goto brandName;
+                            }
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine("Name cannot be null");
+                            Console.ResetColor();
+                            goto brandName;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine(ex.Message);
+                        Console.ResetColor();
+                    }
+                    break;
                 case (int)AdminPanel.UpdateCategory:
                     Console.WriteLine("1)Update Category Name");
                     Console.WriteLine("2)Update Category Description");
@@ -595,6 +721,13 @@ while (isContinue)
                                             goto categoryName;
                                         }
                                         Category category = context.Categories.Find(categoryIdForUpdate);
+                                        if (category is null)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Yellow;
+                                            Console.WriteLine("Category cannot be found");
+                                            Console.ResetColor();
+                                            goto categoryName;
+                                        }
                                         Console.WriteLine("Enter new Name:");
                                         string name = Console.ReadLine();
                                         if (name is not null)
@@ -648,6 +781,13 @@ while (isContinue)
                                             goto categoryDesc;
                                         }
                                         Category category = context.Categories.Find(categoryIdForCat);
+                                        if (category is null)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Yellow;
+                                            Console.WriteLine("Category cannot be found");
+                                            Console.ResetColor();
+                                            goto categoryDesc;
+                                        }
                                         Console.WriteLine("Enter new Description:");
                                         string desc = Console.ReadLine();
                                         if (category.Description.ToLower() != desc.ToLower())
@@ -717,6 +857,13 @@ while (isContinue)
                                             goto productName;
                                         }
                                         Product product = context.Products.Find(productId);
+                                        if (product is null)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Yellow;
+                                            Console.WriteLine("Product cannot be found");
+                                            Console.ResetColor();
+                                            goto productName;
+                                        }
                                         Console.WriteLine("Enter new Name:");
                                         string name = Console.ReadLine();
                                         if (name is not null)
@@ -773,6 +920,13 @@ while (isContinue)
                                             goto productDesc;
                                         }
                                         Product product = context.Products.Find(productId);
+                                        if (product is null)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Yellow;
+                                            Console.WriteLine("Product cannot be found");
+                                            Console.ResetColor();
+                                            goto productDesc;
+                                        }
                                         Console.WriteLine("Enter new Description:");
                                         string desc = Console.ReadLine();
                                         if (product.Description.ToLower() != desc.ToLower())
@@ -819,6 +973,13 @@ while (isContinue)
                                             goto productPrice;
                                         }
                                         Product product = context.Products.Find(productId);
+                                        if (product is null)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Yellow;
+                                            Console.WriteLine("Product cannot be found");
+                                            Console.ResetColor();
+                                            goto productPrice;
+                                        }
                                         Console.WriteLine("Enter new Price:");
                                         decimal price = Convert.ToDecimal(Console.ReadLine());
                                         if (product.Price != price)
@@ -865,6 +1026,13 @@ while (isContinue)
                                             goto productAvailable;
                                         }
                                         Product product = context.Products.Find(productId);
+                                        if (product is null)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Yellow;
+                                            Console.WriteLine("Product cannot be found");
+                                            Console.ResetColor();
+                                            goto productAvailable;
+                                        }
                                         Console.WriteLine("Enter new Available count:");
                                         int available = Convert.ToInt32(Console.ReadLine());
                                         if (product.AvailableCount != available)
@@ -916,6 +1084,13 @@ while (isContinue)
                                             goto productCategory;
                                         }
                                         Product product = context.Products.Find(productId);
+                                        if (product is null)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Yellow;
+                                            Console.WriteLine("Product cannot be found");
+                                            Console.ResetColor();
+                                            goto productCategory;
+                                        }
                                         Console.ForegroundColor = ConsoleColor.Magenta;
                                         foreach (var existCategory in context.Categories)
                                         {
@@ -973,6 +1148,13 @@ while (isContinue)
                                             goto productBrand;
                                         }
                                         Product product = context.Products.Find(productId);
+                                        if (product is null)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Yellow;
+                                            Console.WriteLine("Product cannot be found");
+                                            Console.ResetColor();
+                                            goto productBrand;
+                                        }
                                         Console.ForegroundColor = ConsoleColor.Magenta;
                                         foreach (var existBrand in context.Brands)
                                         {

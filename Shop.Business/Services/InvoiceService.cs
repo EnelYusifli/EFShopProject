@@ -78,10 +78,11 @@ public class InvoiceService : IInvoiceService
                                     var wallets = context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false);
                                     if (wallets.Any())
                                     {
+                                        Console.ForegroundColor = ConsoleColor.Magenta;
                                         foreach (var walletOfUser in context.Wallets.Where(w => w.User == user && w.IsDeactive == false))
                                         {
                                             Console.WriteLine($"Id:{walletOfUser.Id}/Number:{walletOfUser.Number}\nBalance:{walletOfUser.Balance}");
-                                        }
+                                        }Console.ResetColor();
                                         Console.WriteLine("\nChoose the card that you want to pay with:\n");
                                         int walletIdForPay = Convert.ToInt32(Console.ReadLine());
 
@@ -116,7 +117,9 @@ public class InvoiceService : IInvoiceService
                                             context.Entry(product).State = EntityState.Modified;
                                             context.Entry(cartProduct).State = EntityState.Modified;
                                         }
+                                        Console.ForegroundColor = ConsoleColor.Green;
                                         Console.WriteLine("Purchase successful");
+                                        Console.ResetColor();
                                     }
                                 }
                                 catch (Exception ex)

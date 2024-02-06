@@ -2,5 +2,5 @@
 
 public interface IProductService
 {
-    void CreateProduct(string productName, string description, decimal price, int availableCount, int categoryId);
+    void CreateProduct(string productName, string description, decimal price, int availableCount, int categoryId,int brandId);
 }

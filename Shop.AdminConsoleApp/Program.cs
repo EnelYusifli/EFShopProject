@@ -22,6 +22,7 @@ ShopDbContext context = new ShopDbContext();
 UserService userService = new UserService();
 ProductService productService = new ProductService();
 CategoryService categoryService = new CategoryService();
+BrandService brandService = new BrandService();
 WalletService walletService = new WalletService();
 while (isContinue)
 {
@@ -142,7 +143,9 @@ while (isContinue)
     Console.WriteLine("16)Show Deactive Products");
     Console.WriteLine("17)Show Active Products");
     Console.WriteLine("18)Show Deactive Categories");
-    Console.WriteLine("19)Show Active Categories");
+    Console.WriteLine("19)Show Active Categories"); 
+    Console.WriteLine("20)Show Deactive Brands");
+    Console.WriteLine("21)Show Active Brands");
     Console.WriteLine("-------------------");
     Console.WriteLine("0)Exit\n");
     Console.WriteLine("Choose an option");
@@ -151,7 +154,7 @@ while (isContinue)
     bool isInt = int.TryParse(option, out intOption);
     if (isInt)
     {
-        if (intOption >= 0 && intOption <= 19)
+        if (intOption >= 0 && intOption <= 21)
         {
             switch (intOption)
             {
@@ -190,6 +193,41 @@ while (isContinue)
                     {
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine("There is no deactive category");
+                        Console.ResetColor();
+                    }
+                    break;
+                case (int)AdminPanel.ShowActiveBrands:
+                    int count8 = 0;
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    foreach (var brand in context.Brands.Where(b => b.IsDeactive == false))
+                    {
+                        Console.WriteLine($"\nId:{brand.Id}\n" +
+                            $"Name:{brand.Name.ToUpper()}\n");
+                        count8++;
+                    }
+                    Console.ResetColor();
+                    if (count8 == 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine("There is no active brand");
+                        Console.ResetColor();
+                    }
+
+                    break;
+                case (int)AdminPanel.ShowDeactiveBrands:
+                    int count9 = 0;
+                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    foreach (var brand in context.Brands.Where(c => c.IsDeactive == true))
+                    {
+                        Console.WriteLine($"\nId:{brand.Id}\n" +
+                            $"Name:{brand.Name.ToUpper()}\n");
+                        count9++;
+                    }
+                    Console.ResetColor();
+                    if (count9 == 0)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine("There is no deactive brand");
                         Console.ResetColor();
                     }
                     break;
@@ -276,8 +314,17 @@ while (isContinue)
                         Console.ResetColor();
                         Console.WriteLine("Enter Category Id");
                         int categoryIdForPro = Convert.ToInt32(Console.ReadLine());
+                        Console.ForegroundColor = ConsoleColor.DarkBlue;
+                        foreach (var brand in context.Brands)
+                        {
+                            Console.WriteLine($"\nId:{brand.Id}\n" +
+                                $"Name:{brand.Name.ToUpper()}\n");
+                        }
+                        Console.ResetColor();
+                        Console.WriteLine("Enter Category Id");
+                        int brandIdForPro = Convert.ToInt32(Console.ReadLine());
                         Console.ForegroundColor = ConsoleColor.Green;
-                        productService.CreateProduct(name, description, price, count, categoryIdForPro);
+                        productService.CreateProduct(name, description, price, count, categoryIdForPro, brandIdForPro);
                         Console.ResetColor();
                     }
                     catch (Exception ex)
@@ -591,7 +638,8 @@ while (isContinue)
                                             Console.WriteLine($"\nId:{existCategory.Id}/" +
                                                 $"Name:{existCategory.Name.ToUpper()}\n" +
                                                 $"Description:{existCategory.Description}");
-                                        }Console.ResetColor();
+                                        }
+                                        Console.ResetColor();
                                         Console.WriteLine("Enter Category Id");
                                         int categoryIdForCat = Convert.ToInt32(Console.ReadLine());
                                         if (categoryIdForCat < 0)
@@ -635,7 +683,8 @@ while (isContinue)
                     Console.WriteLine("2)Update Product Description");
                     Console.WriteLine("3)Update Product Price");
                     Console.WriteLine("4)Update Product Available count");
-                    Console.WriteLine("5)Update Product Category\n");
+                    Console.WriteLine("5)Update Product Category");
+                    Console.WriteLine("6)Update Product Brand\n");
                     Console.WriteLine("Choose an option");
                     string? optionUpdateProduct = Console.ReadLine();
                     int intOptionUpdateProduct;
@@ -675,7 +724,7 @@ while (isContinue)
                                             if (product.Name.ToLower() != name.ToLower())
                                             {
                                                 Console.ForegroundColor = ConsoleColor.Green;
-                                                productService.UpdateProduct(product, name, product.Description, product.Price, product.AvailableCount, product.CategoryId);
+                                                productService.UpdateProduct(product, name, product.Description, product.Price, product.AvailableCount, product.CategoryId, product.BrandId);
                                                 Console.ResetColor();
                                             }
                                             else
@@ -729,7 +778,7 @@ while (isContinue)
                                         if (product.Description.ToLower() != desc.ToLower())
                                         {
                                             Console.ForegroundColor = ConsoleColor.Green;
-                                            productService.UpdateProduct(product, product.Name, desc, product.Price, product.AvailableCount, product.CategoryId);
+                                            productService.UpdateProduct(product, product.Name, desc, product.Price, product.AvailableCount, product.CategoryId, product.BrandId);
                                             Console.ResetColor();
                                         }
                                         else
@@ -775,7 +824,7 @@ while (isContinue)
                                         if (product.Price != price)
                                         {
                                             Console.ForegroundColor = ConsoleColor.Green;
-                                            productService.UpdateProduct(product, product.Name, product.Description, price, product.AvailableCount, product.CategoryId);
+                                            productService.UpdateProduct(product, product.Name, product.Description, price, product.AvailableCount, product.CategoryId, product.BrandId);
                                             Console.ResetColor();
                                         }
                                         else
@@ -821,7 +870,7 @@ while (isContinue)
                                         if (product.AvailableCount != available)
                                         {
                                             Console.ForegroundColor = ConsoleColor.Green;
-                                            productService.UpdateProduct(product, product.Name, product.Description, product.Price, available, product.CategoryId);
+                                            productService.UpdateProduct(product, product.Name, product.Description, product.Price, available, product.CategoryId, product.BrandId);
                                             Console.ResetColor();
                                         }
                                         else
@@ -855,7 +904,8 @@ while (isContinue)
                                              $"Price:${existProduct.Price}\n" +
                                              $"Available:{existProduct.AvailableCount}\n" +
                                              $"Category:{existProduct.Category.Name.ToUpper()}\n");
-                                        }Console.ResetColor();
+                                        }
+                                        Console.ResetColor();
                                         Console.WriteLine("Enter Product Id");
                                         int productId = Convert.ToInt32(Console.ReadLine());
                                         if (productId < 0)
@@ -878,7 +928,7 @@ while (isContinue)
                                         if (product.CategoryId != categoryIdForUpt)
                                         {
                                             Console.ForegroundColor = ConsoleColor.Green;
-                                            productService.UpdateProduct(product, product.Name, product.Description, product.Price, product.AvailableCount, categoryIdForUpt);
+                                            productService.UpdateProduct(product, product.Name, product.Description, product.Price, product.AvailableCount, categoryIdForUpt, product.BrandId);
                                             Console.ResetColor();
                                         }
                                         else
@@ -889,6 +939,62 @@ while (isContinue)
                                             goto productCategory;
                                         }
 
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        Console.ForegroundColor = ConsoleColor.Red;
+                                        Console.WriteLine(ex.Message);
+                                        Console.ResetColor();
+                                    }
+                                    break;
+                                case (int)UpdateProduct.UpdateBrand:
+                                    try
+                                    {
+                                    productBrand:
+                                        var productsWithBrands = context.Products.Where(p => p.IsDeactive == false).Include(p => p.Brand);
+                                        Console.ForegroundColor = ConsoleColor.DarkYellow;
+                                        foreach (var existProduct in productsWithBrands)
+                                        {
+                                            Console.WriteLine($"\nId:{existProduct.Id}/" +
+                                             $"Name:{existProduct.Name.ToUpper()}\n" +
+                                             $"Description:{existProduct.Description}\n" +
+                                             $"Price:${existProduct.Price}\n" +
+                                             $"Available:{existProduct.AvailableCount}\n" +
+                                             $"Category:{existProduct.Brand.Name.ToUpper()}\n");
+                                        }
+                                        Console.ResetColor();
+                                        Console.WriteLine("Enter Product Id");
+                                        int productId = Convert.ToInt32(Console.ReadLine());
+                                        if (productId < 0)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Yellow;
+                                            Console.WriteLine("Id cannot be negative");
+                                            Console.ResetColor();
+                                            goto productBrand;
+                                        }
+                                        Product product = context.Products.Find(productId);
+                                        Console.ForegroundColor = ConsoleColor.Magenta;
+                                        foreach (var existBrand in context.Brands)
+                                        {
+                                            Console.WriteLine($"\nId:{existBrand.Id}/" +
+                                                $"Name:{existBrand.Name.ToUpper()}\n");
+                                        }
+                                        Console.ResetColor();
+                                        Console.WriteLine("Enter new Brand Id:");
+                                        int brandIdForUpt = Convert.ToInt32(Console.ReadLine());
+                                        if (product.BrandId != brandIdForUpt)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Green;
+                                            productService.UpdateProduct(product, product.Name, product.Description, product.Price, product.AvailableCount, product.CategoryId, brandIdForUpt);
+                                            Console.ResetColor();
+                                        }
+                                        else
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Yellow;
+                                            Console.WriteLine("Brand cannot be the same");
+                                            Console.ResetColor();
+                                            goto productBrand;
+                                        }
                                     }
                                     catch (Exception ex)
                                     {

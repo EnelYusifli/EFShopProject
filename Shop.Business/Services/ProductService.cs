@@ -2,14 +2,13 @@
 using Shop.Business.Utilities.Exceptions;
 using Shop.Core.Entities;
 using Shop.DataAccess;
-
 namespace Shop.Business.Services;
 
 public class ProductService : IProductService
 {
     ShopDbContext context = new ShopDbContext();
 
-    public async void CreateProduct(string productName, string description, decimal price, int availableCount, int categoryId)
+    public async void CreateProduct(string productName, string description, decimal price, int availableCount, int categoryId, int brandId)
     {
 
         if (productName is not null)
@@ -18,10 +17,11 @@ public class ProductService : IProductService
             {
                 if (price > 0)
                 {
-                    if (categoryId > 0)
+                    if (categoryId > 0 && brandId > 0)
                     {
                         Category category = context.Categories.Find(categoryId);
-                        if (category is not null)
+                        Brand brand = context.Brands.Find(brandId);
+                        if (category is not null && brand is not null)
                         {
                             bool isDublicate = context.Products.Where(p => p.Name.ToLower() == productName.ToLower()).Any();
                             if (!isDublicate)
@@ -33,14 +33,15 @@ public class ProductService : IProductService
                                     AvailableCount = availableCount,
                                     Description = description,
                                     CategoryId = categoryId,
-                                    Category = category
+                                    Category = category,
+                                    Brand = brand
                                 };
                                 await context.Products.AddAsync(product);
                                 await context.SaveChangesAsync();
                             }
                             else throw new ShouldBeUniqueException("Product Name must be unique");
                         }
-                        else throw new CannotBeFoundException("Category cannot be found");
+                        else throw new CannotBeFoundException("Category or brand cannot be found");
                     }
                     else throw new LessThanMinimumException("Id should be more than 0");
                 }
@@ -110,7 +111,7 @@ public class ProductService : IProductService
         else throw new CannotBeFoundException("Product cannot be found");
     }
 
-    public void UpdateProduct(Product product, string name, string description, decimal price, int availableCount, int categoryId)
+    public void UpdateProduct(Product product, string name, string description, decimal price, int availableCount, int categoryId, int brandId)
     {
         if (product is not null)
         {
@@ -121,13 +122,19 @@ public class ProductService : IProductService
             product.Price = price;
             product.AvailableCount = availableCount;
             Category category = context.Categories.Find(categoryId);
+            Brand brand = context.Brands.Find(brandId);
             if (category is not null)
             {
-            product.CategoryId = categoryId;
-            product.ModifiedTime = DateTime.Now;
-            context.Entry(product).State=Microsoft.EntityFrameworkCore.EntityState.Modified;
-            context.SaveChanges();
-            Console.WriteLine("Updated Successfully");
+                if (brand is not null)
+                {
+                    product.CategoryId = categoryId;
+                    product.BrandId = brandId;
+                    product.ModifiedTime = DateTime.Now;
+                    context.Entry(product).State = Microsoft.EntityFrameworkCore.EntityState.Modified;
+                    context.SaveChanges();
+                    Console.WriteLine("Updated Successfully");
+                }
+                else throw new CannotBeFoundException("Brand cannot be found");
             }
             else throw new CannotBeFoundException("Category cannot be found");
         }

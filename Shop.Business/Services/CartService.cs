@@ -19,10 +19,15 @@ public class CartService: ICartService
                 CartProduct? cartProduct = context.CartProducts.Find(user.Id, product.Id);
                 if (cartProduct is not null && cartProduct.IsDeactive == false)
                 {
+                    if ((cartProduct.ProductCountInCart + count) > product.AvailableCount)
+                        throw new MoreThanMaximumException("Count is More than Available");
+                    else
+                    {
                     cartProduct.ProductCountInCart += count;
                     context.SaveChanges();
                     Console.Out.WriteLine("Added to Cart Successfully");
                     return;
+                    }
                 };
                 if (cartProduct is not null && cartProduct.IsDeactive == true)
                 {

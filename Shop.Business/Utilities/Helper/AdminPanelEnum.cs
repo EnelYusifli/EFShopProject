@@ -20,5 +20,7 @@ public enum AdminPanel
     ShowActiveProducts,
     ShowDeactiveCategories,
     ShowActiveCategories,
+    ShowDeactiveBrands,
+    ShowActiveBrands
 }
 

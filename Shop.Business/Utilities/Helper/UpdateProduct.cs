@@ -6,7 +6,8 @@ public enum UpdateProduct
     UpdateDescription,
     UpdatePrice,
     UpdateAvailableCount,
-    UpdateCategory
+    UpdateCategory,
+    UpdateBrand
 }
 
 

@@ -27,15 +27,18 @@ public class CartService: ICartService
                     Console.Out.WriteLine("Added to Cart Successfully");
                     return;
                 }
-                CartProduct newCartProduct = new CartProduct()
+                else
                 {
-                    ProductId = product.Id,
-                    CartId = user.Id,
-                    ProductCountInCart = count,
-                };
-                context.CartProducts.Add(newCartProduct);
-                context.SaveChanges();
-                Console.Out.WriteLine("Added to Cart Successfully");
+                    CartProduct newCartProduct = new CartProduct()
+                    {
+                        ProductId = product.Id,
+                        CartId = user.Id,
+                        ProductCountInCart = count,
+                    };
+                    context.CartProducts.Add(newCartProduct);
+                    context.SaveChanges();
+                    Console.Out.WriteLine("Added to Cart Successfully");
+                }
 
             }
             else throw new MoreThanMaximumException("Count is more than available");
@@ -49,7 +52,7 @@ public class CartService: ICartService
         if (product is not null && product.IsDeactive == false && user is not null && user.IsDeactive == false)
         {
             CartProduct? cartProduct = context.CartProducts.Find(user.Id, product.Id);
-            if (cartProduct is null || cartProduct is not null && cartProduct.IsDeactive == true)
+            if (cartProduct is null || (cartProduct is not null && cartProduct.IsDeactive == true))
                 throw new CannotBeFoundException("Product does not exist in your cart");
             if (cartProduct is not null && cartProduct.IsDeactive == false)
             {

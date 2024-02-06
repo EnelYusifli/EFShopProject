@@ -248,7 +248,7 @@ while (isMainPageContinue)
                 case (int)MainPage.GoToCart:
                     try
                     {
-                        var cart = await context.Carts.Include(c => c.CartProducts.Where(cp => !cp.IsDeactive)).ThenInclude(cp => cp.Product).FirstOrDefaultAsync(c => c.Id == user.Id);
+                        var cart = context.Carts.Include(c => c.CartProducts.Where(cp => !cp.IsDeactive)).ThenInclude(cp => cp.Product).FirstOrDefault(c => c.Id == user.Id);
                         decimal total = 0;
                         if (cart is not null)
                         {
@@ -281,26 +281,18 @@ while (isMainPageContinue)
                                     switch (cartIntOption)
                                     {
                                         case (int)CartEnum.BuyAllProducts:
-                                            var wallets = context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false);
-                                            if (wallets.Any())
-                                            {
-                                                foreach (var wallet in context.Wallets.Where(w => w.User == user && w.IsDeactive == false))
-                                                {
-                                                    Console.WriteLine($"Id:{wallet.Id}/Number:{wallet.Number}\nBalance:{wallet.Balance}");
-                                                }
-                                                Console.WriteLine("\nChoose the card that you want to pay with:\n");
-                                                int walletIdForPay = Convert.ToInt32(Console.ReadLine());
+                                           
                                                 List<Product> productsInCart = context.Products.Where(p => p.CartProducts.Where(cp => !cp.IsDeactive).Any(cp => cp.CartId == user.Id)).ToList();
-                                                try
-                                                {
-                                                    invoiceService.BuyProduct(walletIdForPay, user, productsInCart, total);
-                                                }
-                                                catch (Exception ex)
-                                                {
-                                                    Console.WriteLine(ex.Message);
-                                                }
+                                            try
+                                            {
+                                                invoiceService.BuyProduct( user, productsInCart, total);
                                             }
-                                                break;
+                                            catch (Exception ex)
+                                            {
+                                                Console.WriteLine(ex.Message);
+                                            }
+
+                                            break;
                                     
                                         case (int)CartEnum.RemoveProduct:
                                             try

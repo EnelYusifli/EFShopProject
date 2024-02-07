@@ -607,11 +607,13 @@ while (isMainPageContinue)
                                                         case (int)UserUpdateEnum.UpdatePassword:
                                                         password:
                                                             Console.WriteLine("Enter old password:");
-                                                            string oldPassword = Console.ReadLine();
+                                                            string oldPassword = userService.ReadPasswordFromConsole();
+                                                            string hashedPassword = userService.HashPassword(oldPassword);
                                                             if (oldPassword == user.Password)
                                                             {
                                                                 Console.WriteLine("Enter new password:");
-                                                                string password = Console.ReadLine();
+                                                                string password = userService.ReadPasswordFromConsole();
+                                                                string hashedPasswordNew = userService.HashPassword(password);
                                                                 if (user.Password.ToLower() != password.ToLower())
                                                                     if (password.Length >= 8)
                                                                     {

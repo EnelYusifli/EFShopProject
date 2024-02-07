@@ -1,4 +1,5 @@
-﻿using Shop.Business.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using Shop.Business.Interfaces;
 using Shop.Business.Utilities.Exceptions;
 using Shop.Core.Entities;
 using Shop.DataAccess;
@@ -75,8 +76,10 @@ public class CartService : ICartService
                     cartProduct.IsDeactive = true;
                     cartProduct.ModifiedTime = DateTime.Now;
                 }
+                context.Entry(cartProduct).State = EntityState.Modified;
                 context.SaveChanges();
                 Console.Out.WriteLine("Removed from Cart Successfully");
+                return;
             }
         }
         else throw new CannotBeFoundException("Product or user cannot be found");

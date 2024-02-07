@@ -2,6 +2,8 @@
 using Shop.Business.Utilities.Exceptions;
 using Shop.Core.Entities;
 using Shop.DataAccess;
+using System.Xml.Linq;
+
 namespace Shop.Business.Services;
 
 public class ProductService : IProductService
@@ -150,8 +152,53 @@ public class ProductService : IProductService
         }
         else throw new CannotBeFoundException("Product cannot be found");
     }
-    //public void SearchForProductVia() 
-    //{
+    public void SearchForProductViaName(string name)
+    {
+        if (name is not null && name.Length > 1)
+        {
+            Product product = context.Products.Where(p => p.Name.ToLower() == name.ToLower() && !p.IsDeactive).FirstOrDefault();
+            if (product is null) throw new CannotBeFoundException("This product cannot be found");
+            Console.WriteLine($"{product.Id}){product.Name.ToUpper()}\n" +
+                $"Price {product.Price}");
 
-    //}
+        }
+        else throw new CannotBeNullException("Name cannot be null");
+    }
+    public void SearchProductsViaBrand(string brandName)
+    {
+        if (brandName is not null && brandName.Length > 1)
+        {
+            Brand brand = context.Brands.Where(b => b.Name.ToLower() == brandName.ToLower() && !b.IsDeactive).FirstOrDefault();
+            if (brand is null) throw new CannotBeFoundException("This brand cannot be found");
+            var products = context.Products.Where(p => p.BrandId == brand.Id && !p.IsDeactive);
+            if (products is null) throw new CannotBeFoundException("This brand does not have any product");
+            int n = 0;
+            foreach (var product in products)
+            {
+                Console.WriteLine($"{product.Id}){product.Name.ToUpper()}\n" +
+                $"Price {product.Price}");
+                n++;
+            }
+            if (n == 0) throw new CannotBeFoundException("This category does not have any product");
+        }
+        else throw new CannotBeNullException("Name cannot be null");
+
+    }
+    public void SearchProductsViaCategory(string categoryName)
+    {
+        if (categoryName is null && categoryName.Length > 1)
+            throw new CannotBeNullException("Name cannot be null");
+            Category category = context.Categories.Where(c => c.Name.ToLower() == categoryName.ToLower() && !c.IsDeactive).FirstOrDefault();
+        if (category is null) throw new CannotBeFoundException("This category cannot be found");
+        var products = context.Products.Where(p => p.CategoryId == category.Id && !p.IsDeactive);
+        // if (products is null) throw new CannotBeFoundException("This category does not have any product");
+        int n = 0;
+        foreach (var product in products)
+        {
+            Console.WriteLine($"{product.Id}){product.Name.ToUpper()}\n" +
+                $"Price {product.Price}");
+            n++;
+        }
+        if(n==0) throw new CannotBeFoundException("This category does not have any product");
+    }
 }

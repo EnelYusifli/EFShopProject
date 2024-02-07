@@ -2,5 +2,8 @@
 public enum HomePage
 {
     ContinueScrolling=1,
-    AddProductToCart
+    AddProductToCart,
+    SearchProductViaName,
+    SearchProductViaCategory,
+    SearchProductViaBrand
 }

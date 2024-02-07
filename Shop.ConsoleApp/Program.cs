@@ -211,6 +211,9 @@ while (isMainPageContinue)
                     {
                         Console.WriteLine("\n1)Continue Scrolling");
                         Console.WriteLine("2)Add Product To Cart");
+                        Console.WriteLine("3)Search Product By Name");
+                        Console.WriteLine("4)Search Product By Category");
+                        Console.WriteLine("5)Search Product By Brand");
                         Console.WriteLine("0)Return to main page\n");
                         Console.WriteLine("Choose an option");
                         string? homePageOption = Console.ReadLine();
@@ -218,7 +221,7 @@ while (isMainPageContinue)
                         bool isIntHomePage = int.TryParse(homePageOption, out homePageIntOption);
                         if (isIntHomePage)
                         {
-                            if (homePageIntOption >= 0 && homePageIntOption <= 2)
+                            if (homePageIntOption >= 0 && homePageIntOption <= 5)
                             {
                                 int n = 1;
                                 switch (homePageIntOption)
@@ -257,6 +260,54 @@ while (isMainPageContinue)
                                             Console.ResetColor();
                                         }
                                         break;
+                                    case (int)HomePage.SearchProductViaName:
+                                        Console.WriteLine("Enter product name");
+                                        string name = Console.ReadLine();
+                                        try
+                                        {
+                                            Console.ForegroundColor=ConsoleColor.Green;
+                                            productService.SearchForProductViaName(name);
+                                            Console.ResetColor();
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Console.ForegroundColor= ConsoleColor.Red;
+                                            Console.WriteLine(ex.Message);
+                                            Console.ResetColor();
+                                        }
+                                        break; 
+                                    case (int)HomePage.SearchProductViaCategory:
+                                        Console.WriteLine("Enter category name");
+                                        string categoryName = Console.ReadLine();
+                                        try
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Green;
+                                            productService.SearchProductsViaCategory(categoryName);
+                                            Console.ResetColor();
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Red;
+                                            Console.WriteLine(ex.Message);
+                                            Console.ResetColor();
+                                        }
+                                        break;  
+                                    case (int)HomePage.SearchProductViaBrand:
+                                        Console.WriteLine("Enter brand name");
+                                        string brandName = Console.ReadLine();
+                                        try
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Green;
+                                            productService.SearchProductsViaBrand(brandName);
+                                            Console.ResetColor();
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Red;
+                                            Console.WriteLine(ex.Message);
+                                            Console.ResetColor();
+                                        }
+                                        break;
                                     default:
                                         isContinueHomePage = false;
                                         break;
@@ -274,7 +325,6 @@ while (isMainPageContinue)
                         decimal total = 0;
                         if (cartProducts is not null)
                         {
-                       
                             Console.ForegroundColor = ConsoleColor.Magenta;
                             foreach (var cartProduct in cartProducts)
                             {

@@ -160,7 +160,7 @@ public class InvoiceService : IInvoiceService
                                     product.AvailableCount += cartProduct.ProductCountInCart;
                                     context.Entry(product).State = EntityState.Modified;
                                 }
-                                //context.Entry(invoice).State = EntityState.Modified;
+                                context.Entry(invoice).State = EntityState.Modified;
                                 invoice.ModifiedTime = DateTime.Now;
                                 context.SaveChanges();
                                 break;

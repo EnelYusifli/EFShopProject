@@ -8,4 +8,5 @@ public enum UserInfo
     AddRemovedCard,
     IncreaseCardBalance,
     TransferMoney,
+    ShowBoughtProducts
 }

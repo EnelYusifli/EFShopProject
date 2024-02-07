@@ -224,20 +224,23 @@ public class UserService : IUserService
         return password.ToString();
     }
 
-    //public void GetBoughtProducts(User user)
-    //{
-    //    if (user is not null)
-    //    {
-    //        List<ProductIncoive> productIncoives = context.ProductInvoices.Where(pi => !pi.IsDeactive).Include(pi => pi.Invoice.Where(i=>i.IsPaid)).ThenInclude(i => pi.Product).ToList();
-    //        if(invoices is not null)
-    //        {
-    //            foreach (var invoice in invoices)
-    //            {
-    //                Console.WriteLine($"Bought date:{invoice.ModifiedTime}\n" +
-    //                    $"Product Name:{}");
-    //            }
-    //        }
-    //    }
-    //    else throw new CannotBeFoundException("User Cannot be found");
-    //}
+    public void GetBoughtProducts(User user)
+    {
+        if (user is not null)
+        {
+            var productInvoices = context.ProductInvoices
+                .Where(pi => !pi.IsDeactive)
+                .Include(pi => pi.Product)
+                .Include(pi => pi.Invoice)
+                .ThenInclude(i => i.Wallet)
+                .Where(pi => pi.Invoice.IsPaid && pi.Invoice.Wallet.UserId == user.Id);
+            foreach (var productInvoice in productInvoices)
+            {
+                Console.WriteLine($"\nName:{productInvoice.Product.Name.ToUpper()}\n" +
+                    $"Count:{productInvoice.ProductCountInInvoice}\n" +
+                    $"Bought Date:{productInvoice.Invoice.ModifiedTime}\n");
+            }
+        }
+        else throw new CannotBeFoundException("User Cannot be found");
+    }
 }

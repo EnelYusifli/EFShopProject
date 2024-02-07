@@ -449,6 +449,7 @@ while (isMainPageContinue)
                         Console.WriteLine("4)Add Removed Card");
                         Console.WriteLine("5)Increase Card balance");
                         Console.WriteLine("6)Transfer money");
+                        Console.WriteLine("7)Show Bought products");
                         Console.WriteLine("0)Return to main page\n");
                         Console.WriteLine("Choose an option");
                         string? homePageOption = Console.ReadLine();
@@ -456,7 +457,7 @@ while (isMainPageContinue)
                         bool isIntHomePage = int.TryParse(homePageOption, out homePageIntOption);
                         if (isIntHomePage)
                         {
-                            if (homePageIntOption >= 0 && homePageIntOption <= 6)
+                            if (homePageIntOption >= 0 && homePageIntOption <= 7)
                             {
                                 switch (homePageIntOption)
                                 {
@@ -840,6 +841,20 @@ while (isMainPageContinue)
                                             Console.ResetColor();
                                         }
 
+                                        break;
+                                    case(int)UserInfo.ShowBoughtProducts:
+                                        try
+                                        {
+                                            Console.ForegroundColor=ConsoleColor.DarkCyan;
+                                            userService.GetBoughtProducts(user);
+                                            Console.ResetColor();
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Red;
+                                            Console.WriteLine(ex.Message);
+                                            Console.ResetColor();
+                                        }
                                         break;
                                     case (int)UserInfo.ReturnToHomePage:
                                         isUserInfoContinue = false;

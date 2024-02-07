@@ -255,7 +255,7 @@ while (isContinue)
                 case (int)AdminPanel.ShowActiveUsers:
                     int count1 = 0;
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    foreach (var actUser in context.Users.Where(u => u.IsDeactive == false))
+                    foreach (var actUser in context.Users.Where(u => u.IsDeactive == false && u.Id!=1))
                     {
                         Console.WriteLine($"\nId:{actUser.Id}\n" +
                             $"Name:{actUser.Name.ToUpper()}\n");
@@ -284,7 +284,7 @@ while (isContinue)
                 case (int)AdminPanel.ShowDeactiveProducts:
                     int count3 = 0;
                     Console.ForegroundColor = ConsoleColor.Magenta;
-                    foreach (var deactPro in context.Products.Where(u => u.IsDeactive == true))
+                    foreach (var deactPro in context.Products.Where(u => u.IsDeactive == true && u.Id != 1))
                     {
                         Console.WriteLine($"\nId:{deactPro.Id}\n" +
                             $"Name:{deactPro.Name.ToUpper()}\n");

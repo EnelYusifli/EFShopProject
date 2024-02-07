@@ -52,7 +52,7 @@ public class InvoiceService : IInvoiceService
                             product.AvailableCount -= cartProduct.ProductCountInCart;
                             if (product.AvailableCount == 0)
                             {
-                                var cartProducts = context.CartProducts.Where(cp=>cp.ProductId==product.Id);
+                                var cartProducts = context.CartProducts.Where(cp => cp.ProductId == product.Id);
                                 foreach (var cartProductToDeact in cartProducts)
                                 {
                                     cartProductToDeact.IsDeactive = true;
@@ -62,7 +62,10 @@ public class InvoiceService : IInvoiceService
                             }
                             context.Entry(product).State = EntityState.Modified;
                         }
-                        else throw new MoreThanMaximumException("Count is not available");
+                        else
+                            throw new MoreThanMaximumException("Count is not available");
+                            
+                        
                     }
                 }
                 context.SaveChanges();
@@ -169,6 +172,7 @@ public class InvoiceService : IInvoiceService
                                 context.Entry(invoice).State = EntityState.Modified;
                                 invoice.ModifiedTime = DateTime.Now;
                                 context.SaveChanges();
+                                Console.WriteLine("Canceled purchase");
                                 break;
                         }
                     }

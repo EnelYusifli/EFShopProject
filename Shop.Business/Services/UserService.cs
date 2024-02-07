@@ -183,6 +183,7 @@ public class UserService : IUserService
             if (context.Users.Where(u => u.UserName.ToLower() == username.ToLower() && u.UserName.ToLower() != user.UserName.ToLower()).Any())
                 throw new ShouldBeUniqueException("This Username is already taken");
             user.UserName = username;
+            if (password.Length < 8) throw new LessThanMinimumException("Length of password must be more than 8");
             user.Password = password;
             user.Phone = phone;
             user.Address = address;

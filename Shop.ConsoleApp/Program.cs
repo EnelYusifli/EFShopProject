@@ -73,7 +73,9 @@ while (isContinue)
                     }
                     catch (Exception ex)
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine(ex.Message);
+                        Console.ResetColor();
                     }
                     break;
                 case (int)LoginOrRegisterEnum.Login:
@@ -745,11 +747,22 @@ while (isMainPageContinue)
                                     case (int)UserInfo.RemoveCard:
                                         try
                                         {
+                                            var userWalletsForRemove = context.Wallets
+                                                               .Where(w => w.UserId == user.Id && !w.IsDeactive)
+                                                               .Select(cw => new
+                                                               {
+                                                                   UserId = user.Id,
+                                                                   Number = cw.Number,
+                                                                   CVC = cw.CVC,
+                                                                   Balance = cw.Balance,
+                                                                   Id = cw.Id,
+                                                               })
+                                                               .ToList();
                                             bool hasWalletForRemove = context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false).Any();
                                             if (hasWalletForRemove)
                                             {
                                                 Console.ForegroundColor = ConsoleColor.Blue;
-                                                foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false))
+                                                foreach (var wallet in userWalletsForRemove)
                                                 {
                                                     Console.WriteLine($"Id:{wallet.Id}/" +
                                                                       $"Card:{wallet.Number}\n" +
@@ -787,11 +800,22 @@ while (isMainPageContinue)
                                     case (int)UserInfo.AddRemovedCard:
                                         try
                                         {
+                                            var userWalletsForAdd = context.Wallets
+                                                               .Where(w => w.UserId == user.Id && w.IsDeactive)
+                                                               .Select(cw => new
+                                                               {
+                                                                   UserId = user.Id,
+                                                                   Number = cw.Number,
+                                                                   CVC = cw.CVC,
+                                                                   Balance = cw.Balance,
+                                                                   Id = cw.Id,
+                                                               })
+                                                               .ToList();
                                             bool hasWalletForAdd = context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == true).Any();
                                             if (hasWalletForAdd)
                                             {
                                                 Console.ForegroundColor = ConsoleColor.Blue;
-                                                foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == true))
+                                                foreach (var wallet in userWalletsForAdd)
                                                 {
                                                     Console.WriteLine($"Id:{wallet.Id}/" +
                                                                       $"Card:{wallet.Number}\n" +
@@ -829,8 +853,19 @@ while (isMainPageContinue)
                                     case (int)UserInfo.IncreaseCardBalance:
                                         try
                                         {
+                                            var userWalletsForInc = context.Wallets
+                                                               .Where(w => w.UserId == user.Id && !w.IsDeactive)
+                                                               .Select(cw => new
+                                                               {
+                                                                   UserId = user.Id,
+                                                                   Number = cw.Number,
+                                                                   CVC = cw.CVC,
+                                                                   Balance = cw.Balance,
+                                                                   Id = cw.Id,
+                                                               })
+                                                               .ToList();
                                             Console.ForegroundColor = ConsoleColor.Blue;
-                                            foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false))
+                                            foreach (var wallet in userWalletsForInc)
                                             {
                                                 Console.WriteLine($"Id:{wallet.Id}/" +
                                                                   $"Card:{wallet.Number}\n" +
@@ -863,8 +898,19 @@ while (isMainPageContinue)
                                     case (int)UserInfo.TransferMoney:
                                         try
                                         {
+                                            var userWalletsForTansfer = context.Wallets
+                                                               .Where(w => w.UserId == user.Id && !w.IsDeactive)
+                                                               .Select(cw => new
+                                                               {
+                                                                   UserId = user.Id,
+                                                                   Number = cw.Number,
+                                                                   CVC = cw.CVC,
+                                                                   Balance = cw.Balance,
+                                                                   Id = cw.Id,
+                                                               })
+                                                               .ToList();
                                             Console.ForegroundColor = ConsoleColor.Blue;
-                                            foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false))
+                                            foreach (var wallet in userWalletsForTansfer)
                                             {
                                                 Console.WriteLine($"Id:{wallet.Id}/" +
                                                                   $"Card:{wallet.Number}\n" +
@@ -874,7 +920,7 @@ while (isMainPageContinue)
                                             Console.WriteLine("Enter Card Id To Get the Money");
                                             int walletIdForInc = Convert.ToInt32(Console.ReadLine());
                                             Console.ForegroundColor = ConsoleColor.DarkBlue;
-                                            foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false))
+                                            foreach (var wallet in userWalletsForTansfer)
                                             {
                                                 Console.WriteLine($"Id:{wallet.Id}/" +
                                                                   $"Card:{wallet.Number}\n" +

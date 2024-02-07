@@ -191,7 +191,6 @@ public class ProductService : IProductService
             Category category = context.Categories.Where(c => c.Name.ToLower() == categoryName.ToLower() && !c.IsDeactive).FirstOrDefault();
         if (category is null) throw new CannotBeFoundException("This category cannot be found");
         var products = context.Products.Where(p => p.CategoryId == category.Id && !p.IsDeactive);
-        // if (products is null) throw new CannotBeFoundException("This category does not have any product");
         int n = 0;
         foreach (var product in products)
         {

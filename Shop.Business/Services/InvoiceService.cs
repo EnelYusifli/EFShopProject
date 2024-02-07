@@ -52,6 +52,11 @@ public class InvoiceService : IInvoiceService
                             product.AvailableCount -= cartProduct.ProductCountInCart;
                             if (product.AvailableCount == 0)
                             {
+                                var cartProducts = context.CartProducts.Where(cp=>cp.ProductId==product.Id);
+                                foreach (var cartProductToDeact in cartProducts)
+                                {
+                                    cartProductToDeact.IsDeactive = true;
+                                }
                                 product.IsDeactive = true;
                                 product.ModifiedTime = DateTime.Now;
                             }
@@ -121,6 +126,7 @@ public class InvoiceService : IInvoiceService
                                         Console.WriteLine("Purchase successful");
                                         Console.ResetColor();
                                     }
+                                    else throw new CannotBeFoundException("You do not have any saved card");
                                 }
                                 catch (Exception ex)
                                 {

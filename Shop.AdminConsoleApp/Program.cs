@@ -556,24 +556,33 @@ while (isContinue)
                     }
                     break;
                 case (int)AdminPanel.GetInvoiceReport:
-                    Console.WriteLine("Enter Start Time");
-                    DateTime startTime = Convert.ToDateTime(Console.ReadLine());
-                    Console.WriteLine("Enter End Time");
-                    DateTime endTime = Convert.ToDateTime(Console.ReadLine());
                     try
                     {
-                        var result = context.GetInvoiceReport(startTime, endTime);
-                        Console.WriteLine("TotalPrice\tCreatedDate");
-                        decimal total = 0;
-                        Console.ForegroundColor = ConsoleColor.DarkGreen;
-                        foreach (var item in result)
+                        Console.WriteLine("Enter Start Time");
+                        DateTime startTime = Convert.ToDateTime(Console.ReadLine());
+                        Console.WriteLine("Enter End Time");
+                        DateTime endTime = Convert.ToDateTime(Console.ReadLine());
+                        try
                         {
-                            Console.WriteLine($"{item.TotalPrice}\t        {item.CreatedDate}");
-                            total += item.TotalPrice;
-                        }
-                        Console.WriteLine($"Total sale:{total}");
-                        Console.ResetColor();
+                            var result = context.GetInvoiceReport(startTime, endTime);
+                            Console.WriteLine("TotalPrice\tCreatedDate");
+                            decimal total = 0;
+                            Console.ForegroundColor = ConsoleColor.DarkGreen;
+                            foreach (var item in result)
+                            {
+                                Console.WriteLine($"{item.TotalPrice}\t        {item.CreatedDate}");
+                                total += item.TotalPrice;
+                            }
+                            Console.WriteLine($"Total sale:{total}");
+                            Console.ResetColor();
 
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine(ex.Message);
+                            Console.ResetColor();
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -581,24 +590,34 @@ while (isContinue)
                         Console.WriteLine(ex.Message);
                         Console.ResetColor();
                     }
+                    
                     break;
                 case (int)AdminPanel.GetCanceledInvoiceReport:
-                    Console.WriteLine("Enter Start Time");
-                    DateTime canceledStartTime = Convert.ToDateTime(Console.ReadLine());
-                    Console.WriteLine("Enter End Time");
-                    DateTime canceledEndTime = Convert.ToDateTime(Console.ReadLine());
                     try
                     {
-                        Console.ForegroundColor = ConsoleColor.DarkCyan;
-                        var result = context.GetCanceledInvoiceReport(canceledStartTime, canceledEndTime);
-                        Console.WriteLine("TotalPrice\tCreatedDate");
-                        decimal total = 0;
-                        foreach (var item in result)
+                        Console.WriteLine("Enter Start Time");
+                        DateTime canceledStartTime = Convert.ToDateTime(Console.ReadLine());
+                        Console.WriteLine("Enter End Time");
+                        DateTime canceledEndTime = Convert.ToDateTime(Console.ReadLine());
+                        try
                         {
-                            Console.WriteLine($"{item.TotalPrice}\t        {item.CreatedDate}");
-                        }
-                        Console.ResetColor();
+                            Console.ForegroundColor = ConsoleColor.DarkCyan;
+                            var result = context.GetCanceledInvoiceReport(canceledStartTime, canceledEndTime);
+                            Console.WriteLine("TotalPrice\tCreatedDate");
+                            decimal total = 0;
+                            foreach (var item in result)
+                            {
+                                Console.WriteLine($"{item.TotalPrice}\t        {item.CreatedDate}");
+                            }
+                            Console.ResetColor();
 
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine(ex.Message);
+                            Console.ResetColor();
+                        }
                     }
                     catch (Exception ex)
                     {
@@ -610,18 +629,27 @@ while (isContinue)
 
 
                 case (int)AdminPanel.GetTheMostAddedProducts:
-                    Console.WriteLine("Enter the count of products");
-                    int countOfPro = Convert.ToInt32(Console.ReadLine());
                     try
                     {
-                        var result = context.GetTheMostAddedProducts(countOfPro);
-                        Console.WriteLine("Product Name\t             Count");
-                        Console.ForegroundColor = ConsoleColor.Magenta;
-                        foreach (var item in result)
+                        Console.WriteLine("How many products do you want to see most added?");
+                        int countOfPro = Convert.ToInt32(Console.ReadLine());
+                        try
                         {
-                            Console.WriteLine($"{item.Name.ToUpper()}\t  {item.ProductCount}");
+                            var result = context.GetTheMostAddedProducts(countOfPro);
+                            Console.WriteLine("Product Name\t             Count");
+                            Console.ForegroundColor = ConsoleColor.Magenta;
+                            foreach (var item in result)
+                            {
+                                Console.WriteLine($"{item.Name.ToUpper()}\t  {item.ProductCount}");
+                            }
+                            Console.ResetColor();
                         }
-                        Console.ResetColor();
+                        catch (Exception ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine(ex.Message);
+                            Console.ResetColor();
+                        }
                     }
                     catch (Exception ex)
                     {

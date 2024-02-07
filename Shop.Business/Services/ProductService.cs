@@ -156,10 +156,15 @@ public class ProductService : IProductService
     {
         if (name is not null && name.Length > 1)
         {
-            Product product = context.Products.Where(p => p.Name.ToLower() == name.ToLower() && !p.IsDeactive).FirstOrDefault();
-            if (product is null) throw new CannotBeFoundException("This product cannot be found");
-            Console.WriteLine($"{product.Id}){product.Name.ToUpper()}\n" +
+            var products = context.Products.Where(p => p.Name.ToLower().Contains($"{name.ToLower()}") && !p.IsDeactive);
+            int n = 0;
+            foreach (var product in products)
+            {
+                Console.WriteLine($"{product.Id}){product.Name.ToUpper()}\n" +
                 $"Price {product.Price}");
+                n++;
+            }
+            if (n==0) throw new CannotBeFoundException("This product cannot be found");
 
         }
         else throw new CannotBeNullException("Name cannot be null");

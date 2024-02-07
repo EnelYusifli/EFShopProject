@@ -1,4 +1,5 @@
-﻿using Shop.Business.Services;
+﻿using Microsoft.EntityFrameworkCore;
+using Shop.Business.Services;
 using Shop.Business.Utilities.Helper;
 using Shop.Core.Entities;
 using Shop.DataAccess;
@@ -334,7 +335,7 @@ while (isMainPageContinue)
                                 .ToList();
 
                         decimal total = 0;
-
+                        Console.ForegroundColor = ConsoleColor.Magenta;
                         foreach (var cartProduct in cartProductsInCart)
                         {
                             Console.Write($"\nId:{cartProduct.ProductId} Name: {cartProduct.ProductName},\n" +
@@ -343,26 +344,7 @@ while (isMainPageContinue)
                                           $"Count In cart:{cartProduct.ProductCountInCart}\n");
                             total += cartProduct.ProductPrice * cartProduct.ProductCountInCart;
                         }
-                        //var cartProducts = context.CartProducts.Where(cp => !cp.IsDeactive)
-                        //    .Where(cp => cp.Cart.Id == user.Id)
-                        //    .Include(cp => cp.Product);
-                        //decimal total = 0;
-                        //if (cartProducts is not null)
-                        //{
-                        //    Console.ForegroundColor = ConsoleColor.Magenta;
-                        //    foreach (var cartProduct in cartProducts)
-                        //    {
-                        //        if (cartProduct.IsDeactive == false && cartProduct.ProductCountInCart != 0)
-                        //        {
-                        //            Console.Write($"\nId:{cartProduct.Product.Id} Name: {cartProduct.Product.Name.ToUpper()},\n" +
-                        //                          $"Price: {cartProduct.Product.Price},\n" +
-                        //                          $"Description: {cartProduct.Product.Description}\n" +
-                        //                          $"Count In cart:{cartProduct.ProductCountInCart}\n");
-                        //            total += cartProduct.Product.Price * cartProduct.ProductCountInCart;
-                        //        }
-                        //    }
-                        //Console.ResetColor();
-                        //}
+                        Console.ResetColor();
                         Console.WriteLine($"\nTotal Price ${total}\n");
                         bool isContinueCart = true;
                         while (isContinueCart)
@@ -456,11 +438,22 @@ while (isMainPageContinue)
                         $"Phone:{user.Phone}\n" +
                         $"Address:{user.Address}\n");
                     Console.ResetColor();
+                    var userWallets = context.Wallets
+                               .Where(w => w.UserId == user.Id && !w.IsDeactive)
+                               .Select(cw => new
+                               {
+                                  UserId=user.Id,
+                                  Number=cw.Number,
+                                  CVC=cw.CVC,
+                                  Balance=cw.Balance,
+                                  Id = cw.Id,
+                               })
+                               .ToList();
                     bool hasWallet = context.Wallets.Where(w => w.UserId == user.Id).Any();
                     if (hasWallet)
                     {
                         Console.ForegroundColor = ConsoleColor.DarkCyan;
-                        foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id))
+                        foreach (var wallet in userWallets)
                         {
                             Console.WriteLine($"Card:{wallet.Number}\n" +
                                               $"Balance:{wallet.Balance}\n");
@@ -750,45 +743,94 @@ while (isMainPageContinue)
                                         }
                                         break;
                                     case (int)UserInfo.RemoveCard:
-                                        bool hasWalletForRemove = context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false).Any();
-                                        if (hasWalletForRemove)
+                                        try
+                                        {
+                                            bool hasWalletForRemove = context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false).Any();
+                                            if (hasWalletForRemove)
+                                            {
+                                                Console.ForegroundColor = ConsoleColor.Blue;
+                                                foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false))
+                                                {
+                                                    Console.WriteLine($"Id:{wallet.Id}/" +
+                                                                      $"Card:{wallet.Number}\n" +
+                                                                      $"Balance:{wallet.Balance}");
+                                                }
+                                                Console.ResetColor();
+                                                Console.WriteLine("Enter Card Id");
+                                                int walletIdForDeact = Convert.ToInt32(Console.ReadLine());
+                                                try
+                                                {
+                                                    Console.ForegroundColor = ConsoleColor.Green;
+                                                    walletService.DeactivateWallet(walletIdForDeact, user);
+                                                    Console.ResetColor();
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    Console.ForegroundColor = ConsoleColor.Red;
+                                                    Console.WriteLine(ex.Message);
+                                                    Console.ResetColor();
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                                Console.WriteLine("You do not have any active card");
+                                                Console.ResetColor();
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Console.WriteLine(ex.Message);
+                                        }
+                                       
+                                        break;
+                                    case (int)UserInfo.AddRemovedCard:
+                                        try
+                                        {
+                                            bool hasWalletForAdd = context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == true).Any();
+                                            if (hasWalletForAdd)
+                                            {
+                                                Console.ForegroundColor = ConsoleColor.Blue;
+                                                foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == true))
+                                                {
+                                                    Console.WriteLine($"Id:{wallet.Id}/" +
+                                                                      $"Card:{wallet.Number}\n" +
+                                                                      $"Balance:{wallet.Balance}\n");
+                                                }
+                                                Console.ResetColor();
+                                                Console.WriteLine("Enter Card Id");
+                                                int walletIdForAddCard = Convert.ToInt32(Console.ReadLine());
+                                                try
+                                                {
+                                                    Console.ForegroundColor = ConsoleColor.Green;
+                                                    walletService.ActivateWallet(walletIdForAddCard, user);
+                                                    Console.ResetColor();
+                                                }
+                                                catch (Exception ex)
+                                                {
+                                                    Console.ForegroundColor = ConsoleColor.Red;
+                                                    Console.WriteLine(ex.Message);
+                                                    Console.ResetColor();
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                                Console.WriteLine("You do not have any deleted card");
+                                                Console.ResetColor();
+                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Console.WriteLine(ex.Message);
+                                        }
+                                       
+                                        break;
+                                    case (int)UserInfo.IncreaseCardBalance:
+                                        try
                                         {
                                             Console.ForegroundColor = ConsoleColor.Blue;
                                             foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false))
-                                            {
-                                                Console.WriteLine($"Id:{wallet.Id}/" +
-                                                                  $"Card:{wallet.Number}\n" +
-                                                                  $"Balance:{wallet.Balance}");
-                                            }
-                                            Console.ResetColor();
-                                            Console.WriteLine("Enter Card Id");
-                                            int walletIdForDeact = Convert.ToInt32(Console.ReadLine());
-                                            try
-                                            {
-                                                Console.ForegroundColor = ConsoleColor.Green;
-                                                walletService.DeactivateWallet(walletIdForDeact, user);
-                                                Console.ResetColor();
-                                            }
-                                            catch (Exception ex)
-                                            {
-                                                Console.ForegroundColor = ConsoleColor.Red;
-                                                Console.WriteLine(ex.Message);
-                                                Console.ResetColor();
-                                            }
-                                        }
-                                        else
-                                        {
-                                            Console.ForegroundColor = ConsoleColor.Yellow;
-                                            Console.WriteLine("You do not have any active card");
-                                            Console.ResetColor();
-                                        }
-                                        break;
-                                    case (int)UserInfo.AddRemovedCard:
-                                        bool hasWalletForAdd = context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == true).Any();
-                                        if (hasWalletForAdd)
-                                        {
-                                            Console.ForegroundColor = ConsoleColor.Blue;
-                                            foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == true))
                                             {
                                                 Console.WriteLine($"Id:{wallet.Id}/" +
                                                                   $"Card:{wallet.Number}\n" +
@@ -796,11 +838,13 @@ while (isMainPageContinue)
                                             }
                                             Console.ResetColor();
                                             Console.WriteLine("Enter Card Id");
-                                            int walletIdForAddCard = Convert.ToInt32(Console.ReadLine());
+                                            int walletIdForIncBalance = Convert.ToInt32(Console.ReadLine());
+                                            Console.WriteLine("Enter the amount of money");
+                                            decimal amount = Convert.ToDecimal(Console.ReadLine());
                                             try
                                             {
                                                 Console.ForegroundColor = ConsoleColor.Green;
-                                                walletService.ActivateWallet(walletIdForAddCard, user);
+                                                walletService.IncreaseBalance(walletIdForIncBalance, user, amount);
                                                 Console.ResetColor();
                                             }
                                             catch (Exception ex)
@@ -810,75 +854,54 @@ while (isMainPageContinue)
                                                 Console.ResetColor();
                                             }
                                         }
-                                        else
-                                        {
-                                            Console.ForegroundColor = ConsoleColor.Yellow;
-                                            Console.WriteLine("You do not have any deleted card");
-                                            Console.ResetColor();
-                                        }
-                                        break;
-                                    case (int)UserInfo.IncreaseCardBalance:
-                                        Console.ForegroundColor = ConsoleColor.Blue;
-                                        foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false))
-                                        {
-                                            Console.WriteLine($"Id:{wallet.Id}/" +
-                                                              $"Card:{wallet.Number}\n" +
-                                                              $"Balance:{wallet.Balance}\n");
-                                        }
-                                        Console.ResetColor();
-                                        Console.WriteLine("Enter Card Id");
-                                        int walletIdForIncBalance = Convert.ToInt32(Console.ReadLine());
-                                        Console.WriteLine("Enter the amount of money");
-                                        decimal amount = Convert.ToDecimal(Console.ReadLine());
-                                        try
-                                        {
-                                            Console.ForegroundColor = ConsoleColor.Green;
-                                            walletService.IncreaseBalance(walletIdForIncBalance, user, amount);
-                                            Console.ResetColor();
-                                        }
                                         catch (Exception ex)
                                         {
-                                            Console.ForegroundColor = ConsoleColor.Red;
                                             Console.WriteLine(ex.Message);
-                                            Console.ResetColor();
                                         }
+                                       
                                         break;
                                     case (int)UserInfo.TransferMoney:
-                                        Console.ForegroundColor = ConsoleColor.Blue;
-                                        foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false))
-                                        {
-                                            Console.WriteLine($"Id:{wallet.Id}/" +
-                                                              $"Card:{wallet.Number}\n" +
-                                                              $"Balance:{wallet.Balance}\n");
-                                        }
-                                        Console.ResetColor();
-                                        Console.WriteLine("Enter Card Id To Get the Money");
-                                        int walletIdForInc = Convert.ToInt32(Console.ReadLine());
-                                        Console.ForegroundColor = ConsoleColor.DarkBlue;
-                                        foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false))
-                                        {
-                                            Console.WriteLine($"Id:{wallet.Id}/" +
-                                                              $"Card:{wallet.Number}\n" +
-                                                              $"Balance:{wallet.Balance}\n");
-                                        }
-                                        Console.ResetColor();
-                                        Console.WriteLine("Enter Card Id To Transfer the Money");
-                                        int walletIdForDec = Convert.ToInt32(Console.ReadLine());
-                                        Console.WriteLine("Enter Amount to Transfer");
-                                        decimal transferAmount = Convert.ToDecimal(Console.ReadLine());
                                         try
                                         {
-                                            Console.ForegroundColor = ConsoleColor.Green;
-                                            walletService.TransferMoney(walletIdForInc, walletIdForDec, user, transferAmount);
+                                            Console.ForegroundColor = ConsoleColor.Blue;
+                                            foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false))
+                                            {
+                                                Console.WriteLine($"Id:{wallet.Id}/" +
+                                                                  $"Card:{wallet.Number}\n" +
+                                                                  $"Balance:{wallet.Balance}\n");
+                                            }
                                             Console.ResetColor();
+                                            Console.WriteLine("Enter Card Id To Get the Money");
+                                            int walletIdForInc = Convert.ToInt32(Console.ReadLine());
+                                            Console.ForegroundColor = ConsoleColor.DarkBlue;
+                                            foreach (var wallet in context.Wallets.Where(w => w.UserId == user.Id && w.IsDeactive == false))
+                                            {
+                                                Console.WriteLine($"Id:{wallet.Id}/" +
+                                                                  $"Card:{wallet.Number}\n" +
+                                                                  $"Balance:{wallet.Balance}\n");
+                                            }
+                                            Console.ResetColor();
+                                            Console.WriteLine("Enter Card Id To Transfer the Money");
+                                            int walletIdForDec = Convert.ToInt32(Console.ReadLine());
+                                            Console.WriteLine("Enter Amount to Transfer");
+                                            decimal transferAmount = Convert.ToDecimal(Console.ReadLine());
+                                            try
+                                            {
+                                                Console.ForegroundColor = ConsoleColor.Green;
+                                                walletService.TransferMoney(walletIdForInc, walletIdForDec, user, transferAmount);
+                                                Console.ResetColor();
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                Console.ForegroundColor = ConsoleColor.Red;
+                                                Console.WriteLine(ex.Message);
+                                                Console.ResetColor();
+                                            }
                                         }
                                         catch (Exception ex)
                                         {
-                                            Console.ForegroundColor = ConsoleColor.Red;
                                             Console.WriteLine(ex.Message);
-                                            Console.ResetColor();
                                         }
-
                                         break;
                                     case (int)UserInfo.ShowBoughtProducts:
                                         try

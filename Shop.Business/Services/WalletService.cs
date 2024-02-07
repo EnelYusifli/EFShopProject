@@ -173,4 +173,25 @@ public void IncreaseBalance(int walletId, User user,decimal amount)
         }
         else throw new CannotBeFoundException("You do not have any saved card");
     }
+    public void ShowUserWallets(User user, ShopDbContext context)
+    {
+        var userWallets = context.Wallets.Where(w => w.UserId == user.Id && !w.IsDeactive).ToList();
+
+        if (userWallets.Any())
+        {
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+            foreach (var wallet in userWallets)
+            {
+                Console.WriteLine($"Id:{wallet.Id}/Card: {wallet.Number}\n" +
+                                  $"Balance: {wallet.Balance}\n");
+            }
+            Console.ResetColor();
+        }
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("You don't have any cards yet.");
+            Console.ResetColor();
+        }
+    }
 }

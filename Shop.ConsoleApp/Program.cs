@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Shop.Business.Services;
+﻿using Shop.Business.Services;
 using Shop.Business.Utilities.Helper;
 using Shop.Core.Entities;
 using Shop.DataAccess;
@@ -98,7 +97,7 @@ while (isContinue)
                                         Console.WriteLine("Enter Password");
                                         string password = userService.ReadPasswordFromConsole();
                                         string hashedPassword = userService.HashPassword(password);
-                                        Console.ForegroundColor=ConsoleColor.Green;
+                                        Console.ForegroundColor = ConsoleColor.Green;
                                         userService.LoginUserWithEmail(email, password);
                                         Console.ResetColor();
                                     YesOrNo:
@@ -197,7 +196,7 @@ while (isMainPageContinue)
                     isMainPageContinue = false;
                     break;
                 case (int)MainPage.GoToHomePage:
-                    Console.ForegroundColor=ConsoleColor.Yellow;
+                    Console.ForegroundColor = ConsoleColor.Yellow;
                     foreach (var product in context.Products.OrderByDescending(p => p.CreatedDate).Take(5).Where(p => p.IsDeactive == false))
                     {
                         Console.Write($"\n Id:{product.Id}/Name:{product.Name.ToUpper()},\n" +
@@ -265,17 +264,17 @@ while (isMainPageContinue)
                                         string name = Console.ReadLine();
                                         try
                                         {
-                                            Console.ForegroundColor=ConsoleColor.Green;
+                                            Console.ForegroundColor = ConsoleColor.Green;
                                             productService.SearchForProductViaName(name);
                                             Console.ResetColor();
                                         }
                                         catch (Exception ex)
                                         {
-                                            Console.ForegroundColor= ConsoleColor.Red;
+                                            Console.ForegroundColor = ConsoleColor.Red;
                                             Console.WriteLine(ex.Message);
                                             Console.ResetColor();
                                         }
-                                        break; 
+                                        break;
                                     case (int)HomePage.SearchProductViaCategory:
                                         Console.WriteLine("Enter category name");
                                         string categoryName = Console.ReadLine();
@@ -291,7 +290,7 @@ while (isMainPageContinue)
                                             Console.WriteLine(ex.Message);
                                             Console.ResetColor();
                                         }
-                                        break;  
+                                        break;
                                     case (int)HomePage.SearchProductViaBrand:
                                         Console.WriteLine("Enter brand name");
                                         string brandName = Console.ReadLine();
@@ -321,23 +320,49 @@ while (isMainPageContinue)
                 case (int)MainPage.GoToCart:
                     try
                     {
-                        var cartProducts = context.CartProducts.Where(cp=>!cp.IsDeactive).Where(cp => cp.Cart.Id == user.Id).Include(cp => cp.Product);
-                        decimal total = 0;
-                        if (cartProducts is not null)
-                        {
-                            Console.ForegroundColor = ConsoleColor.Magenta;
-                            foreach (var cartProduct in cartProducts)
-                            {
-                                if (cartProduct.IsDeactive == false && cartProduct.ProductCountInCart != 0)
+                       
+                        var cartProductsInCart = context.CartProducts
+                                .Where(cp => cp.Cart.Id == user.Id && !cp.IsDeactive && cp.ProductCountInCart != 0)
+                                .Select(cp => new
                                 {
-                                    Console.Write($"\nId:{cartProduct.Product.Id} Name: {cartProduct.Product.Name.ToUpper()},\n" +
-                                                  $"Price: {cartProduct.Product.Price},\n" +
-                                                  $"Description: {cartProduct.Product.Description}\n" +
-                                                  $"Count In cart:{cartProduct.ProductCountInCart}\n");
-                                    total += cartProduct.Product.Price * cartProduct.ProductCountInCart;
-                                }
-                            }Console.ResetColor();
+                                    ProductId = cp.Product.Id,
+                                    ProductName = cp.Product.Name.ToUpper(),
+                                    ProductPrice = cp.Product.Price,
+                                    ProductDescription = cp.Product.Description,
+                                    ProductCountInCart = cp.ProductCountInCart
+                                })
+                                .ToList();
+
+                        decimal total = 0;
+
+                        foreach (var cartProduct in cartProductsInCart)
+                        {
+                            Console.Write($"\nId:{cartProduct.ProductId} Name: {cartProduct.ProductName},\n" +
+                                          $"Price: {cartProduct.ProductPrice},\n" +
+                                          $"Description: {cartProduct.ProductDescription}\n" +
+                                          $"Count In cart:{cartProduct.ProductCountInCart}\n");
+                            total += cartProduct.ProductPrice * cartProduct.ProductCountInCart;
                         }
+                        //var cartProducts = context.CartProducts.Where(cp => !cp.IsDeactive)
+                        //    .Where(cp => cp.Cart.Id == user.Id)
+                        //    .Include(cp => cp.Product);
+                        //decimal total = 0;
+                        //if (cartProducts is not null)
+                        //{
+                        //    Console.ForegroundColor = ConsoleColor.Magenta;
+                        //    foreach (var cartProduct in cartProducts)
+                        //    {
+                        //        if (cartProduct.IsDeactive == false && cartProduct.ProductCountInCart != 0)
+                        //        {
+                        //            Console.Write($"\nId:{cartProduct.Product.Id} Name: {cartProduct.Product.Name.ToUpper()},\n" +
+                        //                          $"Price: {cartProduct.Product.Price},\n" +
+                        //                          $"Description: {cartProduct.Product.Description}\n" +
+                        //                          $"Count In cart:{cartProduct.ProductCountInCart}\n");
+                        //            total += cartProduct.Product.Price * cartProduct.ProductCountInCart;
+                        //        }
+                        //    }
+                        //Console.ResetColor();
+                        //}
                         Console.WriteLine($"\nTotal Price ${total}\n");
                         bool isContinueCart = true;
                         while (isContinueCart)
@@ -356,61 +381,72 @@ while (isMainPageContinue)
                                     switch (cartIntOption)
                                     {
                                         case (int)CartEnum.BuyAllProducts:
-                                           
-                                                List<Product> productsInCart = context.Products.Where(p => p.CartProducts.Where(cp => !cp.IsDeactive).Any(cp => cp.CartId == user.Id)).ToList();
-                                            try
-                                            {
-                                                invoiceService.BuyProduct( user, productsInCart, total);
-                                                isContinueCart = false;
-                                                Console.ResetColor();
-                                            }
-                                            catch (Exception ex)
-                                            {
-                                                Console.ForegroundColor = ConsoleColor.Red;
-                                                Console.WriteLine(ex.Message);
-                                                Console.ResetColor();
-                                            }
-
+                                            HandleBuyAllProducts(user, total, context, invoiceService);
+                                            isContinueCart = false;
                                             break;
-                                    
+
                                         case (int)CartEnum.RemoveProduct:
-                                            try
-                                            {
-                                                Console.WriteLine("Enter Product Id");
-                                                int productId = Convert.ToInt32(Console.ReadLine());
-                                                Console.WriteLine("Enter the count that you want to remove");
-                                                int count = Convert.ToInt32(Console.ReadLine());
-                                                Console.ForegroundColor = ConsoleColor.Green;
-                                                cartService.RemoveProductFromCart(productId, user, count);
-                                                Console.ResetColor();
-                                                isContinueCart = false;
-                                            }
-                                            catch (Exception ex)
-                                            {
-                                                Console.ForegroundColor = ConsoleColor.Red;
-                                                Console.WriteLine(ex.Message);
-                                                Console.ResetColor();
-                                            }
-
-
+                                            HandleRemoveProduct(user, context, cartService);
+                                            isContinueCart = false;
                                             break;
+
                                         case (int)CartEnum.ReturnToMainPage:
                                             isContinueCart = false;
                                             break;
                                     }
                                 }
-                                else Console.WriteLine("Invalid option. Please select again.");
-
+                                else
+                                {
+                                    Console.WriteLine("Invalid option. Please select again.");
+                                }
                             }
-                            else Console.WriteLine("Please enter correct format");
+                            else
+                            {
+                                Console.WriteLine("Please enter correct format");
+                            }
                         }
                     }
-
                     catch (Exception ex)
                     {
                         Console.WriteLine(ex.Message);
                     }
                     break;
+
+                    void HandleBuyAllProducts(User user, decimal total, ShopDbContext context, InvoiceService invoiceService)
+                    {
+                        List<Product> productsInCart = context.Products.Where(p => p.CartProducts.Where(cp => !cp.IsDeactive).Any(cp => cp.CartId == user.Id)).ToList();
+                        try
+                        {
+                            invoiceService.BuyProduct(user, productsInCart, total);
+                            Console.ResetColor();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine(ex.Message);
+                            Console.ResetColor();
+                        }
+                    }
+
+                    void HandleRemoveProduct(User user, ShopDbContext context, CartService cartService)
+                    {
+                        try
+                        {
+                            Console.WriteLine("Enter Product Id");
+                            int productId = Convert.ToInt32(Console.ReadLine());
+                            Console.WriteLine("Enter the count that you want to remove");
+                            int count = Convert.ToInt32(Console.ReadLine());
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            cartService.RemoveProductFromCart(productId, user, count);
+                            Console.ResetColor();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine(ex.Message);
+                            Console.ResetColor();
+                        }
+                    }
                 case (int)MainPage.SeeUserInfo:
                     Console.ForegroundColor = ConsoleColor.Cyan;
                     Console.WriteLine($"\nName:{user.Name.ToUpper()}\n" +
@@ -651,7 +687,7 @@ while (isMainPageContinue)
                                                             string phone = Console.ReadLine();
                                                             if (user.Phone.ToLower() != phone.ToLower())
                                                             {
-                                                                Console.ForegroundColor=ConsoleColor.Green;
+                                                                Console.ForegroundColor = ConsoleColor.Green;
                                                                 userService.UpdateUser(user, user.Name, user.Surname, user.Email, user.UserName, user.Password, phone, user.Address);
                                                                 Console.ResetColor();
 
@@ -672,7 +708,7 @@ while (isMainPageContinue)
                                                             {
                                                                 Console.ForegroundColor = ConsoleColor.Green;
                                                                 userService.UpdateUser(user, user.Name, user.Surname, user.Email, user.UserName, user.Password, user.Phone, address);
-                                                                Console.ResetColor(); 
+                                                                Console.ResetColor();
                                                             }
                                                             else
                                                             {
@@ -789,7 +825,7 @@ while (isMainPageContinue)
                                                               $"Card:{wallet.Number}\n" +
                                                               $"Balance:{wallet.Balance}\n");
                                         }
-                                            Console.ResetColor();
+                                        Console.ResetColor();
                                         Console.WriteLine("Enter Card Id");
                                         int walletIdForIncBalance = Convert.ToInt32(Console.ReadLine());
                                         Console.WriteLine("Enter the amount of money");
@@ -798,7 +834,7 @@ while (isMainPageContinue)
                                         {
                                             Console.ForegroundColor = ConsoleColor.Green;
                                             walletService.IncreaseBalance(walletIdForIncBalance, user, amount);
-                                            Console.ResetColor();   
+                                            Console.ResetColor();
                                         }
                                         catch (Exception ex)
                                         {
@@ -844,10 +880,10 @@ while (isMainPageContinue)
                                         }
 
                                         break;
-                                    case(int)UserInfo.ShowBoughtProducts:
+                                    case (int)UserInfo.ShowBoughtProducts:
                                         try
                                         {
-                                            Console.ForegroundColor=ConsoleColor.DarkCyan;
+                                            Console.ForegroundColor = ConsoleColor.DarkCyan;
                                             userService.GetBoughtProducts(user);
                                             Console.ResetColor();
                                         }

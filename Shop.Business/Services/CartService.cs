@@ -37,7 +37,6 @@ public class CartService : ICartService
                     cartProduct.ModifiedTime = DateTime.Now;
                     context.SaveChanges();
                     Console.Out.WriteLine("Added to Cart Successfully");
-                    return;
                 }
                 else
                 {
@@ -70,7 +69,8 @@ public class CartService : ICartService
             {
                 if (cartProduct.ProductCountInCart < count)
                     throw new MoreThanMaximumException("You do not have that many product in your cart");
-                cartProduct.ProductCountInCart -= count;
+                int productCount=cartProduct.ProductCountInCart - count;
+                cartProduct.ProductCountInCart = productCount;
                 if (cartProduct.ProductCountInCart == 0)
                 {
                     cartProduct.IsDeactive = true;
@@ -79,7 +79,6 @@ public class CartService : ICartService
                 context.Entry(cartProduct).State = EntityState.Modified;
                 context.SaveChanges();
                 Console.Out.WriteLine("Removed from Cart Successfully");
-                return;
             }
         }
         else throw new CannotBeFoundException("Product or user cannot be found");
